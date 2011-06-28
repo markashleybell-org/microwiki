@@ -3,24 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using microwiki.Domain.Abstract;
 using microwiki.Web.Models;
 using MarkdownSharp;
+using microwiki.Web.Data;
 
 namespace microwiki.Web.Controllers
 {
-    public class WikiController : BaseController
+    public class WikiController : Controller
     {
         private Markdown _markdown;
 
-        public WikiController(IDocumentRepository documents) : base(documents) 
+        public WikiController() : base() 
         { 
             _markdown = new Markdown();
         }
 
         public ActionResult Index()
         {
-            var document = _documents.Get(1);
+            var documents = new Documents();
+
+            var document = documents.Single(1);
 
             return View(new DocumentViewModel {
                 Title = document.Title,
