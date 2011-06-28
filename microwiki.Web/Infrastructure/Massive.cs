@@ -122,6 +122,7 @@ namespace Massive
             dynamic dm = new DynamicModel(connectionStringName);
             return dm;
         }
+
         public DynamicModel(string connectionStringName, string tableName = "", string primaryKeyField = "")
         {
             TableName = tableName == "" ? this.GetType().Name : tableName;

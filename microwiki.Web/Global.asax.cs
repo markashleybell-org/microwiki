@@ -4,6 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Configuration;
+using System.Data.SqlServerCe;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace microwiki.Web
 {
@@ -12,6 +16,35 @@ namespace microwiki.Web
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        public static void CreateDatabase(string connectionString)
+        {
+            var databaseFile = Regex.Match(connectionString, "Data Source=(.*?)(?:;|$)", RegexOptions.IgnoreCase).Groups[1].Value;
+
+            if(databaseFile != null && !File.Exists(databaseFile))
+            {
+                var engine = new SqlCeEngine(connectionString);
+
+                engine.CreateDatabase();
+
+                using (var conn = new SqlCeConnection(connectionString))
+                {
+                    conn.Open();
+
+                    var cmd = new SqlCeCommand();
+                    cmd.Connection = conn;
+
+                    using (var reader = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "\\Infrastructure\\Schema.sql"))
+                    {
+                        while (reader.Peek() >= 0)
+                        {
+                            cmd.CommandText = Regex.Replace(reader.ReadLine(), "@@NOW@@", DateTime.Now.ToString("yyyy-MM-dd hh:mm"));
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+        }
+
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
@@ -35,6 +68,8 @@ namespace microwiki.Web
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+
+            CreateDatabase(ConfigurationManager.ConnectionStrings["MicroWiki"].ConnectionString);
         }
     }
 }
