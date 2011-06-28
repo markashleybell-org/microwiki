@@ -13,7 +13,7 @@ namespace microwiki.Web.Controllers
     {
         private Markdown _markdown;
 
-        public WikiController() : base() 
+        public WikiController()
         { 
             _markdown = new Markdown();
         }
@@ -22,7 +22,7 @@ namespace microwiki.Web.Controllers
         {
             var documents = new Documents();
 
-            var document = documents.Single(1);
+            var document = documents.Single("Location = '/'");
 
             return View(new DocumentViewModel {
                 Title = document.Title,
