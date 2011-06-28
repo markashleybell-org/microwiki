@@ -1,4 +1,6 @@
-﻿@{
+﻿@model microwiki.Web.Models.DocumentViewModel
+
+@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/MainLayout.cshtml";
 }
@@ -8,5 +10,11 @@
     <h1>Index</h1>
 
     <p>This is the index.</p>
+
+    <h2>@Model.Title</h2>
+
+    <p>@Model.Created.ToString("dd/MM/yyyy")</p>
+
+    @Html.Raw(Model.Body)
 
 }

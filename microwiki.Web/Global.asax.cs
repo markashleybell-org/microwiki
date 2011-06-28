@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using microwiki.Web.Configuration;
+using microwiki.Web.Infrastructure;
 
 namespace microwiki.Web
 {
@@ -35,6 +37,10 @@ namespace microwiki.Web
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+
+            ControllerBuilder.Current.SetControllerFactory(new NinjectControllerFactory());
+
+            SetupServices.InitializeDb();
         }
     }
 }
