@@ -51,7 +51,6 @@ stylecop.*
 ~$*
 *.dbmdl
 Auth.config
-Db.config
 Settings.config
 microwiki.Web/App_Data/*
 !.gitignore
