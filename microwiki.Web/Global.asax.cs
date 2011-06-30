@@ -53,9 +53,33 @@ namespace microwiki.Web
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                "Default", // Route name
-                "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Wiki", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+                "Get", // Route name
+                "get", // URL with parameters
+                new { controller = "Wiki", action = "Get" } // Parameter defaults
+            );
+
+            routes.MapRoute(
+                "Insert", // Route name
+                "insert", // URL with parameters
+                new { controller = "Wiki", action = "Insert" } // Parameter defaults
+            );
+
+            routes.MapRoute(
+                "Update", // Route name
+                "update", // URL with parameters
+                new { controller = "Wiki", action = "Update" } // Parameter defaults
+            );
+
+            routes.MapRoute(
+                "Delete", // Route name
+                "delete", // URL with parameters
+                new { controller = "Wiki", action = "Delete" } // Parameter defaults
+            );
+
+            routes.MapRoute(
+                "Page", // Route name
+                "{*url}", // URL with parameters
+                new { controller = "Wiki", action = "Page", url = UrlParameter.Optional } // Parameter defaults
             );
 
         }
