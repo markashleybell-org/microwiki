@@ -9,7 +9,7 @@ namespace microwiki.Web.Data
 {
     public class Documents : DynamicModel
     {
-        public Documents() : base("MicroWiki")
+        public Documents() : base("microwiki")
         {
             PrimaryKeyField = "Location";
         }

@@ -67,7 +67,7 @@ namespace microwiki.Web
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
-            CreateTables(ConfigurationManager.ConnectionStrings["MicroWiki"].ConnectionString);
+            CreateTables(ConfigurationManager.ConnectionStrings["microwiki"].ConnectionString);
         }
     }
 }
