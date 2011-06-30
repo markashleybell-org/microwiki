@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Configuration;
-using System.Data.SqlServerCe;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Data.SqlClient;
 
 namespace microwiki.Web
 {
@@ -16,30 +16,28 @@ namespace microwiki.Web
 
     public class MvcApplication : System.Web.HttpApplication
     {
-        public static void CreateDatabase(string connectionString)
+        public static void CreateTables(string connectionString)
         {
-            var databaseFile = Regex.Match(connectionString, "Data Source=(.*?)(?:;|$)", RegexOptions.IgnoreCase).Groups[1].Value;
-
-            if(databaseFile != null && !File.Exists(databaseFile))
+            using (var conn = new SqlConnection(connectionString))
             {
-                var engine = new SqlCeEngine(connectionString);
+                conn.Open();
 
-                engine.CreateDatabase();
+                var cmd = new SqlCommand();
+                cmd.Connection = conn;
 
-                using (var conn = new SqlCeConnection(connectionString))
+                using (var reader = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "\\Infrastructure\\Schema.sql"))
                 {
-                    conn.Open();
+                    var schema = reader.ReadToEnd();
 
-                    var cmd = new SqlCeCommand();
-                    cmd.Connection = conn;
+                    cmd.CommandText = Regex.Replace(schema, "@@NOW@@", DateTime.Now.ToString("yyyy-MM-dd hh:mm"));
 
-                    using (var reader = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "\\Infrastructure\\Schema.sql"))
+                    try
                     {
-                        while (reader.Peek() >= 0)
-                        {
-                            cmd.CommandText = Regex.Replace(reader.ReadLine(), "@@NOW@@", DateTime.Now.ToString("yyyy-MM-dd hh:mm"));
-                            cmd.ExecuteNonQuery();
-                        }
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (SqlException e)
+                    {
+                        
                     }
                 }
             }
@@ -69,7 +67,7 @@ namespace microwiki.Web
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
-            CreateDatabase(ConfigurationManager.ConnectionStrings["MicroWiki"].ConnectionString);
+            CreateTables(ConfigurationManager.ConnectionStrings["MicroWiki"].ConnectionString);
         }
     }
 }
