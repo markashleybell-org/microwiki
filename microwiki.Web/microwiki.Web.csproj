@@ -110,11 +110,6 @@
   <ItemGroup>
     <Content Include="Views\Wiki\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Db.config">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
