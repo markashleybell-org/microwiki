@@ -1,0 +1,46 @@
+﻿@model microwiki.Web.Models.DocumentViewModel
+
+@{
+    ViewBag.Title = @Model.Title + " - MAB MicroWiki";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+@section controls {
+
+    <div id="control-bar">
+        <p>
+            <span id="page-title">@Model.Title</span>
+            <span id="page-controls">Created on: @Model.Created.ToString("dd/MM/yyyy hh:mm") | Last Edited: @Model.LastEdited.ToString("dd/MM/yyyy hh:mm") | <a href="@Request.Url.AbsolutePath" class="edit-link">Edit this page</a> | <a href="@Request.Url.AbsolutePath" class="add-link">Add a new page</a></span>
+        </p>
+    </div>
+}
+
+@section content {
+
+    <div id="content">
+
+        @if(Model.Children != null && Model.Children.Count > 0) {
+
+        <div id="children">
+
+            <ul>
+
+            @foreach(var child in Model.Children)
+            {
+                <li><a href="@child.Location">@child.Title</a></li>
+            }
+
+            </ul>
+
+        </div>
+
+        }
+            
+        @Html.Raw(Model.Body)
+    </div>
+
+}
+
+@section footer {
+
+}

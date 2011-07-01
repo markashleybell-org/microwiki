@@ -109,7 +109,7 @@
     <Content Include="Views\Shared\MainLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Wiki\Page.cshtml" />
+    <Content Include="Views\Wiki\Document.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
