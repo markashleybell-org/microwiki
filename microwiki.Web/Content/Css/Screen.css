@@ -1,3 +1,42 @@
-﻿body { }
+﻿body, h1, h2, h3, p, ul, ol, li, form, blockquote { margin: 0; padding: 0; }
+body { font-family: Arial, Helvetica, sans-serif; color: #000000; font-size: 14px; }
 
-#edit-form textarea { width: 600px; height: 400px; }
+h1 { padding: 10px 20px; font-size: 28px; }
+h2 { padding: 10px 20px; font-size: 22px; }
+h3 { padding: 10px 20px; font-size: 18px; }
+h4 { padding: 10px 20px; font-size: 14px; }
+p { padding: 10px 20px; }
+
+ul { padding: 10px 20px 10px 50px; }
+ol { padding: 10px 20px 10px 50px; }
+
+#content { margin-top: 50px; }
+
+#add-form textarea { width: 800px; height: 600px; font-size: 14px; }
+#edit-form textarea { width: 800px; height: 600px; font-size: 14px; }
+
+#control-bar { color: #fff; background-color: #000; width: 100%; height: 37px; position: absolute; top: 0; left: 0; }
+#control-bar a { color: #FFE100; }
+
+#page-title { width: 250px; position: absolute; top: 10px; left: 20px; font-weight: bold; }
+#page-controls { width: 550px; position: absolute; top: 11px; right: 20px; font-size: 11px; text-align: right; }
+
+#children { width: 200px; float: right; margin: 20px 20px 0 0; background-color: #e0e0e0; text-align: right; }
+#children ul { padding: 20px; list-style: none; }
+
+pre 
+{
+    margin: 10px 20px;
+    white-space: pre;
+    display: block;
+    background-color: #EEEEEE;
+    font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: auto;
+}
+
+code 
+{
+    background-color: #EEEEEE;
+}
