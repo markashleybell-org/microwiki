@@ -34,7 +34,7 @@ $(function () {
                             var form = '<form action="/update" method="post" id="edit-form">' +
                                            '<p><input name="title" type="text" value="' + data.title + '" /></p>' +
                                            '<p><textarea name="body">' + data.body + '</textarea></p>' +
-                                           '<p><input type="hidden" name="location" value="' + location + '" />' +
+                                           '<p><input type="hidden" name="location" value="' + url + '" />' +
                                            '<input type="submit" value="Save" /></p>' +
                                        '</form>';
 
@@ -69,11 +69,11 @@ $(function () {
 
         event.preventDefault();
 
-        var location = $(this).attr('href').substring(1);
+        var url = $(this).attr('href').substring(1);
 
         var form = '<form action="/insert" method="post" id="add-form">' +
                         '<p><input name="title" type="text" value="" /></p>' +
-                        '<p>/<input name="location" type="text" value="' + location + '" /></p>' +
+                        '<p>/<input name="location" type="text" value="' + url + '" /></p>' +
                         '<p><textarea name="body"></textarea></p>' +
                         '<p><input name="redirect" type="checkbox" value="1" /> </p>' +
                         '<p><input type="submit" value="Save" /></p>' +
@@ -88,7 +88,7 @@ $(function () {
         // If the checkbox is checked, just post to the add action and redirect to the page afterwards
         if ($('#add-form input[name=redirect]').is(':checked'))
             return true;
-        
+
         event.preventDefault();
 
         ajaxPostRequest('/insert',
