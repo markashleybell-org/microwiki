@@ -1,4 +1,10 @@
-﻿function ajaxPostRequest(requestUrl, postData, successCallback, errorCallback) {
+﻿window.$_MICRO_WIKI_GLOBALS = {
+
+    CHILD_MENU_HTML: ''
+
+};
+
+function ajaxPostRequest(requestUrl, postData, successCallback, errorCallback) {
 
     $.ajax({
         url: requestUrl,
@@ -38,6 +44,8 @@ $(function () {
                                            '<input type="submit" value="Save" /></p>' +
                                        '</form>';
 
+                            $_MICRO_WIKI_GLOBALS.CHILD_MENU_HTML = '<div id="children">' + $('#children').html() + '</div>';
+
                             $('#content').html(form);
 
                         },
@@ -58,7 +66,8 @@ $(function () {
                         function (data, status, request) {
 
                             $('#page-title').html(data.updatedTitle);
-                            $('#content').html(data.updatedBody);
+
+                            $('#content').html($_MICRO_WIKI_GLOBALS.CHILD_MENU_HTML + data.updatedBody);
 
                         },
                         genericErrorCallback);
