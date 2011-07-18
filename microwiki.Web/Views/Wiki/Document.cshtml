@@ -27,7 +27,7 @@
 
             @foreach(var child in Model.Children)
             {
-                <li><a href="@child.Location">@child.Title</a></li>
+                <li><a href="@child.Location.Substring(5)">@child.Title</a></li>
             }
 
             </ul>
