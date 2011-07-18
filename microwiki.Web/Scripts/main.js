@@ -82,7 +82,7 @@ $(function () {
 
         var form = '<form action="/insert" method="post" id="add-form">' +
                         '<p><input name="title" type="text" value="" /></p>' +
-                        '<p>/<input name="location" type="text" value="' + url + '" /></p>' +
+                        '<p>root/<input name="location" type="text" value="' + url + '" /></p>' +
                         '<p><textarea name="body"></textarea></p>' +
                         '<p><input name="redirect" type="checkbox" value="1" /> </p>' +
                         '<p><input type="submit" value="Save" /></p>' +

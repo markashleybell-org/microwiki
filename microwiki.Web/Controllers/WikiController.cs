@@ -18,13 +18,19 @@ namespace microwiki.Web.Controllers
             _markdown = new Markdown();
         }
 
-        public ActionResult Document(string location)
+        public ActionResult Document(string location = "")
         {
             var documents = new Documents();
 
-            var document = documents.Single("Location = '/" + location + "'");
+            location = (location == "") ? "root" : "root/" + location;
 
-            var children = documents.All(columns: "Location, Title", where: "WHERE Location LIKE @0 + '%'", args: "/" + location);
+            var depth = (from c in location
+                         where c == '/'
+                         select c).Count();
+
+            var document = documents.Single("Location = '" + location + "'");
+
+            var children = documents.All(columns: "Location, Title", where: "WHERE Location <> @0", args: location).ToList();
 
             return View(new DocumentViewModel {
                 Location = document.Location,
@@ -32,16 +38,36 @@ namespace microwiki.Web.Controllers
                 Created = document.Created,
                 LastEdited = document.LastEdited,
                 Body = _markdown.Transform(document.Body),
-                Children = children.ToList()
+                Children = children.FindAll(delegate(dynamic d) {
+                    
+                    // Only return documents which are direct children
+                    int count = 0;
+
+                    foreach (char c in d.Location)
+                    {
+                        if (c == '/')
+                        {
+                            count++;
+                        }
+                    }
+
+                    var locTmp = ((depth > 0) ? location + "/" : "");
+                    var isChild = d.Location.StartsWith(locTmp);
+                    var childDepth = (count == (depth + 1));
+
+                    return childDepth && isChild;
+                })
             });
         }
 
         [HttpPost]
         public ActionResult Get(string location)
         {
+            location = (location == "") ? "root" : "root/" + location;
+
             var documents = new Documents();
 
-            var document = documents.Single("Location = '/" + location + "'");
+            var document = documents.Single("Location = '" + location + "'");
 
             return Json(new { title = document.Title, location = document.Location, body = document.Body });
         }
@@ -53,7 +79,7 @@ namespace microwiki.Web.Controllers
 
             documents.Insert(new {
                 Title = title,
-                Location = "/" + location,
+                Location = "root/" + location,
                 Created = DateTime.Now, 
                 LastEdited = DateTime.Now, 
                 Body = body 
@@ -68,13 +94,15 @@ namespace microwiki.Web.Controllers
         [HttpPost]
         public ActionResult Update(string title, string location, string body)
         {
+            location = (location == "") ? "root" : "root/" + location;
+
             var documents = new Documents();
 
             documents.Update(new { 
                 Title = title,
                 LastEdited = DateTime.Now, 
                 Body = body
-            }, "/" + location);
+            }, location);
 
             return Json(new { updatedTitle = title, updatedBody = _markdown.Transform(body) });
         }
