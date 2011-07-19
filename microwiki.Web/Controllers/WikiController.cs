@@ -110,7 +110,14 @@ namespace microwiki.Web.Controllers
         [HttpPost]
         public ActionResult Delete(string location)
         {
-            return Content("");
+            if(location == "")
+                return Redirect("");
+
+            var documents = new Documents();
+
+            documents.Delete("root/" + location);
+
+            return Json(new { deleted = true });
         }
     }
 }

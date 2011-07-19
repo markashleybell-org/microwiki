@@ -115,4 +115,26 @@ $(function () {
 
     });
 
+
+    $('.delete-link').bind('click', function (event) {
+
+        event.preventDefault();
+
+        if (confirm('Are you sure you want to delete this page?')) {
+
+            ajaxPostRequest('/delete',
+                            {
+                                location: $(this).attr('href').substring(1)
+                            },
+                            function (data, status, request) {
+
+                                if (data.deleted) window.location.href = '/';
+
+                            },
+                            genericErrorCallback);
+
+        }
+
+    });
+
 });
