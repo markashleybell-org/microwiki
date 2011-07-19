@@ -77,6 +77,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Formatting.cs" />
+    <Compile Include="Helpers\Widgets.cs" />
     <Compile Include="Infrastructure\Massive.cs" />
     <Compile Include="Models\DocumentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,7 +99,9 @@
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
