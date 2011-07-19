@@ -1,7 +1,7 @@
 ﻿@model microwiki.Web.Models.DocumentViewModel
 
 @{
-    ViewBag.Title = @Model.Title + " - MAB MicroWiki";
+    ViewBag.Title = @Model.Location.Title() + " - MAB MicroWiki";
     Layout = "~/Views/Shared/MainLayout.cshtml";
 }
 
@@ -9,7 +9,7 @@
 
     <div id="control-bar">
         <p>
-            <span id="page-title">@Model.Title</span>
+            <span id="page-title">@Model.Location.Title()</span>
             <span id="page-controls">
                 Created: @Model.Created.ToString("dd/MM/yyyy hh:mm") | 
                 Last Edit: @Model.LastEdited.ToString("dd/MM/yyyy hh:mm") | 
@@ -23,6 +23,12 @@
 
 @section content {
 
+    <div id="navigation-bar">
+
+        <p id="breadcrumb-trail">@Request.Url.AbsolutePath.Breadcrumb()</p>
+
+    </div>
+
     <div id="content">
 
         @if(Model.Children != null && Model.Children.Count > 0) {
@@ -33,7 +39,7 @@
 
             @foreach(var child in Model.Children)
             {
-                <li><a href="@child.Location.Substring(5)">@child.Title</a></li>
+                <li><a href="@child.Location.Substring(5)">@child.Location.Title()</a></li>
             }
 
             </ul>
@@ -43,6 +49,7 @@
         }
             
         @Html.Raw(Model.Body)
+
     </div>
 
 }
