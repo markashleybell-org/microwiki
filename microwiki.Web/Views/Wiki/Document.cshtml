@@ -10,7 +10,13 @@
     <div id="control-bar">
         <p>
             <span id="page-title">@Model.Title</span>
-            <span id="page-controls">Created on: @Model.Created.ToString("dd/MM/yyyy hh:mm") | Last Edited: @Model.LastEdited.ToString("dd/MM/yyyy hh:mm") | <a href="@Request.Url.AbsolutePath" class="edit-link">Edit this page</a> | <a href="@Request.Url.AbsolutePath" class="add-link">Add a new page</a></span>
+            <span id="page-controls">
+                Created: @Model.Created.ToString("dd/MM/yyyy hh:mm") | 
+                Last Edit: @Model.LastEdited.ToString("dd/MM/yyyy hh:mm") | 
+                <a href="@Request.Url.AbsolutePath" class="edit-link">Edit this page</a> | 
+                <a href="@Request.Url.AbsolutePath" class="delete-link">Delete this page</a> | 
+                <a href="@Request.Url.AbsolutePath" class="add-link">Add a new page</a>
+            </span>
         </p>
     </div>
 }

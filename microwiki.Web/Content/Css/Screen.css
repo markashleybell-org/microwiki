@@ -19,7 +19,7 @@ ol { padding: 10px 20px 10px 50px; }
 #control-bar a { color: #FFE100; }
 
 #page-title { width: 250px; position: absolute; top: 10px; left: 20px; font-weight: bold; }
-#page-controls { width: 550px; position: absolute; top: 11px; right: 20px; font-size: 11px; text-align: right; }
+#page-controls { width: 560px; position: absolute; top: 11px; right: 20px; font-size: 11px; text-align: right; }
 
 #children { width: 200px; float: right; margin: 20px 20px 0 0; background-color: #e0e0e0; text-align: right; }
 #children ul { padding: 20px; list-style: none; }
