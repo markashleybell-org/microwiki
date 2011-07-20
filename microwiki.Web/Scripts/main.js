@@ -39,11 +39,12 @@ $(function () {
 
                             var form = '<form action="/update" method="post" id="edit-form">' +
                                            '<p>root/<input name="location" type="text" value="' + url + '" /></p>' +
-                                           '<p><textarea name="body">' + data.body + '</textarea>' +
+                                           '<p><textarea name="body">' + data.body + '</textarea></p>' +
+                                           '<p><input name="id" type="hidden" value="' + data.id + '" />' +
                                            '<input type="submit" value="Save" /></p>' +
                                        '</form>';
 
-                            if($('#children').length)
+                            if ($('#children').length)
                                 $_MICRO_WIKI_GLOBALS.CHILD_MENU_HTML = '<div id="children">' + $('#children').html() + '</div>';
 
                             $('#content').html(form);
@@ -59,12 +60,16 @@ $(function () {
 
         ajaxPostRequest('/update',
                         {
+                            id: $('#edit-form input[name=id]').val(),
                             location: $('#edit-form input[name=location]').val(),
                             body: $('#edit-form textarea[name=body]').val()
                         },
                         function (data, status, request) {
 
-                            $('#page-title').html(data.updatedTitle);
+                            var url = "root/" + window.location.pathname.substring(1);
+
+                            if (url != "root/" && data.updatedLocation != url)
+                                window.location.href = data.updatedLocation.substring(4);
 
                             $('#content').html($_MICRO_WIKI_GLOBALS.CHILD_MENU_HTML + data.updatedBody);
 
@@ -82,7 +87,8 @@ $(function () {
         var form = '<form action="/insert" method="post" id="add-form">' +
                         '<p>root/<input name="location" type="text" value="' + url + '" /></p>' +
                         '<p><textarea name="body"></textarea></p>' +
-                        '<p><input type="hidden" name="redirect" value="1" /><input type="submit" value="Save" /></p>' +
+                        '<p><input type="hidden" name="redirect" value="1" />' +
+                        '<input type="submit" value="Save" /></p>' +
                     '</form>';
 
         $('#content').html(form);

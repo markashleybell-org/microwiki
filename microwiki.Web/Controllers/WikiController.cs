@@ -31,7 +31,7 @@ namespace microwiki.Web.Controllers
                          where c == '/'
                          select c).Count();
 
-            var document = documents.Single("Location = '" + location + "'");
+            var document = documents.Single("Location = @0", args: location);
 
             var children = documents.All(columns: "Location", where: "WHERE Location <> @0", args: location).ToList();
 
@@ -59,6 +59,7 @@ namespace microwiki.Web.Controllers
                            };
 
             return View(new DocumentViewModel {
+                ID = document.ID,
                 Location = document.Location,
                 Created = document.Created,
                 LastEdited = document.LastEdited,
@@ -74,9 +75,9 @@ namespace microwiki.Web.Controllers
 
             var documents = new Documents();
 
-            var document = documents.Single("Location = '" + location + "'");
+            var document = documents.Single("Location = @0", args: location);
 
-            return Json(new { location = document.Location, body = document.Body });
+            return Json(new { id = document.ID, location = document.Location, body = document.Body });
         }
 
         [HttpPost]
@@ -85,6 +86,7 @@ namespace microwiki.Web.Controllers
             var documents = new Documents();
 
             documents.Insert(new {
+                ID = Guid.NewGuid().ToString(),
                 Location = "root/" + location,
                 Created = DateTime.Now, 
                 LastEdited = DateTime.Now, 
@@ -98,29 +100,27 @@ namespace microwiki.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Update(string location, string body)
+        public ActionResult Update(string id, string location, string body)
         {
             location = (location == "") ? "root" : "root/" + location;
 
             var documents = new Documents();
 
-            documents.Update(new { 
+            documents.Update(new {
+                Location = location,
                 LastEdited = DateTime.Now, 
                 Body = body
-            }, location);
+            }, id);
 
-            return Json(new { updatedBody = _markdown.Transform(body) });
+            return Json(new { updatedLocation = location, updatedBody = _markdown.Transform(body) });
         }
 
         [HttpPost]
         public ActionResult Delete(string location)
         {
-            if(location == "")
-                return Redirect("");
-
             var documents = new Documents();
 
-            documents.Delete("root/" + location);
+            documents.Delete(where: "Location = @0", args: "root/" + location);
 
             return Json(new { deleted = true });
         }
