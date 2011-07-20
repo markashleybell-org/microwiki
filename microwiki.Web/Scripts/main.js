@@ -43,7 +43,8 @@ $(function () {
                                            '<input type="submit" value="Save" /></p>' +
                                        '</form>';
 
-                            $_MICRO_WIKI_GLOBALS.CHILD_MENU_HTML = '<div id="children">' + $('#children').html() + '</div>';
+                            if($('#children').length)
+                                $_MICRO_WIKI_GLOBALS.CHILD_MENU_HTML = '<div id="children">' + $('#children').html() + '</div>';
 
                             $('#content').html(form);
 
