@@ -15,7 +15,10 @@ namespace microwiki.Web.Controllers
 
         public WikiController()
         { 
-            _markdown = new Markdown();
+            var options = new MarkdownOptions();
+            options.AutoHyperlink = true;
+
+            _markdown = new Markdown(options);
         }
 
         public ActionResult Document(string location = "")
