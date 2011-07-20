@@ -85,9 +85,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Css\Screen.css" />
+    <Content Include="Content\Css\wmd.css" />
+    <Content Include="Content\Img\Site\favicon.ico" />
+    <Content Include="Content\Img\Site\wmd-buttons.png" />
     <Content Include="Global.asax" />
     <Content Include="Infrastructure\Schema.sql" />
     <Content Include="Scripts\main.js" />
+    <Content Include="Scripts\showdown.js" />
+    <Content Include="Scripts\wmd.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

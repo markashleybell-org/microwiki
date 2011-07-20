@@ -39,7 +39,15 @@ $(function () {
 
                             var form = '<form action="/update" method="post" id="edit-form">' +
                                            '<p>root/<input name="location" type="text" value="' + url + '" /></p>' +
-                                           '<p><textarea name="body">' + data.body + '</textarea></p>' +
+
+                                           '<div id="wmd-editor" class="wmd-panel">' +
+			                                   '<div id="wmd-button-bar"></div>' +
+			                                   '<textarea id="wmd-input"></textarea>' +
+		                                   '</div>' +
+		                                   '<div id="wmd-preview" class="wmd-panel"></div>' +
+		                                   '<div id="wmd-output" class="wmd-panel"></div>' +
+
+                                           // '<p><textarea name="body">' + data.body + '</textarea></p>' +
                                            '<p><input name="id" type="hidden" value="' + data.id + '" />' +
                                            '<input type="submit" value="Save" /></p>' +
                                        '</form>';
@@ -48,6 +56,8 @@ $(function () {
                                 $_MICRO_WIKI_GLOBALS.CHILD_MENU_HTML = '<div id="children">' + $('#children').html() + '</div>';
 
                             $('#content').html(form);
+
+                            
 
                         },
                         genericErrorCallback);
