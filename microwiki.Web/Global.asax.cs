@@ -29,7 +29,7 @@ namespace microwiki.Web
                 {
                     var schema = reader.ReadToEnd();
 
-                    cmd.CommandText = Regex.Replace(schema, "@@NOW@@", DateTime.Now.ToString("yyyy-MM-dd hh:mm"));
+                    cmd.CommandText = Regex.Replace(Regex.Replace(schema, "@@GUID@@", Guid.NewGuid().ToString()), "@@NOW@@", DateTime.Now.ToString("yyyy-MM-dd hh:mm"));
 
                     try
                     {

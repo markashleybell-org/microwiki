@@ -7,6 +7,7 @@ namespace microwiki.Web.Models
 {
     public class DocumentViewModel 
     {
+        public string ID { get; set; }
         public string Location { get; set; }
         public DateTime Created { get; set; }
         public DateTime LastEdited { get; set; }

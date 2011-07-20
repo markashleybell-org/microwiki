@@ -11,7 +11,7 @@ namespace microwiki.Web.Data
     {
         public Documents() : base("microwiki")
         {
-            PrimaryKeyField = "Location";
+            PrimaryKeyField = "ID";
         }
     }
 }
