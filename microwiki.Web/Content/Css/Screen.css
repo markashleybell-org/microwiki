@@ -12,8 +12,8 @@ ol { padding: 10px 20px 10px 50px; }
 
 #content { }
 
-#add-form textarea { width: 800px; height: 600px; font-size: 14px; }
-#edit-form textarea { width: 800px; height: 600px; font-size: 14px; }
+#xadd-form textarea { width: 800px; height: 600px; font-size: 14px; }
+#xedit-form textarea { width: 800px; height: 600px; font-size: 14px; }
 
 #control-bar { color: #fff; background-color: #000; width: 100%; height: 37px; position: relative; }
 #control-bar a { color: #FFE100; }

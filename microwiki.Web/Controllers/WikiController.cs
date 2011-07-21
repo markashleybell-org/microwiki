@@ -68,16 +68,24 @@ namespace microwiki.Web.Controllers
             });
         }
 
-        [HttpPost]
-        public ActionResult Get(string location)
+        public ActionResult Add()
         {
-            location = (location == "") ? "root" : "root/" + location;
+            return View();
+        }
+
+        public ActionResult Edit(string loc = "")
+        {
+            loc = (loc == "") ? "root" : "root/" + loc;
 
             var documents = new Documents();
 
-            var document = documents.Single("Location = @0", args: location);
+            var document = documents.Single("Location = @0", args: loc);
 
-            return Json(new { id = document.ID, location = document.Location, body = document.Body });
+            return View(new DocumentViewModel {
+                ID = document.ID,
+                Location = document.Location.Substring(5),
+                Body = document.Body
+            });
         }
 
         [HttpPost]
@@ -93,36 +101,31 @@ namespace microwiki.Web.Controllers
                 Body = body 
             });
 
-            if (redirect != null && int.Parse(redirect) == 1)
-                return Redirect(location);
-
-            return Json(new { updatedBody = _markdown.Transform(body) });
+            return Redirect("/" + location);
         }
 
         [HttpPost]
-        public ActionResult Update(string id, string location, string body)
+        public ActionResult Update(string id, string body, string location = "")
         {
-            location = (location == "") ? "root" : "root/" + location;
-
             var documents = new Documents();
 
             documents.Update(new {
-                Location = location,
+                Location = (location == "") ? "root" : "root/" + location,
                 LastEdited = DateTime.Now, 
                 Body = body
             }, id);
 
-            return Json(new { updatedLocation = location, updatedBody = _markdown.Transform(body) });
+            return Redirect("/" + location);
         }
 
         [HttpPost]
-        public ActionResult Delete(string location)
+        public ActionResult Delete(string id)
         {
             var documents = new Documents();
 
-            documents.Delete(where: "Location = @0", args: "root/" + location);
+            documents.Delete(id);
 
-            return Json(new { deleted = true });
+            return Redirect("/");
         }
     }
 }

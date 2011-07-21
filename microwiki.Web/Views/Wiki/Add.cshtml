@@ -1,0 +1,40 @@
+﻿@model microwiki.Web.Models.DocumentViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+@section controls {
+
+    <div id="control-bar">
+        <p>
+            <span id="page-title">Add/Edit Page</span>
+            <span id="page-controls">
+                <a href="/" class="add-link">Cancel Edit</a>
+            </span>
+        </p>
+    </div>
+}
+
+@section content {
+
+    <h1>New Page</h1>
+
+    @using(Html.BeginForm("Insert", "Wiki", FormMethod.Post)) {
+        
+        <p>@Html.LabelFor(x => x.Location)
+        root/@Html.TextBoxFor(x => x.Location)</p>
+        
+        <p>@Html.LabelFor(x => x.Body)
+        @Html.TextAreaFor(x => x.Body)</p>
+
+        <p><input type="submit" value="Add Page" /></p>        
+        
+    }
+
+}
+
+@section footer {
+
+}
