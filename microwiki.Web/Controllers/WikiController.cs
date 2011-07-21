@@ -83,7 +83,7 @@ namespace microwiki.Web.Controllers
 
             return View(new DocumentViewModel {
                 ID = document.ID,
-                Location = document.Location.Substring(5),
+                Location = (document.Location.Length > 5) ? document.Location.Substring(5) : document.Location,
                 Body = document.Body
             });
         }
