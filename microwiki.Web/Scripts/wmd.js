@@ -2437,4 +2437,3 @@ if(!Attacklab.wmd)
 	Attacklab.wmdBase();
 	Attacklab.Util.startEditor();
 };
-

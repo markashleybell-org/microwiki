@@ -1,0 +1,52 @@
+﻿@model microwiki.Web.Models.DocumentViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/MainLayout.cshtml";
+}
+
+@section controls {
+
+    <div id="control-bar">
+        <p>
+            <span id="page-title">Add/Edit Page</span>
+            <span id="page-controls">
+                <a href="/@((Model.Location != "root") ? Model.Location : "")" class="add-link">Cancel Edit</a>
+            </span>
+        </p>
+    </div>
+}
+
+@section content {
+
+    <h1>Edit</h1>
+
+    @using(Html.BeginForm("Update", "Wiki", FormMethod.Post)) {
+        
+        if(Model.Location != "root") {
+            
+            <p>@Html.LabelFor(x => x.Location)
+            root/@Html.TextBoxFor(x => x.Location)</p>
+        }
+        
+        <p>@Html.LabelFor(x => x.Body)
+        @Html.TextAreaFor(x => x.Body)</p>
+
+        <p>@Html.HiddenFor(x => x.ID)
+        <input type="submit" value="Save Page" /></p>        
+        
+    }
+
+    @using(Html.BeginForm("Delete", "Wiki", FormMethod.Post, new { id = "delete-form" }))
+    {
+        
+        <p>@Html.HiddenFor(x => x.ID)
+        <input type="submit" value="Delete Page" /></p>   
+        
+    }
+
+}
+
+@section footer {
+
+}

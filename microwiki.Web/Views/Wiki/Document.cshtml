@@ -13,11 +13,8 @@
             <span id="page-controls">
                 Created: @Model.Created.ToString("dd/MM/yyyy hh:mm") | 
                 Last Edit: @Model.LastEdited.ToString("dd/MM/yyyy hh:mm") | 
-                <a href="@Request.Url.AbsolutePath" class="edit-link">Edit this page</a> | 
-                @if(Request.Url.AbsolutePath != "/"){
-                    <a href="@Request.Url.AbsolutePath" class="delete-link">Delete this page</a> <span>|</span>
-                }
-                <a href="@Request.Url.AbsolutePath" class="add-link">Add a new page</a>
+                <a href="/edit@(Request.Url.AbsolutePath)" class="edit-link">Edit this page</a> | 
+                <a href="/new" class="add-link">Add a new page</a>
             </span>
         </p>
     </div>

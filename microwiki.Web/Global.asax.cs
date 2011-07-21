@@ -77,6 +77,18 @@ namespace microwiki.Web
             );
 
             routes.MapRoute(
+                "Add", // Route name
+                "new", // URL with parameters
+                new { controller = "Wiki", action = "Add" } // Parameter defaults
+            );
+
+            routes.MapRoute(
+                "Edit", // Route name
+                "edit/{*loc}", // URL with parameters
+                new { controller = "Wiki", action = "Edit", loc = UrlParameter.Optional } // Parameter defaults
+            );
+
+            routes.MapRoute(
                 "Document", // Route name
                 "{*location}", // URL with parameters
                 new { controller = "Wiki", action = "Document", location = UrlParameter.Optional } // Parameter defaults
