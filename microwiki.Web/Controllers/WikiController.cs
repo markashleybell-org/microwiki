@@ -89,6 +89,7 @@ namespace microwiki.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Insert(string location, string body, string redirect)
         {
             var documents = new Documents();
@@ -105,6 +106,7 @@ namespace microwiki.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Update(string id, string body, string location = "")
         {
             var documents = new Documents();
