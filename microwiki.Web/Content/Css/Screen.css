@@ -43,3 +43,18 @@ code
 {
     background-color: #EEEEEE;
 }
+
+.left-panel 
+{ 
+    margin-left: 20px;
+	margin-right: 20px;
+}
+.left-panel p { padding-left: 0; }
+
+.right-panel { 
+	margin: 20px 25px 10px 20px;
+    border: dotted 1px #cccccc; 
+}
+
+.xleft-panel { float: left; width: 50%; }
+.xright-panel { float: right; width: 50%; }

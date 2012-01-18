@@ -81,8 +81,9 @@
     <Content Include="Global.asax" />
     <Content Include="Infrastructure\Schema.sql" />
     <Content Include="Scripts\main.js" />
-    <Content Include="Scripts\showdown.js" />
-    <Content Include="Scripts\wmd.js" />
+    <Content Include="Scripts\Markdown.Converter.js" />
+    <Content Include="Scripts\Markdown.Editor.js" />
+    <Content Include="Scripts\Markdown.Sanitizer.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
