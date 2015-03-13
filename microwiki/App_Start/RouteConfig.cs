@@ -11,18 +11,32 @@ namespace microwiki
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            routes.LowercaseUrls = true;
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                name: "Wiki",
-                url: "wiki/{action}/{id}",
-                defaults: new { controller = "Wiki", action = "Index", id = UrlParameter.Optional }
+                name: "Create",
+                url: "wiki/create/{parentid}",
+                defaults: new { controller = "Wiki", action = "Create" }
             );
 
             routes.MapRoute(
-                name: "Document",
-                url: "{location}",
-                defaults: new { controller = "Wiki", action = "Read", location = UrlParameter.Optional }
+                name: "Update",
+                url: "wiki/update/{id}",
+                defaults: new { controller = "Wiki", action = "Update" }
+            );
+
+            routes.MapRoute(
+                name: "Delete",
+                url: "wiki/delete/{id}",
+                defaults: new { controller = "Wiki", action = "Delete" }
+            );
+
+            routes.MapRoute(
+                name: "Read",
+                url: "{*location}",
+                defaults: new { controller = "Wiki", action = "Read" }
             );
         }
     }

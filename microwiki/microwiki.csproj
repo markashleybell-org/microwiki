@@ -49,6 +49,9 @@
     <Reference Include="mab.lib.SimpleMapper">
       <HintPath>..\packages\mab.lib.SimpleMapper.3.3.0.1\lib\mab.lib.SimpleMapper.dll</HintPath>
     </Reference>
+    <Reference Include="MarkdownSharp">
+      <HintPath>..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -121,7 +124,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Document.cs" />
-    <Compile Include="Models\DocumentViewModel.cs" />
+    <Compile Include="Models\DocumentUpdateViewModel.cs" />
+    <Compile Include="Models\DocumentCreateViewModel.cs" />
+    <Compile Include="Models\DocumentReadViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -162,7 +167,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Wiki\Index.cshtml" />
     <Content Include="Views\Wiki\Read.cshtml" />
     <Content Include="Views\Wiki\Update.cshtml" />
     <None Include="Views\Wiki\Create.cshtml" />
