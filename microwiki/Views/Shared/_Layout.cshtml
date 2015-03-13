@@ -10,7 +10,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                @Html.ActionLink("MicroWiki", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a class="navbar-brand" href="/">MicroWiki</a>
             </div>
             <form class="navbar-form navbar-right" role="search">
                 <div class="form-group">
@@ -27,7 +27,6 @@
             <p>&copy; @DateTime.Now.Year - @ConfigurationManager.AppSettings["PublisherName"]</p>
         </footer>
     </div>
-
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/pagedown")

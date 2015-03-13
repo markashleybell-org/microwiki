@@ -1,7 +1,29 @@
-﻿@model microwiki.Models.DocumentViewModel
+﻿@model microwiki.Models.DocumentReadViewModel
 
 @{
     ViewBag.Title = "READ";
 }
 
-@Html.Raw(Model.Body)
+<div class="row">
+
+    <div class="col-lg-8">
+        <h1>@Model.Title</h1>
+        @Html.Raw(Model.Body)
+    </div>
+
+    <div class="col-md-4">
+        <p>@Html.ActionLink("Add A New Page Under This One", "Create", new { parentID = Model.ID })</p>
+
+        @if(Model.Children != null && Model.Children.Count > 0)
+        { 
+            <ul>
+            @foreach(var child in Model.Children)
+            {
+                <li><a href="@child.Location">@child.Title</a></li>
+            }
+            </ul>
+        }
+    </div>
+
+</div>
+
