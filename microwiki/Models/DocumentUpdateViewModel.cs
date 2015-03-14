@@ -17,5 +17,7 @@ namespace microwiki.Models
         public string Body { get; set; }
 
         public string Slug { get; set; }
+
+        public bool IsRoot { get; set; }
     }
 }
