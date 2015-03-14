@@ -99,6 +99,7 @@ namespace microwiki.Controllers
                     throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
 
                 var model = document.MapTo<DocumentUpdateViewModel>();
+                model.IsRoot = (model.ParentID == model.ID);
 
                 return View(model);
             }
@@ -117,7 +118,7 @@ namespace microwiki.Controllers
                 ParentID = model.ParentID,
                 Title = model.Title,
                 Body = model.Body,
-                Slug = model.Slug,
+                Slug = CreateSlug(model.Slug),
                 Username = User.Identity.Name
             };
 
