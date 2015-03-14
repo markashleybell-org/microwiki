@@ -46,9 +46,7 @@ namespace microwiki.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var sql = "INSERT INTO Documents (ID, ParentID, Title, Body, Slug, Username) " + 
-                      "VALUES (@ID, @ParentID, @Title, @Body, @Slug, @Username); " + 
-                      "EXEC MicroWiki_UpdateDocumentLocations;";
+            var sql = "EXEC mw_Create_Document @ID, @ParentID, @Title, @Body, @Slug, @Username";
 
             var data = new {
                 ID = Guid.NewGuid().ToString().ToLower(),
@@ -62,10 +60,10 @@ namespace microwiki.Controllers
             using (_db = new SqlConnection(_connString))
             {
                 _db.Open();
-                _db.Execute(sql, data);
-            }
+                var location = _db.ExecuteScalar<string>(sql, data);
 
-            return View(model);
+                return Redirect(location);
+            }
         }
 
         public ActionResult Read(string location)
@@ -112,8 +110,7 @@ namespace microwiki.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var sql = "UPDATE Documents SET ParentID = @ParentID, Title = @Title, Body = @Body, Slug = @Slug, Username = @Username WHERE ID = @ID; " +
-                      "EXEC MicroWiki_UpdateDocumentLocations;";
+            var sql = "EXEC mw_Update_Document @ID, @ParentID, @Title, @Body, @Slug, @Username";
 
             var data = new {
                 ID = model.ID,
@@ -127,10 +124,10 @@ namespace microwiki.Controllers
             using (_db = new SqlConnection(_connString))
             {
                 _db.Open();
-                _db.Execute(sql, data);
-            }
+                var location = _db.ExecuteScalar<string>(sql, data);
 
-            return View(model);
+                return Redirect(location);
+            }
         }
 
         public ActionResult Delete()
