@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
@@ -9,8 +8,8 @@ using Dapper;
 using microwiki.Models;
 using mab.lib.SimpleMapper;
 using System.Net;
-using System.Text.RegularExpressions;
 using MarkdownSharp;
+using microwiki.Helpers;
 
 namespace microwiki.Controllers
 {
@@ -41,6 +40,7 @@ namespace microwiki.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Create(DocumentCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -53,7 +53,7 @@ namespace microwiki.Controllers
                 ParentID = model.ParentID,
                 Title = model.Title,
                 Body = model.Body,
-                Slug = CreateSlug(model.Title),
+                Slug = WikiHelpers.CreateSlug(model.Title),
                 Username = User.Identity.Name
             };
 
@@ -78,7 +78,7 @@ namespace microwiki.Controllers
                     throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
 
                 var model = document.MapTo<DocumentReadViewModel>();
-                model.Body = _markdown.Transform(model.Body);
+                model.Body = WikiHelpers.AddCodeHintClasses(_markdown.Transform(model.Body));
                 model.Children = _db.Query<DocumentReadViewModel>("SELECT * FROM Documents WHERE ParentID = @ID AND ID != @ID", new { ID = document.ID }).ToList();
 
                 return View(model);
@@ -106,6 +106,7 @@ namespace microwiki.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Update(DocumentUpdateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -118,7 +119,7 @@ namespace microwiki.Controllers
                 ParentID = model.ParentID,
                 Title = model.Title,
                 Body = model.Body,
-                Slug = CreateSlug(model.Slug),
+                Slug = WikiHelpers.CreateSlug(model.Slug),
                 Username = User.Identity.Name
             };
 
@@ -139,23 +140,6 @@ namespace microwiki.Controllers
         public ActionResult Search()
         {
             return View();
-        }
-
-        private string CreateSlug(string input)
-        {
-            var options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
-
-            // Remove all special chars (but not spaces or dashes)
-            string output = Regex.Replace(input, @"[^a-z0-9\s\-]", "", options);
-            // Replace spaces with hyphens
-            output = Regex.Replace(output, @"[\s]", "-", options);
-            // Replace multiple hyphens (more than one in a row) with a single hyphen
-            output = Regex.Replace(output, @"\-{2,}", "-", options);
-            // Trim extra hyphen off the end if exists
-            if(output.EndsWith("-"))
-                output = output.Substring(0, output.Length - 1);
-
-            return output.ToLower();
         }
     }
 }
