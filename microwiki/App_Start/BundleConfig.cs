@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace microwiki
 {
@@ -22,12 +21,21 @@ namespace microwiki
                       "~/Scripts/Markdown.Sanitizer.js",
                       "~/Scripts/Markdown.Editor.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/prettify").Include(
+                      "~/Scripts/Prettify/prettify.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/main").Include(
                       "~/Scripts/main.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/pagedown.css",
+                      "~/Content/Prettify/prettify.css",
+                      //"~/Content/Prettify/Themes/desert.css",
+                      //"~/Content/Prettify/Themes/sons-of-obsidian.css",
+                      //"~/Content/Prettify/Themes/github.css",
+                      "~/Content/Prettify/Themes/tomorrow-night-bright.css",
+                      //"~/Content/Prettify/Themes/hemisu-dark.css",
                       "~/Content/main.css"));
         }
     }

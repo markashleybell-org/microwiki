@@ -24,3 +24,5 @@
         editor.run();
     }
 });
+
+$('body').on('load', prettyPrint());

@@ -4,22 +4,31 @@
     ViewBag.Title = "New Page";
 }
 
-<h1>Create Page</h1>
+<h1>New Page</h1>
 
-<p>Authenticated as @User.Identity.Name</p>
-
-@using (Html.BeginForm("Create", "Wiki", FormMethod.Post, new object {  }))
+@using (Html.BeginForm("Create", "Wiki", FormMethod.Post, new object { }))
 {
-    <p>@Html.TextBoxFor(x => x.Title)</p>
-    <p>@Html.TextBoxFor(x => x.Slug)</p>
+    <div class="form-group">
+        @Html.LabelFor(x => x.Title)
+        @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+        @Html.ValidationMessageFor(x => x.Title)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.Slug)
+        @Html.TextBoxFor(x => x.Slug, new { @class = "form-control" })
+        @Html.ValidationMessageFor(x => x.Slug)
+    </div>
 
     <div class="wmd-panel">
         <div id="wmd-button-bar"></div>
         @Html.TextAreaFor(x => x.Body, new { id = "wmd-input", @class = "wmd-input" })
     </div>
     <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
-    
+
     @Html.HiddenFor(x => x.ParentID)
- 
-    <p><input type="submit" value="Save"></p>
+
+    <div class="form-group form-group-submit">
+        <input type="submit" class="btn btn-primary" value="Save Page">
+    </div>
 }
