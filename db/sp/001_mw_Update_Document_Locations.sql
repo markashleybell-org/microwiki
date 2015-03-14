@@ -1,11 +1,11 @@
 USE [MicroWiki]
 GO
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[MicroWiki_UpdateDocumentLocations]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[MicroWiki_UpdateDocumentLocations]
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = 'mw_Update_Document_Locations')
+    DROP PROCEDURE [dbo].[mw_Update_Document_Locations]
 GO
 
-CREATE PROCEDURE [dbo].[MicroWiki_UpdateDocumentLocations] 
+CREATE PROCEDURE [dbo].[mw_Update_Document_Locations] 
 AS
 BEGIN 
 	SET NOCOUNT ON
@@ -39,22 +39,14 @@ BEGIN
 			SET Location = tmp.Location
 			FROM Documents doc
 			INNER JOIN #Documents tmp ON doc.ID = tmp.ID
-           
 		COMMIT TRAN
-		SELECT 0
 		RETURN 0		
 	END TRY
 	BEGIN CATCH
 		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage, ERROR_LINE() AS ErrorLine
 		IF(@@TRANCOUNT>0) ROLLBACK TRAN	
-		SELECT -1
 		RETURN -1	
 	END CATCH	
 END	
 GO
 
---exec MicroWiki_UpdateDocumentLocations
---go
-
---select * from Documents
---go
