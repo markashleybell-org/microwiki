@@ -128,9 +128,11 @@
     </Compile>
     <Compile Include="Helpers\WikiHelpers.cs" />
     <Compile Include="Models\Document.cs" />
+    <Compile Include="Models\DocumentSiteMapViewModel.cs" />
     <Compile Include="Models\DocumentUpdateViewModel.cs" />
     <Compile Include="Models\DocumentCreateViewModel.cs" />
     <Compile Include="Models\DocumentReadViewModel.cs" />
+    <Compile Include="Models\SiteMapViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

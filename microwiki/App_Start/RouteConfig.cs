@@ -12,6 +12,12 @@ namespace microwiki
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "SiteMap",
+                url: "wiki/sitemap",
+                defaults: new { controller = "Wiki", action = "SiteMap" }
+            );
+
+            routes.MapRoute(
                 name: "Create",
                 url: "wiki/create/{parentid}",
                 defaults: new { controller = "Wiki", action = "Create" }

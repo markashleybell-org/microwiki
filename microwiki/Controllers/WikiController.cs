@@ -10,6 +10,7 @@ using mab.lib.SimpleMapper;
 using System.Net;
 using MarkdownSharp;
 using microwiki.Helpers;
+using System.Collections.Generic;
 
 namespace microwiki.Controllers
 {
@@ -135,6 +136,24 @@ namespace microwiki.Controllers
         public ActionResult Delete()
         {
             return View();
+        }
+
+        public ActionResult SiteMap()
+        {
+            using (_db = new SqlConnection(_connString))
+            {
+                _db.Open();
+
+                var documents = _db.Query<DocumentSiteMapViewModel>("SELECT ID, ParentID, Location, Title FROM Documents").ToList();
+
+                var root = documents.Where(x => x.ID == x.ParentID).First();
+
+                documents.Remove(root);
+
+                WikiHelpers.BuildNode(documents, root);
+
+                return Json(root, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult Search()
