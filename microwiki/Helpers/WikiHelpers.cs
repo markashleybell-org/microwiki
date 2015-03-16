@@ -26,7 +26,7 @@ namespace microwiki.Helpers
             return output.ToLower();
         }
 
-        public static void BuildNode(List<DocumentSiteMapViewModel> documents, DocumentSiteMapViewModel document)
+        public static void BuildNode(List<DocumentSiteMapViewModel> documents, DocumentSiteMapViewModel document, string id)
         {
             foreach (var d in documents)
             {
@@ -37,16 +37,17 @@ namespace microwiki.Helpers
 
                     document.Children.Add(d);
 
-                    BuildNode(documents, d);
+                    BuildNode(documents, d, id);
                 }
             }
         }
 
-        public static MvcHtmlString WriteNode(DocumentSiteMapViewModel document)
+        public static MvcHtmlString WriteNode(DocumentSiteMapViewModel document, string id)
         {
             var output = new List<MvcHtmlString>();
 
-            output.Add(new MvcHtmlString("<li><a href=\"" + document.Location + "\">" + document.Title + "</a>"));
+            output.Add(new MvcHtmlString("<li><span class=\"glyphicon glyphicon-file\"></span> "));
+            output.Add(new MvcHtmlString("<a class=\"document\" href=\"" + document.Location + "\" data-moveid=\"" + id + "\" data-documentid=\"" + document.ID + "\">" + document.Title + "</a>"));
 
             if (document.Children != null && document.Children.Count > 0)
             {
@@ -54,7 +55,7 @@ namespace microwiki.Helpers
 
                 foreach (var child in document.Children)
                 {
-                    output.Add(WriteNode(child));
+                    output.Add(WriteNode(child, id));
                 }
 
                 output.Add(new MvcHtmlString("</ul>"));

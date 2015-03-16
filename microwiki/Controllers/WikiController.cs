@@ -133,12 +133,24 @@ namespace microwiki.Controllers
             }
         }
 
-        public ActionResult Delete()
+        [HttpPost]
+        public ActionResult Delete(string id)
         {
             return View();
         }
 
+        [HttpPost]
+        public ActionResult Move(string id, string parentID)
+        {
+            return Json(new { moved = true });
+        }
+
         public ActionResult SiteMap()
+        {
+            return View();
+        }
+
+        public ActionResult WikiTreeView(string id)
         {
             using (_db = new SqlConnection(_connString))
             {
@@ -150,9 +162,9 @@ namespace microwiki.Controllers
 
                 documents.Remove(root);
 
-                WikiHelpers.BuildNode(documents, root);
+                WikiHelpers.BuildNode(documents, root, id);
 
-                return View(new SiteMapViewModel { Root = root });
+                return View(new WikiTreeViewModel { Root = root, ID = id });
             }
         }
 

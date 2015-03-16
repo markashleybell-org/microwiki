@@ -18,6 +18,12 @@ namespace microwiki
             );
 
             routes.MapRoute(
+                name: "WikiTreeView",
+                url: "wiki/wikitreeview/{id}",
+                defaults: new { controller = "Wiki", action = "WikiTreeView", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "Create",
                 url: "wiki/create/{parentid}",
                 defaults: new { controller = "Wiki", action = "Create" }
@@ -33,6 +39,12 @@ namespace microwiki
                 name: "Delete",
                 url: "wiki/delete/{id}",
                 defaults: new { controller = "Wiki", action = "Delete" }
+            );
+
+            routes.MapRoute(
+                name: "Move",
+                url: "wiki/move",
+                defaults: new { controller = "Wiki", action = "Move" }
             );
 
             routes.MapRoute(

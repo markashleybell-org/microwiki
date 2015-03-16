@@ -23,6 +23,22 @@
         //});
         editor.run();
     }
+
+    $('#document-move-modal').on('click', 'a.document', function (e) {
+        e.preventDefault();
+        var link = $(this);
+        $.ajax({
+            url: '/wiki/move',
+            data: { id: link.data('moveid'), parentID: link.data('documentid') },
+            dataType: 'json',
+            type: 'POST',
+            success: function (data, status, request) {
+                alert('done');
+            },
+            error: function (request, status, error) {
+            }
+        });
+    });
 });
 
 $('body').on('load', prettyPrint());
