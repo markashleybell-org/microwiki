@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using microwiki.Models;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace microwiki.Helpers
@@ -20,6 +22,22 @@ namespace microwiki.Helpers
                 output = output.Substring(0, output.Length - 1);
 
             return output.ToLower();
+        }
+
+        public static void BuildNode(List<DocumentSiteMapViewModel> documents, DocumentSiteMapViewModel document)
+        {
+            foreach (var d in documents)
+            {
+                if (d.ParentID == document.ID)
+                {
+                    if (document.Children == null)
+                        document.Children = new List<DocumentSiteMapViewModel>();
+
+                    document.Children.Add(d);
+
+                    BuildNode(documents, d);
+                }
+            }
         }
 
         public static string AddCodeHintClasses(string content)
