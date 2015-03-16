@@ -142,7 +142,22 @@ namespace microwiki.Controllers
         [HttpPost]
         public ActionResult Move(string id, string parentID)
         {
-            return Json(new { moved = true });
+            var sql = "EXEC mw_Move_Document @ID, @ParentID, @Username";
+
+            var data = new
+            {
+                ID = id,
+                ParentID = parentID,
+                Username = User.Identity.Name
+            };
+
+            using (_db = new SqlConnection(_connString))
+            {
+                _db.Open();
+                var location = _db.ExecuteScalar<string>(sql, data);
+
+                return Json(new { location = location });
+            }
         }
 
         public ActionResult SiteMap()

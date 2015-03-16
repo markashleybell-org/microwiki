@@ -33,7 +33,7 @@
             dataType: 'json',
             type: 'POST',
             success: function (data, status, request) {
-                alert('done');
+                window.location.href = data.location;
             },
             error: function (request, status, error) {
             }

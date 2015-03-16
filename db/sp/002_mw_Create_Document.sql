@@ -17,11 +17,14 @@ CREATE PROCEDURE [dbo].[mw_Create_Document]
 AS
 BEGIN 
 	SET NOCOUNT ON
+	
 	INSERT INTO Documents 
 	    (ID, ParentID, Title, Body, Slug, Username)
     VALUES 
         (@ID, @ParentID, @Title, @Body, @Slug, @Username)
+        
     EXEC mw_Update_Document_Locations
+    
     SELECT Location FROM Documents WHERE ID = @ID
 END	
 GO
