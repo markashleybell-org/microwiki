@@ -5,8 +5,9 @@ using System.Web;
 
 namespace microwiki.Models
 {
-    public class SiteMapViewModel
+    public class WikiTreeViewModel
     {
+        public string ID { get; set; }
         public DocumentSiteMapViewModel Root { get; set; }
     }
 }

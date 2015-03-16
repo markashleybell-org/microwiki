@@ -132,7 +132,7 @@
     <Compile Include="Models\DocumentUpdateViewModel.cs" />
     <Compile Include="Models\DocumentCreateViewModel.cs" />
     <Compile Include="Models\DocumentReadViewModel.cs" />
-    <Compile Include="Models\SiteMapViewModel.cs" />
+    <Compile Include="Models\WikiTreeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +215,7 @@
     <Content Include="Views\Wiki\Update.cshtml" />
     <None Include="Views\Wiki\Create.cshtml" />
     <Content Include="Views\Wiki\SiteMap.cshtml" />
+    <Content Include="Views\Wiki\WikiTreeView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

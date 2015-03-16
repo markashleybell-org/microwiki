@@ -1,0 +1,9 @@
+﻿@model microwiki.Models.WikiTreeViewModel
+
+@{
+    Layout = null;
+}
+
+<ul class="sitemap">
+    @WikiHelpers.WriteNode(Model.Root, Model.ID)
+</ul>
