@@ -214,6 +214,7 @@
     <Content Include="Views\Wiki\Read.cshtml" />
     <Content Include="Views\Wiki\Update.cshtml" />
     <None Include="Views\Wiki\Create.cshtml" />
+    <Content Include="Views\Wiki\SiteMap.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

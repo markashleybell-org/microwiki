@@ -2,6 +2,8 @@
 using microwiki.Models;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Web.Mvc;
+using System.Text;
 
 namespace microwiki.Helpers
 {
@@ -38,6 +40,29 @@ namespace microwiki.Helpers
                     BuildNode(documents, d);
                 }
             }
+        }
+
+        public static MvcHtmlString WriteNode(DocumentSiteMapViewModel document)
+        {
+            var output = new List<MvcHtmlString>();
+
+            output.Add(new MvcHtmlString("<li><a href=\"" + document.Location + "\">" + document.Title + "</a>"));
+
+            if (document.Children != null && document.Children.Count > 0)
+            {
+                output.Add(new MvcHtmlString("<ul>"));
+
+                foreach (var child in document.Children)
+                {
+                    output.Add(WriteNode(child));
+                }
+
+                output.Add(new MvcHtmlString("</ul>"));
+            }
+
+            output.Add(new MvcHtmlString("</li>"));
+
+            return new MvcHtmlString(string.Join("", output));
         }
 
         public static string AddCodeHintClasses(string content)

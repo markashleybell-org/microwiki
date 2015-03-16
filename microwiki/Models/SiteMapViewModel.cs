@@ -7,6 +7,6 @@ namespace microwiki.Models
 {
     public class SiteMapViewModel
     {
-        public Document Root { get; set; }
+        public DocumentSiteMapViewModel Root { get; set; }
     }
 }

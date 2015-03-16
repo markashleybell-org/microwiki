@@ -1,0 +1,11 @@
+﻿@model microwiki.Models.SiteMapViewModel
+
+@{
+    ViewBag.Title = "Site Map";
+}
+
+<h1>Site Map</h1>
+
+<ul>
+    @WikiHelpers.WriteNode(Model.Root)
+</ul>
