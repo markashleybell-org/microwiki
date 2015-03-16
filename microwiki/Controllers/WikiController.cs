@@ -152,7 +152,7 @@ namespace microwiki.Controllers
 
                 WikiHelpers.BuildNode(documents, root);
 
-                return Json(root, JsonRequestBehavior.AllowGet);
+                return View(new SiteMapViewModel { Root = root });
             }
         }
 
