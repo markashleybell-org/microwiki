@@ -223,6 +223,127 @@ GO
 USE [MicroWiki]
 GO
 
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = 'mw_Read_Document')
+    DROP PROCEDURE [dbo].[mw_Read_Document]
+GO
+
+CREATE PROCEDURE [dbo].[mw_Read_Document] 
+(
+    @ID nvarchar(64) = NULL,
+    @Location nvarchar(256) = NULL
+)
+AS
+BEGIN 
+	SET NOCOUNT ON
+	
+	IF @ID IS NOT NULL
+	BEGIN
+	    SELECT 
+            ID,
+            ParentID,
+            Title,
+            Body,
+            Slug,
+            Location,
+            Username 
+        FROM 
+            Documents 
+        WHERE 
+            ID = @ID
+    END
+    ELSE IF @Location IS NOT NULL
+    BEGIN
+	    SELECT 
+            ID,
+            ParentID,
+            Title,
+            Body,
+            Slug,
+            Location,
+            Username 
+        FROM 
+            Documents 
+        WHERE 
+            Location = @Location
+    END
+END	
+GO
+
+USE [MicroWiki]
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = 'mw_Read_Documents')
+    DROP PROCEDURE [dbo].[mw_Read_Documents]
+GO
+
+CREATE PROCEDURE [dbo].[mw_Read_Documents] 
+(
+    @ParentID nvarchar(64) = NULL
+)
+AS
+BEGIN 
+	SET NOCOUNT ON
+	
+	IF @ParentID IS NOT NULL
+	BEGIN
+	    SELECT 
+            ID,
+            ParentID,
+            Title,
+            Location
+        FROM 
+            Documents 
+        WHERE 
+            ID != @ParentID
+        AND
+            ParentID = @ParentID
+    END
+    ELSE
+    BEGIN
+        SELECT 
+            ID,
+            ParentID,
+            Title,
+            Location
+        FROM 
+            Documents
+    END
+END	
+GO
+
+USE [MicroWiki]
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME = 'mw_Search_Documents')
+    DROP PROCEDURE [dbo].[mw_Search_Documents]
+GO
+
+CREATE PROCEDURE [dbo].[mw_Search_Documents] 
+(
+    @Query nvarchar(255)
+)
+AS
+BEGIN 
+	SET NOCOUNT ON
+	
+    SELECT 
+        ID,
+        ParentID,
+        Title,
+        Body,
+        Location
+    FROM 
+        Documents 
+    WHERE 
+		Title LIKE '%' + @Query + '%'
+    OR
+        Body LIKE '%' + @Query + '%'
+END	
+GO
+
+USE [MicroWiki]
+GO
+
 DECLARE @RootID nvarchar(128) = LOWER(NEWID())
 
 INSERT INTO [Documents] 
