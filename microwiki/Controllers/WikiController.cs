@@ -73,14 +73,13 @@ namespace microwiki.Controllers
             {
                 _db.Open();
 
-                var document = _db.Query<Document>("SELECT * FROM Documents WHERE Location = @Location", new { Location = "/"+ location }).FirstOrDefault();
+                var model = _db.Query<DocumentReadViewModel>("SELECT * FROM Documents WHERE Location = @Location", new { Location = "/" + location }).FirstOrDefault();
 
-                if (document == null)
+                if (model == null)
                     throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
 
-                var model = document.MapTo<DocumentReadViewModel>();
                 model.Body = WikiHelpers.AddCodeHintClasses(_markdown.Transform(model.Body));
-                model.Children = _db.Query<DocumentReadViewModel>("SELECT * FROM Documents WHERE ParentID = @ID AND ID != @ID", new { ID = document.ID }).ToList();
+                model.Children = _db.Query<DocumentReadViewModel>("SELECT * FROM Documents WHERE ParentID = @ID AND ID != @ID", new { ID = model.ID }).ToList();
 
                 return View(model);
             }
