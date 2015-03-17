@@ -73,13 +73,13 @@ namespace microwiki.Controllers
             {
                 _db.Open();
 
-                var model = _db.Query<DocumentReadViewModel>("SELECT * FROM Documents WHERE Location = @Location", new { Location = "/" + location }).FirstOrDefault();
+                var model = _db.Query<DocumentReadViewModel>("EXEC mw_Read_Document NULL, @Location", new { Location = "/" + location }).FirstOrDefault();
 
                 if (model == null)
                     throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
 
                 model.Body = WikiHelpers.AddCodeHintClasses(_markdown.Transform(model.Body));
-                model.Children = _db.Query<DocumentReadViewModel>("SELECT * FROM Documents WHERE ParentID = @ID AND ID != @ID", new { ID = model.ID }).ToList();
+                model.Children = _db.Query<DocumentReadViewModel>("EXEC mw_Read_Documents @ParentID", new { ParentID = model.ID }).ToList();
 
                 return View(model);
             }
@@ -93,7 +93,7 @@ namespace microwiki.Controllers
 
             using (_db = new SqlConnection(_connString))
             {
-                var document = _db.Query<Document>("SELECT * FROM Documents WHERE ID = @ID", new { ID = id }).FirstOrDefault();
+                var document = _db.Query<Document>("EXEC mw_Read_Document @ID, NULL", new { ID = id }).FirstOrDefault();
 
                 if (document == null)
                     throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
@@ -170,7 +170,7 @@ namespace microwiki.Controllers
             {
                 _db.Open();
 
-                var documents = _db.Query<DocumentSiteMapViewModel>("SELECT ID, ParentID, Location, Title FROM Documents").ToList();
+                var documents = _db.Query<DocumentSiteMapViewModel>("EXEC mw_Read_Documents").ToList();
 
                 var root = documents.Where(x => x.ID == x.ParentID).First();
 
