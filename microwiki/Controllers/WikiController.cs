@@ -11,6 +11,7 @@ using System.Net;
 using MarkdownSharp;
 using microwiki.Helpers;
 using System.Collections.Generic;
+using System.IO;
 
 namespace microwiki.Controllers
 {
@@ -143,8 +144,7 @@ namespace microwiki.Controllers
         {
             var sql = "EXEC mw_Move_Document @ID, @ParentID, @Username";
 
-            var data = new
-            {
+            var data = new {
                 ID = id,
                 ParentID = parentID,
                 Username = User.Identity.Name
@@ -157,6 +157,26 @@ namespace microwiki.Controllers
 
                 return Json(new { location = location });
             }
+        }
+
+        public ActionResult Upload()
+        {
+            return View(new UploadViewModel { });
+        }
+
+        [HttpPost]
+        public ActionResult Upload(UploadViewModel model)
+        {
+            var file = model.UploadedFile;
+
+            var destinationFileName = Server.MapPath("/UserContent") + "/" + Path.GetFileName(file.FileName);
+
+            if (System.IO.File.Exists(destinationFileName))
+                destinationFileName = Server.MapPath("/UserContent") + "/" + Path.GetFileNameWithoutExtension(destinationFileName) + "-" + WikiHelpers.GetUniqueCode() + Path.GetExtension(destinationFileName);
+
+            file.SaveAs(destinationFileName);
+
+            return View(new UploadViewModel { UploadedFileName = "/usercontent/" + Path.GetFileName(destinationFileName) });
         }
 
         public ActionResult SiteMap()

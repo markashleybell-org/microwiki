@@ -1,0 +1,24 @@
+﻿@model microwiki.Models.UploadViewModel
+
+@{
+    ViewBag.Title = "Upload Image";
+}
+
+<h1>Upload Image</h1>
+
+@using (Html.BeginForm("Upload", "Wiki", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="form-group">
+        @Html.LabelFor(x => x.UploadedFile)
+        <input type="file" name="UploadedFile">
+    </div>
+
+    <div class="form-group form-group-submit">
+        <input type="submit" class="btn btn-primary" value="Upload Image">
+    </div>
+}
+
+@if (Model.UploadedFileName != null)
+{
+    <p>Uploaded: <strong>@Model.UploadedFileName</strong></p>
+}

@@ -24,6 +24,12 @@ namespace microwiki
             );
 
             routes.MapRoute(
+                name: "Upload",
+                url: "wiki/upload",
+                defaults: new { controller = "Wiki", action = "Upload" }
+            );
+
+            routes.MapRoute(
                 name: "WikiTreeView",
                 url: "wiki/wikitreeview/{id}",
                 defaults: new { controller = "Wiki", action = "WikiTreeView", id = UrlParameter.Optional }
