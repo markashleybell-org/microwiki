@@ -47,7 +47,11 @@ namespace microwiki.Helpers
             var output = new List<MvcHtmlString>();
 
             output.Add(new MvcHtmlString("<li><span class=\"glyphicon glyphicon-file\"></span> "));
-            output.Add(new MvcHtmlString("<a class=\"document\" href=\"" + document.Location + "\" data-moveid=\"" + id + "\" data-documentid=\"" + document.ID + "\">" + document.Title + "</a>"));
+
+            if(id != document.ID)
+                output.Add(new MvcHtmlString("<a class=\"document\" href=\"" + document.Location + "\" data-moveid=\"" + id + "\" data-documentid=\"" + document.ID + "\">" + document.Title + "</a>"));
+            else
+                output.Add(new MvcHtmlString(document.Title));
 
             if (document.Children != null && document.Children.Count > 0)
             {
