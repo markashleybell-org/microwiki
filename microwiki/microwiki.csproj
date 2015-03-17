@@ -133,6 +133,7 @@
     <Compile Include="Models\DocumentUpdateViewModel.cs" />
     <Compile Include="Models\DocumentCreateViewModel.cs" />
     <Compile Include="Models\DocumentReadViewModel.cs" />
+    <Compile Include="Models\UploadViewModel.cs" />
     <Compile Include="Models\WikiTreeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -214,6 +215,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Wiki\Read.cshtml" />
     <Content Include="Views\Wiki\Update.cshtml" />
+    <Content Include="Views\Wiki\Upload.cshtml" />
     <None Include="Views\Wiki\Create.cshtml" />
     <Content Include="Views\Wiki\SiteMap.cshtml" />
     <Content Include="Views\Wiki\WikiTreeView.cshtml" />
@@ -221,6 +223,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="UserContent\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
