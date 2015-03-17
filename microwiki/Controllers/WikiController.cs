@@ -182,9 +182,17 @@ namespace microwiki.Controllers
             }
         }
 
-        public ActionResult Search()
+        public ActionResult Search(string q)
         {
-            return View();
+            using (_db = new SqlConnection(_connString))
+            {
+                _db.Open();
+
+                return View(new DocumentSearchViewModel { 
+                    Query = q, 
+                    Results = _db.Query<DocumentReadViewModel>("EXEC mw_Search_Documents @Query", new { Query = q }).ToList()
+                });
+            }
         }
     }
 }
