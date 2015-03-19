@@ -159,9 +159,9 @@ namespace microwiki.Controllers
             }
         }
 
-        public ActionResult Upload()
+        public ActionResult Upload(string uploadedFileName)
         {
-            return View(new UploadViewModel { });
+            return View(new UploadViewModel { UploadedFileName = uploadedFileName });
         }
 
         [HttpPost]
@@ -176,7 +176,7 @@ namespace microwiki.Controllers
 
             file.SaveAs(destinationFileName);
 
-            return View(new UploadViewModel { UploadedFileName = "/usercontent/" + Path.GetFileName(destinationFileName) });
+            return RedirectToAction("Upload", new { UploadedFileName = "/usercontent/" + Path.GetFileName(destinationFileName) });
         }
 
         public ActionResult SiteMap()
