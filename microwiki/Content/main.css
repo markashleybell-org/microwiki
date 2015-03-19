@@ -56,3 +56,12 @@ img {
 .upload-thumbnails {
     margin-top: 40px;
 }
+
+.thumbnail.file {
+    text-align: center;
+    padding: 10px 0 7px 2px;
+}
+
+.thumbnail.file .glyphicon {
+    font-size: 32px;
+}
