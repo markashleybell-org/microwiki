@@ -134,6 +134,9 @@ publish/
 *.pubxml
 *.publishproj
 
+# Include everything under NuGet Packages
+!packages/**
+
 # Windows Azure Build Output
 csx/
 *.build.csdef
