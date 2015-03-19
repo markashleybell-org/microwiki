@@ -18,6 +18,14 @@ AS
 BEGIN 
 	SET NOCOUNT ON
 	
+	DECLARE @RandomSlug nvarchar(5)
+	
+	WHILE EXISTS (SELECT * FROM Documents WHERE Slug = @Slug AND ID != @ID)
+	BEGIN
+	    SET @RandomSlug = (SELECT LOWER(LEFT(NEWID(), 5)))
+	    SET @Slug = @Slug + '-' + @RandomSlug
+	END
+	
 	UPDATE Documents SET 
 	    ParentID = @ParentID, 
 	    Title = @Title, 

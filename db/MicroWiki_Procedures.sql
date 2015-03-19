@@ -70,6 +70,14 @@ AS
 BEGIN 
 	SET NOCOUNT ON
 	
+	DECLARE @RandomSlug nvarchar(5)
+	
+	WHILE EXISTS (SELECT * FROM Documents WHERE Slug = @Slug)
+	BEGIN
+	    SET @RandomSlug = (SELECT LOWER(LEFT(NEWID(), 5)))
+	    SET @Slug = @Slug + '-' + @RandomSlug
+	END
+	
 	INSERT INTO Documents 
 	    (ID, ParentID, Title, Body, Slug, Username)
     VALUES 
@@ -100,6 +108,14 @@ CREATE PROCEDURE [dbo].[mw_Update_Document]
 AS
 BEGIN 
 	SET NOCOUNT ON
+	
+	DECLARE @RandomSlug nvarchar(5)
+	
+	WHILE EXISTS (SELECT * FROM Documents WHERE Slug = @Slug AND ID != @ID)
+	BEGIN
+	    SET @RandomSlug = (SELECT LOWER(LEFT(NEWID(), 5)))
+	    SET @Slug = @Slug + '-' + @RandomSlug
+	END
 	
 	UPDATE Documents SET 
 	    ParentID = @ParentID, 
@@ -234,6 +250,8 @@ BEGIN
             ID != @ParentID
         AND
             ParentID = @ParentID
+        ORDER BY 
+            Title
     END
     ELSE
     BEGIN
@@ -244,6 +262,8 @@ BEGIN
             Location
         FROM 
             Documents
+        ORDER BY 
+            Title
     END
 END	
 GO
