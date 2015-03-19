@@ -1,0 +1,1 @@
+COPY /Y "sp\*.sql" MicroWiki_Procedures.sql
