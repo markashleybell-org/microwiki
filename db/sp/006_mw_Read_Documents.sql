@@ -26,6 +26,8 @@ BEGIN
             ID != @ParentID
         AND
             ParentID = @ParentID
+        ORDER BY 
+            Title
     END
     ELSE
     BEGIN
@@ -36,6 +38,8 @@ BEGIN
             Location
         FROM 
             Documents
+        ORDER BY 
+            Title
     END
 END	
 GO
