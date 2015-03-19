@@ -48,3 +48,7 @@ pre.prettyprint {
 .sitemap li {
     line-height: 1.8em;
 }
+
+img {
+    max-width: 100%;
+}
