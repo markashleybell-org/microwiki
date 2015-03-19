@@ -32,6 +32,11 @@
             }
         });
     });
+
+    $('.delete').on('click', function (e) {
+        var result = prompt('Are you sure you want to delete this page?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+        return (result === 'YES');
+    });
 });
 
 $('body').on('load', prettyPrint());

@@ -49,7 +49,7 @@ namespace microwiki
 
             routes.MapRoute(
                 name: "Delete",
-                url: "wiki/delete/{id}",
+                url: "wiki/delete",
                 defaults: new { controller = "Wiki", action = "Delete" }
             );
 

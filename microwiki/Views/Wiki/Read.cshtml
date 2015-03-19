@@ -20,6 +20,18 @@
         }
 
         <p>@Html.ActionLink("Add A New Child Page", "Create", new { parentID = Model.ID }, new { @class = "btn btn-default btn-block" })</p>
+
+        @if (Model.ID != Model.ParentID)
+        {
+            using (Html.BeginForm("Delete", "Wiki", FormMethod.Post))
+            {
+                <p>
+                    @Html.HiddenFor(x => x.ID)
+                    <button class="btn btn-default btn-block delete">Delete This Page</button>
+                </p>
+            }
+        }
+
         @if (Model.Children != null && Model.Children.Count > 0)
         {
             <h1>Child Pages</h1>
