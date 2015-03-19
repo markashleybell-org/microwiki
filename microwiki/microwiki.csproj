@@ -127,6 +127,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\WikiHelpers.cs" />
+    <Compile Include="Models\BreadcrumbViewModel.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\DocumentSearchViewModel.cs" />
     <Compile Include="Models\DocumentSiteMapViewModel.cs" />
@@ -220,6 +221,7 @@
     <Content Include="Views\Wiki\SiteMap.cshtml" />
     <Content Include="Views\Wiki\WikiTreeView.cshtml" />
     <Content Include="Views\Wiki\Search.cshtml" />
+    <Content Include="Views\Wiki\Breadcrumb.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

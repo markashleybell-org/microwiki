@@ -78,3 +78,7 @@ img {
 .thumbnail.file .glyphicon {
     font-size: 32px;
 }
+
+.breadcrumb {
+    margin-bottom: 0;
+}

@@ -198,6 +198,23 @@ namespace microwiki.Controllers
             return RedirectToAction("Upload", new { UploadedFileName = "/usercontent/" + Path.GetFileName(destinationFileName) });
         }
 
+        public ActionResult Breadcrumb(string id)
+        {
+            using (_db = new SqlConnection(_connString))
+            {
+                _db.Open();
+
+                var trailData = _db.ExecuteScalar<string>("EXEC mw_Get_Breadcrumb_Trail @ID", new { ID = id });
+
+                var links = trailData.Split('|')
+                                     .Select(x => x.Split('^'))
+                                     .Select(x => new Tuple<string, string>(x[0], x[1]))
+                                     .ToList();
+
+                return View(new BreadcrumbViewModel { Links = links });
+            }
+        }
+
         public ActionResult SiteMap()
         {
             return View();

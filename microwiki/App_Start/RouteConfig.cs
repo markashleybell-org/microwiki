@@ -30,6 +30,12 @@ namespace microwiki
             );
 
             routes.MapRoute(
+                name: "Breadcrumb",
+                url: "wiki/breadcrumb/{id}",
+                defaults: new { controller = "Wiki", action = "Breadcrumb", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "WikiTreeView",
                 url: "wiki/wikitreeview/{id}",
                 defaults: new { controller = "Wiki", action = "WikiTreeView", id = UrlParameter.Optional }
