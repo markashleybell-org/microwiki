@@ -36,6 +36,9 @@ namespace microwiki.Helpers
 
         public static string CreateSlug(string input)
         {
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+
             var options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
 
             // Remove all special chars (but not spaces or dashes)
