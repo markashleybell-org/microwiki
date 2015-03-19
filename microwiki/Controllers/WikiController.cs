@@ -161,13 +161,19 @@ namespace microwiki.Controllers
 
         public ActionResult Upload(string uploadedFileName)
         {
-            return View(new UploadViewModel { UploadedFileName = uploadedFileName });
+            return View(new UploadViewModel { 
+                UploadedFileName = uploadedFileName,
+                Files = Directory.GetFiles(Server.MapPath("/UserContent"))
+            });
         }
 
         [HttpPost]
         public ActionResult Upload(UploadViewModel model)
         {
             var file = model.UploadedFile;
+
+            if(file == null)
+                return RedirectToAction("Upload");
 
             var destinationFileName = Server.MapPath("/UserContent") + "/" + Path.GetFileName(file.FileName);
 
