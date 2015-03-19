@@ -5,7 +5,6 @@
 }
 
 <div class="row">
-
     <div class="col-md-9">
         <h1>@Model.Title</h1>
         @Html.Raw(Model.Body)
@@ -15,27 +14,26 @@
         <h1>Actions</h1>
         <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = "btn btn-default btn-block" })</p>
 
-        @if(Model.ID != Model.ParentID)
-        { 
-        <p><a href="#document-move-modal" data-toggle="modal" data-target="#document-move-modal" class="btn btn-default btn-block">Move This Page</a></p>
+        @if (Model.ID != Model.ParentID)
+        {
+            <p><a href="#document-move-modal" data-toggle="modal" data-target="#document-move-modal" class="btn btn-default btn-block">Move This Page</a></p>
         }
 
         <p>@Html.ActionLink("Add A New Child Page", "Create", new { parentID = Model.ID }, new { @class = "btn btn-default btn-block" })</p>
-        @if(Model.Children != null && Model.Children.Count > 0)
-        { 
+        @if (Model.Children != null && Model.Children.Count > 0)
+        {
             <h1>Child Pages</h1>
             <ul class="child-pages">
-            @foreach(var child in Model.Children)
-            {
-                <li><span class="glyphicon glyphicon-file"></span><a href="@child.Location">@child.Title</a></li>
-            }
+                @foreach (var child in Model.Children)
+                {
+                    <li><span class="glyphicon glyphicon-file"></span><a href="@child.Location">@child.Title</a></li>
+                }
             </ul>
         }
     </div>
-
 </div>
 
-<!-- Modal -->
+<!-- Move Page Modal -->
 <div class="modal" id="document-move-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -49,7 +47,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                @*<button type="button" class="btn btn-primary">Save changes</button>*@
             </div>
         </div>
     </div>
