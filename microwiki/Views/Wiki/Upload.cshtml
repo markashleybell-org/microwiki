@@ -22,3 +22,22 @@
 {
     <p>Uploaded File Name: <strong>@Request.Url.GetLeftPart(UriPartial.Authority)@Model.UploadedFileName</strong></p>
 }
+
+<div class="upload-thumbnails">
+    @if (Model.Files != null && Model.Files.Length > 0)
+    {
+        foreach (var file in Model.Files)
+        {
+            <div class="row">
+                <div class="col-md-1">
+                    <a href="#" class="thumbnail">
+                        <img src="~/UserContent/@Path.GetFileName(file)" />
+                    </a>
+                </div>
+                <div class="col-md-11">
+                    <strong>@Request.Url.GetLeftPart(UriPartial.Authority)/UserContent/@Path.GetFileName(file)</strong>
+                </div>
+            </div>
+        }
+    }
+</div>

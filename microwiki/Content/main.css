@@ -52,3 +52,7 @@ pre.prettyprint {
 img {
     max-width: 100%;
 }
+
+.upload-thumbnails {
+    margin-top: 40px;
+}
