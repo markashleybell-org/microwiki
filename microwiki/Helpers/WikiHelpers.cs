@@ -142,7 +142,9 @@ namespace microwiki.Helpers
 
         private static string ParseCodeHintComment(string content)
         {
-            return content.Trim(new char[] { '<', '>', '-', '!', ' ' }).Split(':')[1].Trim();
+            var lang = content.Trim(new char[] { '<', '>', '-', '!', ' ' }).Split(':')[1].Trim();
+
+            return !lang.StartsWith("lang-") ? "lang-" + lang : lang;
         }
     }
 }
