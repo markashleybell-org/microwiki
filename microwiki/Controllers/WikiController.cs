@@ -136,7 +136,20 @@ namespace microwiki.Controllers
         [HttpPost]
         public ActionResult Delete(string id)
         {
-            return View();
+            var sql = "EXEC mw_Delete_Document @ID, @Username";
+
+            var data = new {
+                ID = id,
+                Username = User.Identity.Name
+            };
+
+            using (_db = new SqlConnection(_connString))
+            {
+                _db.Open();
+                _db.Execute(sql, data);
+
+                return Redirect("/");
+            }
         }
 
         [HttpPost]
