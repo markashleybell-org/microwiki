@@ -1,0 +1,67 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+h1 {
+    font-size: 28px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+.child-pages {
+    list-style: none;
+    padding-left: 5px;
+}
+
+.child-pages .glyphicon {
+    margin-right: 5px;
+}
+
+.form-group-submit {
+    padding-top: 15px;
+}
+
+pre.prettyprint {
+    padding: 20px;
+}
+
+.sitemap, .sitemap ul {
+    list-style: none;
+}
+
+.sitemap li {
+    line-height: 1.8em;
+}
+
+img {
+    max-width: 100%;
+}
+
+.upload-thumbnails {
+    margin-top: 40px;
+}
+
+.thumbnail.file {
+    text-align: center;
+    padding: 10px 0 7px 2px;
+}
+
+.thumbnail.file .glyphicon {
+    font-size: 32px;
+}

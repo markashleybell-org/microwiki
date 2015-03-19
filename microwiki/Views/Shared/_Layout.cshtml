@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - MicroWiki</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">MicroWiki</a>
+            </div>
+            @using (Html.BeginForm("Search", "Wiki", FormMethod.Get, new { @class = "navbar-form navbar-right", role = "search" }))
+            { 
+                <div class="form-group">
+                    <input name="q" type="text" class="form-control" placeholder="What are you looking for?">
+                </div>
+                <button type="submit" class="btn btn-default">Search</button>
+            }
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - @ConfigurationManager.AppSettings["PublisherName"] (<a href="https://github.com/markashleybell/microwiki" target="_blank">Source Code</a>)</p>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/pagedown")
+    @Scripts.Render("~/bundles/prettify")
+    @Scripts.Render("~/bundles/main")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
