@@ -113,7 +113,12 @@ namespace microwiki.Helpers
 
                     if (sibling.NodeType == HtmlNodeType.Element && sibling.Name == "pre")
                     {
-                        sibling.Attributes.Add("class", "prettyprint " + ParseCodeHintComment(comment.InnerText));
+                        var lang = ParseCodeHintComment(comment.InnerText);
+
+                        if(lang == "lang-none")
+                                sibling.Attributes.Add("class", "lang-none");
+                            else
+                                sibling.Attributes.Add("class", "prettyprint " + lang);
                     }
                     else
                     {
@@ -121,7 +126,12 @@ namespace microwiki.Helpers
 
                         if (sibling.NodeType == HtmlNodeType.Element && sibling.Name == "pre")
                         {
-                            sibling.Attributes.Add("class", "prettyprint " + ParseCodeHintComment(comment.InnerText));
+                            var lang = ParseCodeHintComment(comment.InnerText);
+
+                            if(lang == "lang-none")
+                                sibling.Attributes.Add("class", "lang-none");
+                            else
+                                sibling.Attributes.Add("class", "prettyprint " + lang);
                         }
                     }
                 }
