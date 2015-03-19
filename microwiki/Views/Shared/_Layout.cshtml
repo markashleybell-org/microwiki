@@ -10,7 +10,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">MicroWiki</a>
+                <a class="navbar-brand" href="/">@ConfigurationManager.AppSettings["PublisherName"]</a>
             </div>
             @using (Html.BeginForm("Search", "Wiki", FormMethod.Get, new { @class = "navbar-form navbar-right", role = "search" }))
             { 
