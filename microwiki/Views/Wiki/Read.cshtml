@@ -12,14 +12,14 @@
 
     <div class="col-md-3">
         <h1>Actions</h1>
-        <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = "btn btn-default btn-block" })</p>
+        <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = "btn btn-default btn-block btn-xs" })</p>
 
         @if (Model.ID != Model.ParentID)
         {
-            <p><a href="#document-move-modal" data-toggle="modal" data-target="#document-move-modal" class="btn btn-default btn-block">Move This Page</a></p>
+            <p><a href="#document-move-modal" data-toggle="modal" data-target="#document-move-modal" class="btn btn-default btn-block btn-xs">Move This Page</a></p>
         }
 
-        <p>@Html.ActionLink("Add A New Child Page", "Create", new { parentID = Model.ID }, new { @class = "btn btn-default btn-block" })</p>
+        <p>@Html.ActionLink("Add A New Child Page", "Create", new { parentID = Model.ID }, new { @class = "btn btn-default btn-block btn-xs" })</p>
 
         @if (Model.ID != Model.ParentID)
         {
@@ -27,7 +27,7 @@
             {
                 <p>
                     @Html.HiddenFor(x => x.ID)
-                    <button class="btn btn-default btn-block delete">Delete This Page</button>
+                    <button class="btn btn-default btn-block btn-xs delete">Delete This Page</button>
                 </p>
             }
         }
