@@ -22,7 +22,9 @@ namespace microwiki
                       "~/Scripts/Markdown.Editor.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/prettify").Include(
-                      "~/Scripts/Prettify/prettify.js"));
+                      "~/Scripts/Prettify/prettify.js",
+                      "~/Scripts/Prettify/lang-css.js",
+                      "~/Scripts/Prettify/lang-sql.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/main").Include(
                       "~/Scripts/main.js"));
@@ -31,10 +33,10 @@ namespace microwiki
                       "~/Content/bootstrap.css",
                       "~/Content/pagedown.css",
                       "~/Content/Prettify/prettify.css",
-                      //"~/Content/Prettify/Themes/desert.css",
+                      "~/Content/Prettify/Themes/desert.css",
                       //"~/Content/Prettify/Themes/sons-of-obsidian.css",
                       //"~/Content/Prettify/Themes/github.css",
-                      "~/Content/Prettify/Themes/tomorrow-night-bright.css",
+                      //"~/Content/Prettify/Themes/tomorrow-night-bright.css",
                       //"~/Content/Prettify/Themes/hemisu-dark.css",
                       "~/Content/main.css"));
         }
