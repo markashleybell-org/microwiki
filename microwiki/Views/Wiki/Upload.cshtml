@@ -20,5 +20,5 @@
 
 @if (Model.UploadedFileName != null)
 {
-    <p>Uploaded: <strong>@Model.UploadedFileName</strong></p>
+    <p>Uploaded: <strong>@Request.Url.GetLeftPart(UriPartial.Authority)@Model.UploadedFileName</strong></p>
 }
