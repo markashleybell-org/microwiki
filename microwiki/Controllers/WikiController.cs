@@ -24,7 +24,7 @@ namespace microwiki.Controllers
 
         public WikiController()
         {
-            _connString = ConfigurationManager.ConnectionStrings["Main"].ConnectionString;
+            _connString = ConfigurationManager.ConnectionStrings["microwiki"].ConnectionString;
 
             var options = new MarkdownOptions();
             options.AutoHyperlink = true;
