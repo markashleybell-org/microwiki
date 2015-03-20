@@ -218,7 +218,7 @@
     <Content Include="Views\Wiki\Read.cshtml" />
     <Content Include="Views\Wiki\Update.cshtml" />
     <Content Include="Views\Wiki\Upload.cshtml" />
-    <None Include="Views\Wiki\Create.cshtml" />
+    <Content Include="Views\Wiki\Create.cshtml" />
     <Content Include="Views\Wiki\SiteMap.cshtml" />
     <Content Include="Views\Wiki\WikiTreeView.cshtml" />
     <Content Include="Views\Wiki\Search.cshtml" />
