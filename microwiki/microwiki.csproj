@@ -152,6 +152,7 @@
     <Content Include="Content\Prettify\Themes\sons-of-obsidian.css" />
     <Content Include="Content\Prettify\Themes\sunburst.css" />
     <Content Include="Content\Prettify\Themes\tomorrow-night-bright.css" />
+    <Content Include="Content\wmd-buttons.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
