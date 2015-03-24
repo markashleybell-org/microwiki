@@ -30,6 +30,12 @@ namespace microwiki
             );
 
             routes.MapRoute(
+                name: "DeleteUpload",
+                url: "wiki/deleteupload",
+                defaults: new { controller = "Wiki", action = "DeleteUpload" }
+            );
+
+            routes.MapRoute(
                 name: "Breadcrumb",
                 url: "wiki/breadcrumb/{id}",
                 defaults: new { controller = "Wiki", action = "Breadcrumb", id = UrlParameter.Optional }

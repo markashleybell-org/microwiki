@@ -136,6 +136,7 @@
     <Compile Include="Models\DocumentUpdateViewModel.cs" />
     <Compile Include="Models\DocumentCreateViewModel.cs" />
     <Compile Include="Models\DocumentReadViewModel.cs" />
+    <Compile Include="Models\DeleteUploadViewModel.cs" />
     <Compile Include="Models\UploadViewModel.cs" />
     <Compile Include="Models\BasicAuthUser.cs" />
     <Compile Include="Models\WikiTreeViewModel.cs" />

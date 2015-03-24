@@ -46,8 +46,15 @@
                         </a>
                     }
                 </div>
-                <div class="col-md-11">
+                <div class="col-md-10">
                     <strong>/UserContent/@Path.GetFileName(file)</strong>
+                </div>
+                <div class="col-md-1">
+                    @using(Html.BeginForm("DeleteUpload", "Wiki", FormMethod.Post))
+                    {
+                        <input type="hidden" name="Path" value="/UserContent/@Path.GetFileName(file)"/>
+                        <input type="submit" value="Delete" class="btn btn-default" />
+                    }
                 </div>
             </div>
         }

@@ -199,6 +199,29 @@ namespace microwiki.Controllers
             return RedirectToAction("Upload", new { UploadedFileName = "/usercontent/" + Path.GetFileName(destinationFileName) });
         }
 
+        [HttpPost]
+        public ActionResult DeleteUpload(DeleteUploadViewModel model)
+        {
+            var fileName = Server.MapPath(model.Path);
+
+            if (System.IO.File.Exists(fileName))
+            {
+                // Check if the file is used anywhere
+                using (_db = new SqlConnection(_connString))
+                {
+                    _db.Open();
+                    var usedInPages = _db.Query<DocumentSiteMapViewModel>("EXEC mw_Check_File_Use @Location", new { Location = model.Path });
+
+                    if(usedInPages != null && usedInPages.Count() > 0)
+                        return Content("IN USE!");
+                }
+
+                System.IO.File.Delete(fileName);
+            }
+            
+            return RedirectToAction("Upload");
+        }
+
         public ActionResult Breadcrumb(string id)
         {
             using (_db = new SqlConnection(_connString))
