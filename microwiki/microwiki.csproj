@@ -126,7 +126,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BasicAuthAttribute.cs" />
     <Compile Include="Helpers\WikiHelpers.cs" />
+    <Compile Include="Models\BasicAuthIdentity.cs" />
     <Compile Include="Models\BreadcrumbViewModel.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\DocumentSearchViewModel.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="Models\DocumentCreateViewModel.cs" />
     <Compile Include="Models\DocumentReadViewModel.cs" />
     <Compile Include="Models\UploadViewModel.cs" />
+    <Compile Include="Models\BasicAuthUser.cs" />
     <Compile Include="Models\WikiTreeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
