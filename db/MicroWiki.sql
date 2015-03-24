@@ -261,6 +261,8 @@ BEGIN
             Body,
             Slug,
             Location,
+            Created, 
+            Updated,
             Username 
         FROM 
             Documents 
@@ -276,6 +278,8 @@ BEGIN
             Body,
             Slug,
             Location,
+            Created, 
+            Updated,
             Username 
         FROM 
             Documents 
@@ -448,11 +452,13 @@ BEGIN
 		SET @Idx = @Idx + 1
 	END
 
-	SELECT STUFF((SELECT CAST('|' AS NVARCHAR(1)) + CAST(ISNULL(d.Title, '') AS VARCHAR(128)) + '^' + CAST(ISNULL(d.Location, '') AS VARCHAR(256))
-				  FROM @Documents d  
-				  WHERE d.ID <> '1'
-				  ORDER BY d.Idx DESC             
-				  FOR XML PATH('')), 1, 1, '')
+    DECLARE @Result nvarchar(512) = STUFF((SELECT CAST('|' AS NVARCHAR(1)) + CAST(ISNULL(d.Title, '') AS VARCHAR(128)) + '^' + CAST(ISNULL(d.Location, '') AS VARCHAR(256))
+				                    FROM @Documents d  
+				                    WHERE d.ID <> '1'
+				                    ORDER BY d.Idx DESC             
+				                    FOR XML PATH(''), TYPE).value('(./text())[1]','VARCHAR(MAX)'), 1, 1, '')
+
+	SELECT @Result
 END	
 GO
 
