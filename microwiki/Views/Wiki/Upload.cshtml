@@ -20,7 +20,7 @@
 
 @if (Model.UploadedFileName != null)
 {
-    <p>Uploaded File Name: <strong>@Request.Url.GetLeftPart(UriPartial.Authority)@Model.UploadedFileName</strong></p>
+    <p>Uploaded File Name: <strong>@Model.UploadedFileName</strong></p>
 }
 
 <div class="upload-thumbnails">
@@ -47,7 +47,7 @@
                     }
                 </div>
                 <div class="col-md-11">
-                    <strong>@Request.Url.GetLeftPart(UriPartial.Authority)/UserContent/@Path.GetFileName(file)</strong>
+                    <strong>/UserContent/@Path.GetFileName(file)</strong>
                 </div>
             </div>
         }
