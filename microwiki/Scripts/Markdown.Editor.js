@@ -64,8 +64,8 @@
 
     // The default text that appears in the dialog input box when entering
     // links.
-    var imageDefaultText = "http://";
-    var linkDefaultText = "http://";
+    var imageDefaultText = "";
+    var linkDefaultText = "";
 
     // -------------------------------------------------------------------
     //  END OF YOUR CHANGES
@@ -1094,12 +1094,6 @@
 
             if (isCancel) {
                 text = null;
-            }
-            else {
-                // Fixes common pasting errors.
-                text = text.replace(/^http:\/\/(https?|ftp):\/\//, '$1://');
-                if (!/^(?:https?|ftp):\/\//.test(text))
-                    text = 'http://' + text;
             }
 
             dialog.parentNode.removeChild(dialog);
