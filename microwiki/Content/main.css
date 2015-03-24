@@ -82,3 +82,9 @@ img {
 .breadcrumb {
     margin-bottom: 0;
 }
+
+.document-meta-data {
+    margin-top: 40px;
+    font-size: 11px;
+    color: #797979;
+}

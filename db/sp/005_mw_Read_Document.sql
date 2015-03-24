@@ -23,6 +23,8 @@ BEGIN
             Body,
             Slug,
             Location,
+            Created, 
+            Updated,
             Username 
         FROM 
             Documents 
@@ -38,6 +40,8 @@ BEGIN
             Body,
             Slug,
             Location,
+            Created, 
+            Updated,
             Username 
         FROM 
             Documents 
