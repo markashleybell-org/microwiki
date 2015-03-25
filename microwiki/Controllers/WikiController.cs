@@ -196,7 +196,7 @@ namespace microwiki.Controllers
 
             file.SaveAs(destinationFileName);
 
-            return RedirectToAction("Upload", new { UploadedFileName = "/usercontent/" + Path.GetFileName(destinationFileName) });
+            return RedirectToAction("Upload", new { UploadedFileName = "/UserContent/" + Path.GetFileName(destinationFileName) });
         }
 
         [HttpPost]
@@ -210,10 +210,10 @@ namespace microwiki.Controllers
                 using (_db = new SqlConnection(_connString))
                 {
                     _db.Open();
-                    var usedInPages = _db.Query<DocumentSiteMapViewModel>("EXEC mw_Check_File_Use @Location", new { Location = model.Path });
+                    model.UsedInPages = _db.Query<DocumentSiteMapViewModel>("EXEC mw_Check_File_Use @Location", new { Location = model.Path }).ToList();
 
-                    if(usedInPages != null && usedInPages.Count() > 0)
-                        return Content("IN USE!");
+                    if (model.UsedInPages != null && model.UsedInPages.Count > 0)
+                        return View(model);
                 }
 
                 System.IO.File.Delete(fileName);

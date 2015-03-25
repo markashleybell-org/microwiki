@@ -479,7 +479,8 @@ BEGIN
 
 	SELECT 
         ID,
-        Title
+        Title,
+        Location
     FROM 
         Documents 
     WHERE

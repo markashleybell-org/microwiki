@@ -1,0 +1,20 @@
+﻿@model microwiki.Models.DeleteUploadViewModel
+
+@{
+    ViewBag.Title = "Delete Upload - File In Use";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>File In Use</h1>
+        <h2><strong>@Model.Path</strong></h2>
+        <p>You cannot delete this upload, as it is currently linked to the following pages:</p>
+        <ul>
+            @foreach (var page in Model.UsedInPages)
+            {
+            <li><a href="@page.Location" target="_blank">@page.Title</a></li>
+            }
+        </ul>
+        <p>Please remove any links to this upload before continuing.</p>
+    </div>
+</div>

@@ -227,6 +227,7 @@
     <Content Include="Views\Wiki\WikiTreeView.cshtml" />
     <Content Include="Views\Wiki\Search.cshtml" />
     <Content Include="Views\Wiki\Breadcrumb.cshtml" />
+    <Content Include="Views\Wiki\DeleteUpload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

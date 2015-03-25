@@ -9,5 +9,6 @@ namespace microwiki.Models
     public class DeleteUploadViewModel
     {
         public string Path { get; set; }
+        public List<DocumentSiteMapViewModel> UsedInPages { get; set; }
     }
 }
