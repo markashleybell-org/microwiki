@@ -127,6 +127,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BasicAuthAttribute.cs" />
+    <Compile Include="Helpers\FileSystemFileUploader.cs" />
+    <Compile Include="Helpers\IFileUploader.cs" />
     <Compile Include="Helpers\WikiHelpers.cs" />
     <Compile Include="Models\BasicAuthIdentity.cs" />
     <Compile Include="Models\BreadcrumbViewModel.cs" />

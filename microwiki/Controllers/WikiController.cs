@@ -189,14 +189,9 @@ namespace microwiki.Controllers
             if(file == null)
                 return RedirectToAction("Upload");
 
-            var destinationFileName = Server.MapPath("/UserContent") + "/" + Path.GetFileName(file.FileName);
+            var uploadedFilePath = new FileSystemFileUploader().UploadFile(file, Server.MapPath("/UserContent"), Path.GetFileName(file.FileName));
 
-            if (System.IO.File.Exists(destinationFileName))
-                destinationFileName = Server.MapPath("/UserContent") + "/" + Path.GetFileNameWithoutExtension(destinationFileName) + "-" + WikiHelpers.GetUniqueCode() + Path.GetExtension(destinationFileName);
-
-            file.SaveAs(destinationFileName);
-
-            return RedirectToAction("Upload", new { UploadedFileName = "/UserContent/" + Path.GetFileName(destinationFileName) });
+            return RedirectToAction("Upload", new { UploadedFileName = uploadedFilePath });
         }
 
         [HttpPost]
