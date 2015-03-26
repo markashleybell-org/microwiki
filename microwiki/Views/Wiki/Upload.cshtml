@@ -37,24 +37,24 @@
                         <div class="col-md-1">
                             @if (isImage)
                             {
-                                <a href="/UserContent/@Path.GetFileName(file)" class="thumbnail" target="_blank">
-                                    <img src="~/UserContent/@Path.GetFileName(file)" />
+                                <a href="@file" class="thumbnail" target="_blank">
+                                    <img src="@file" />
                                 </a>
                             }
                             else
                             {
-                                <a href="/UserContent/@Path.GetFileName(file)" class="thumbnail file" target="_blank">
+                                <a href="@file" class="thumbnail file" target="_blank">
                                     <span class="glyphicon glyphicon-file"></span>
                                 </a>
                             }
                         </div>
                         <div class="col-md-10">
-                            <strong>/UserContent/@Path.GetFileName(file)</strong>
+                            <strong>@file</strong>
                         </div>
                         <div class="col-md-1">
                             @using (Html.BeginForm("DeleteUpload", "Wiki", FormMethod.Post))
                             {
-                                <input type="hidden" name="Path" value="/UserContent/@Path.GetFileName(file)" />
+                                <input type="hidden" name="Path" value="@file" />
                                 <input type="submit" value="Delete" class="btn btn-default delete-upload" />
                             }
                         </div>

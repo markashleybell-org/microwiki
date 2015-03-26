@@ -11,13 +11,17 @@
     <add key="UnobtrusiveJavaScriptEnabled" value="true" />
     <add key="PublisherName" value="MicroWiki" />
     <add key="Credentials" value="tester^test123|bob^bobbytables" />  
-    <add key="UploaderType" value="FileSystemFileUploader" />  
+    <add key="UploadLibraryType" value="Local" />
+    <!--<add key="UploadLibraryType" value="Remote" />-->
+    <add key="RemoteUploaderHost" value="127.0.0.1" />
+    <add key="RemoteUploaderUsername" value="FTPUSERNAME" />
+    <add key="RemoteUploaderPassword" value="FTPPASSWORD" />
   </appSettings>
   <connectionStrings>
     <add name="microwiki" connectionString="Server=.\SQLEXPRESS;Database=MicroWiki;Trusted_Connection=True;" providerName="System.Data.SqlClient" />
   </connectionStrings>
   <system.web>
-    <customErrors mode="Off"/>
+    <customErrors mode="Off" />
     <compilation debug="true" targetFramework="4.5" />
     <httpRuntime targetFramework="4.5" />
   </system.web>

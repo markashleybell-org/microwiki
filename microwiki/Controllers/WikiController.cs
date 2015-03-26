@@ -175,9 +175,21 @@ namespace microwiki.Controllers
 
         public ActionResult Upload(string uploadedFileName)
         {
+            string[] files = null;
+            
+            switch(ConfigurationManager.AppSettings["UploadLibraryType"])
+            { 
+                case "Local":
+                    files = new LocalFileBrowser().GetFiles(Server.MapPath("/UserContent"), "/UserContent");
+                    break;
+                case "Remote":
+                    files = new RemoteFileBrowser().GetFiles("http://wikifiles.markb.com", "http://wikifiles.markb.com");
+                    break;
+            }
+
             return View(new UploadViewModel { 
                 UploadedFileName = uploadedFileName,
-                Files = Directory.GetFiles(Server.MapPath("/UserContent"))
+                Files = files
             });
         }
 
@@ -189,7 +201,17 @@ namespace microwiki.Controllers
             if(file == null)
                 return RedirectToAction("Upload");
 
-            var uploadedFilePath = new FileSystemFileUploader().UploadFile(file, Server.MapPath("/UserContent"), Path.GetFileName(file.FileName));
+            string uploadedFilePath = null;
+            
+            switch(ConfigurationManager.AppSettings["UploadLibraryType"])
+            { 
+                case "Local":
+                    uploadedFilePath = new LocalFileUploader().UploadFile(file, Server.MapPath("/UserContent"), Path.GetFileName(file.FileName));
+                    break;
+                case "Remote":
+                    uploadedFilePath = new RemoteFileUploader().UploadFile(file, "/", Path.GetFileName(file.FileName));
+                    break;
+            }
 
             return RedirectToAction("Upload", new { UploadedFileName = uploadedFilePath });
         }

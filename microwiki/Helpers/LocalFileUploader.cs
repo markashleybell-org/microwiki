@@ -6,7 +6,7 @@ using System.Web;
 
 namespace microwiki.Helpers
 {
-    public class FileSystemFileUploader : IFileUploader
+    public class LocalFileUploader : IFileUploader
     {
         public string UploadFile(HttpPostedFileBase file, string destinationFolder, string destinationFilename)
         {
@@ -17,7 +17,7 @@ namespace microwiki.Helpers
 
             file.SaveAs(destinationPath);
 
-            return "/UserContent/" + Path.GetFileName(destinationPath);
+            return Path.GetFileName(destinationPath);
         }
     }
 }
