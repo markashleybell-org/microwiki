@@ -10,15 +10,15 @@ using System.Web.Mvc;
 
 namespace microwiki.Helpers
 {
-    public class BasicAuthAttribute : ActionFilterAttribute
+    public class BasicAuthenticationAuthorizeAttribute : AuthorizeAttribute
     {
-        private string _realm;
         private Dictionary<string, string> _credentials;
 
-        public BasicAuthAttribute()
-        {
-            _realm = ConfigurationManager.AppSettings["PublisherName"];
+        private bool _requireSecureConnection = true;
 
+        public BasicAuthenticationAuthorizeAttribute()
+        {
+            // Load the list of users from Web.config
             var credentialData = ConfigurationManager.AppSettings["Credentials"];
 
             // Credential pairs are delimited with pipe, username/password by ^
@@ -28,11 +28,19 @@ namespace microwiki.Helpers
                                          .ToDictionary(c => c[0], c => c[1]);
         }
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            var request = filterContext.HttpContext.Request;
-            var authHeader = request.Headers["Authorization"];
+            if (httpContext == null) 
+                throw new ArgumentNullException("httpContext");
 
+            if (_requireSecureConnection && !httpContext.Request.IsSecureConnection) 
+                return false;
+ 
+            if (!httpContext.Request.Headers.AllKeys.Contains("Authorization")) 
+                return false;
+ 
+            var authHeader = httpContext.Request.Headers["Authorization"];
+            
             if (!string.IsNullOrWhiteSpace(authHeader))
             {
                 var credential = ASCIIEncoding.ASCII.GetString(Convert.FromBase64String(authHeader.Substring(6))).Split(':');
@@ -45,17 +53,25 @@ namespace microwiki.Helpers
                  && _credentials.ContainsKey(user.Name) // And the username exists
                  && _credentials[user.Name] == user.Password) // And the password matches the password
                 {
-                    filterContext.HttpContext.User = new BasicAuthUser(new BasicAuthIdentity(user.Name));
-                    Thread.CurrentPrincipal = filterContext.HttpContext.User;
-                    return;
+                    httpContext.User = new BasicAuthenticationUser(new BasicAuthenticationIdentity(user.Name));
+                    Thread.CurrentPrincipal = httpContext.User;
+
+                    return true;
                 }
             }
 
-            var response = filterContext.HttpContext.Response;
-            response.StatusCode = 401;
-            response.AddHeader("WWW-Authenticate", string.Format("Basic realm=\"{0}\"", _realm));
-            response.Write("<h1>Not Authorised</h1>");
-            response.End();
+            return false;
+        }
+
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            filterContext.Result = new BasicAuthenticationUnauthorizedResult();
+        }
+
+        public bool RequireSecureConnection
+        {
+            get { return _requireSecureConnection; }
+            set { _requireSecureConnection = value; }
         }
     }
 }

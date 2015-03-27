@@ -6,11 +6,11 @@ using System.Web;
 
 namespace microwiki.Models
 {
-    public class BasicAuthIdentity : IIdentity
+    public class BasicAuthenticationIdentity : IIdentity
     {
         private string _name;
 
-        public BasicAuthIdentity(string name)
+        public BasicAuthenticationIdentity(string name)
         {
             _name = name;
         }

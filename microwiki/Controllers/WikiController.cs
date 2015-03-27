@@ -15,7 +15,7 @@ using System.IO;
 
 namespace microwiki.Controllers
 {
-    [BasicAuth]
+    [BasicAuthenticationAuthorize]
     public class WikiController : Controller
     {
         private string _connString;
