@@ -23,6 +23,8 @@ namespace microwiki.Controllers
 
         private Markdown _markdown;
 
+        private IFileManager _fileManager;
+
         public WikiController()
         {
             _connString = ConfigurationManager.ConnectionStrings["microwiki"].ConnectionString;
@@ -31,6 +33,23 @@ namespace microwiki.Controllers
             options.AutoHyperlink = true;
 
             _markdown = new Markdown(options);
+        }
+
+        // We need this method because HttpContext is null when controller is instantiated,
+        // so we can't pass it to LocalFileManager in the controller constructor
+        protected override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+
+            switch (ConfigurationManager.AppSettings["FileManagerType"])
+            {
+                case "Local":
+                    _fileManager = new LocalFileManager(context.HttpContext);
+                    break;
+                case "Remote":
+                    _fileManager = new RemoteFileManager();
+                    break;
+            }
         }
 
         [HttpGet]
@@ -175,22 +194,9 @@ namespace microwiki.Controllers
 
         public ActionResult Upload(string uploadedFileName)
         {
-            string[] files = null;
-            
-            switch(ConfigurationManager.AppSettings["UploadLibraryType"])
-            { 
-                case "Local":
-                    files = new LocalFileBrowser().GetFiles(Server.MapPath("/UserContent"), "/UserContent");
-                    break;
-                case "Remote":
-                    files = new RemoteFileBrowser().GetFiles("http://" + ConfigurationManager.AppSettings["RemoteUploaderHost"],
-                                                             "http://" + ConfigurationManager.AppSettings["RemoteUploaderHost"]);
-                    break;
-            }
-
             return View(new UploadViewModel { 
                 UploadedFileName = uploadedFileName,
-                Files = files
+                Files = _fileManager.GetFiles()
             });
         }
 
@@ -202,17 +208,7 @@ namespace microwiki.Controllers
             if(file == null)
                 return RedirectToAction("Upload");
 
-            string uploadedFilePath = null;
-            
-            switch(ConfigurationManager.AppSettings["UploadLibraryType"])
-            { 
-                case "Local":
-                    uploadedFilePath = new LocalFileUploader().UploadFile(file, Server.MapPath("/UserContent"), Path.GetFileName(file.FileName));
-                    break;
-                case "Remote":
-                    uploadedFilePath = new RemoteFileUploader().UploadFile(file, "/", Path.GetFileName(file.FileName));
-                    break;
-            }
+            string uploadedFilePath = _fileManager.UploadFile(file);
 
             return RedirectToAction("Upload", new { UploadedFileName = uploadedFilePath });
         }

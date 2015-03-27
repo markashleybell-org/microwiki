@@ -130,12 +130,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BasicAuthAttribute.cs" />
-    <Compile Include="Helpers\LocalFileBrowser.cs" />
-    <Compile Include="Helpers\LocalFileUploader.cs" />
-    <Compile Include="Helpers\RemoteFileUploader.cs" />
-    <Compile Include="Helpers\IFileBrowser.cs" />
-    <Compile Include="Helpers\IFileUploader.cs" />
-    <Compile Include="Helpers\RemoteFileBrowser.cs" />
+    <Compile Include="Helpers\LocalFileManager.cs" />
+    <Compile Include="Helpers\RemoteFileManager.cs" />
+    <Compile Include="Helpers\IFileManager.cs" />
     <Compile Include="Helpers\WikiHelpers.cs" />
     <Compile Include="Models\BasicAuthIdentity.cs" />
     <Compile Include="Models\BreadcrumbViewModel.cs" />

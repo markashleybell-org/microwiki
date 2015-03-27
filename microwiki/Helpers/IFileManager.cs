@@ -7,8 +7,10 @@ using System.Web;
 
 namespace microwiki.Helpers
 {
-    public interface IFileUploader
+    public interface IFileManager
     {
-        string UploadFile(HttpPostedFileBase file, string destinationFolder, string destinationFileName);
+        string UploadFile(HttpPostedFileBase file);
+        void DeleteFile(string file);
+        string[] GetFiles();
     }
 }
