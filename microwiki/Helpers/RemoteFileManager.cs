@@ -32,9 +32,9 @@ namespace microwiki.Helpers
             using (var ftpClient = new FtpClient())
             {
                 ftpClient.Host = _host;
-                ftpClient.DataConnectionType = FtpDataConnectionType.AutoActive;
-                ftpClient.Credentials = new NetworkCredential(_username, _password);
                 ftpClient.Port = 21;
+                ftpClient.DataConnectionType = FtpDataConnectionType.EPSV;
+                ftpClient.Credentials = new NetworkCredential(_username, _password);
 
                 ftpClient.Connect();
                 // ftpClient.CreateDirectory("/test");
