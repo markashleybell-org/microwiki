@@ -234,7 +234,6 @@
     <Content Include="Views\Wiki\Search.cshtml" />
     <Content Include="Views\Wiki\Breadcrumb.cshtml" />
     <Content Include="Views\Wiki\DeleteUpload.cshtml" />
-    <Content Include="Web.config.example" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
