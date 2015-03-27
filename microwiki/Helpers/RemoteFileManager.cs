@@ -34,6 +34,7 @@ namespace microwiki.Helpers
                 ftpClient.Host = _host;
                 ftpClient.DataConnectionType = FtpDataConnectionType.AutoActive;
                 ftpClient.Credentials = new NetworkCredential(_username, _password);
+                ftpClient.Port = 21;
 
                 ftpClient.Connect();
                 // ftpClient.CreateDirectory("/test");
