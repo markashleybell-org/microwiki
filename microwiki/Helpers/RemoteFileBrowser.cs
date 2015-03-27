@@ -14,7 +14,8 @@ namespace microwiki.Helpers
             using (var webClient = new WebClient())
             {
                 string json = webClient.DownloadString(physicalPath);
-                string[] files = JArray.Parse(json).Select(x => relativePath + "/" + x.Value<string>()).ToArray();
+                var jArray = JArray.Parse(json);
+                string[] files = jArray.Count > 0 ? jArray.Select(x => relativePath + "/" + x.Value<string>()).ToArray() : new string[0];
                 return files;
             }
         }

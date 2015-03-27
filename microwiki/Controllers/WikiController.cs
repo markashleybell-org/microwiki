@@ -183,7 +183,8 @@ namespace microwiki.Controllers
                     files = new LocalFileBrowser().GetFiles(Server.MapPath("/UserContent"), "/UserContent");
                     break;
                 case "Remote":
-                    files = new RemoteFileBrowser().GetFiles("http://wikifiles.markb.com", "http://wikifiles.markb.com");
+                    files = new RemoteFileBrowser().GetFiles("http://" + ConfigurationManager.AppSettings["RemoteUploaderHost"],
+                                                             "http://" + ConfigurationManager.AppSettings["RemoteUploaderHost"]);
                     break;
             }
 

@@ -2,7 +2,7 @@
 <%@Import Namespace="System.IO"%>
 <%
 var files = new List<string>();
-foreach(var file in Directory.GetFiles(Server.MapPath("/")).Where(f => !f.ToLower().EndsWith(".aspx")))
+foreach(var file in Directory.GetFiles(Server.MapPath("/")).Where(f => !f.ToLower().EndsWith(".aspx") && !f.ToLower().EndsWith(".config")))
 {
     files.Add("\"" + Path.GetFileName(file) + "\"");
 }
