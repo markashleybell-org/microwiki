@@ -15,17 +15,19 @@ namespace microwiki.Helpers
         private string _host;
         private string _username;
         private string _password;
+        private string _folder;
 
         public RemoteFileManager()
         {
             _host = ConfigurationManager.AppSettings["RemoteFileManagerHost"];
             _username = ConfigurationManager.AppSettings["RemoteFileManagerUsername"];
             _password = ConfigurationManager.AppSettings["RemoteFileManagerPassword"];
+            _folder = ConfigurationManager.AppSettings["RemoteFileManagerLibraryFolder"];
         }
 
         public string UploadFile(HttpPostedFileBase file)
         {
-            string destinationFile = "/" + Path.GetFileName(file.FileName);
+            string destinationFile = _folder + ((_folder == "/") ? "" : "/") + Path.GetFileName(file.FileName);
 
             using (var ftpClient = new FtpClient())
             {
@@ -35,7 +37,7 @@ namespace microwiki.Helpers
 
                 ftpClient.Connect();
                 // ftpClient.CreateDirectory("/test");
-                ftpClient.SetWorkingDirectory("/");
+                ftpClient.SetWorkingDirectory(_folder);
 
                 byte[] buf = new byte[8192];
                 int read = 0;
@@ -72,9 +74,9 @@ namespace microwiki.Helpers
 
                 ftpClient.Connect();
                 // ftpClient.CreateDirectory("/test");
-                ftpClient.SetWorkingDirectory("/");
+                ftpClient.SetWorkingDirectory(_folder);
 
-                ftpClient.DeleteFile("/" + fileName);
+                ftpClient.DeleteFile(_folder + ((_folder == "/") ? "" : "/") + fileName);
 
                 ftpClient.Disconnect();
             }
