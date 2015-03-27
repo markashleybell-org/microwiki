@@ -216,22 +216,17 @@ namespace microwiki.Controllers
         [HttpPost]
         public ActionResult DeleteUpload(DeleteUploadViewModel model)
         {
-            var fileName = Server.MapPath(model.Path);
-
-            if (System.IO.File.Exists(fileName))
+            // Check if the file is used anywhere
+            using (_db = new SqlConnection(_connString))
             {
-                // Check if the file is used anywhere
-                using (_db = new SqlConnection(_connString))
-                {
-                    _db.Open();
-                    model.UsedInPages = _db.Query<DocumentSiteMapViewModel>("EXEC mw_Check_File_Use @Location", new { Location = model.Path }).ToList();
+                _db.Open();
+                model.UsedInPages = _db.Query<DocumentSiteMapViewModel>("EXEC mw_Check_File_Use @Location", new { Location = model.Path }).ToList();
 
-                    if (model.UsedInPages != null && model.UsedInPages.Count > 0)
-                        return View(model);
-                }
-
-                System.IO.File.Delete(fileName);
+                if (model.UsedInPages != null && model.UsedInPages.Count > 0)
+                    return View(model);
             }
+
+            _fileManager.DeleteFile(Path.GetFileName(model.Path));
             
             return RedirectToAction("Upload");
         }

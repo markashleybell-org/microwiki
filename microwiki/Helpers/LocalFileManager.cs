@@ -33,9 +33,12 @@ namespace microwiki.Helpers
             return Path.GetFileName(destinationFile);
         }
 
-        public void DeleteFile(string file)
+        public void DeleteFile(string fileName)
         {
-            throw new NotImplementedException();
+            var filePath = _imageLibraryPhysicalPath + "\\" + fileName;
+
+            if (System.IO.File.Exists(filePath))
+                System.IO.File.Delete(filePath);
         }
 
         public string[] GetFiles()

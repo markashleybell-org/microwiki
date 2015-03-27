@@ -62,9 +62,22 @@ namespace microwiki.Helpers
             }
         }
 
-        public void DeleteFile(string file)
+        public void DeleteFile(string fileName)
         {
-            throw new NotImplementedException();
+            using (var ftpClient = new FtpClient())
+            {
+                ftpClient.Host = _host;
+                ftpClient.DataConnectionType = FtpDataConnectionType.AutoActive;
+                ftpClient.Credentials = new NetworkCredential(_username, _password);
+
+                ftpClient.Connect();
+                // ftpClient.CreateDirectory("/test");
+                ftpClient.SetWorkingDirectory("/");
+
+                ftpClient.DeleteFile("/" + fileName);
+
+                ftpClient.Disconnect();
+            }
         }
 
         public string[] GetFiles()

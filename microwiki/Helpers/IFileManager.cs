@@ -10,7 +10,7 @@ namespace microwiki.Helpers
     public interface IFileManager
     {
         string UploadFile(HttpPostedFileBase file);
-        void DeleteFile(string file);
+        void DeleteFile(string fileName);
         string[] GetFiles();
     }
 }
