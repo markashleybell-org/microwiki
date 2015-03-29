@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace microwiki.Helpers
 {
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
     public class BasicAuthenticationAuthorizeAttribute : AuthorizeAttribute
     {
         private Dictionary<string, string> _credentials;
