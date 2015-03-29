@@ -107,7 +107,7 @@ namespace microwiki.Helpers
             {
                 var uri = new UriBuilder(request.Url);
                 uri.Scheme = Uri.UriSchemeHttps;
-                uri.Port = 80;
+                uri.Port = -1;
 
                 filterContext.Result = new RedirectResult(uri.ToString());
             }
