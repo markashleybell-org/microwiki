@@ -14,7 +14,7 @@ namespace microwiki.Helpers
     {
         private Dictionary<string, string> _credentials;
 
-        private bool _requireSecureConnection = true;
+        private bool _requireSecureConnection;
 
         public BasicAuthenticationAuthorizeAttribute()
         {
@@ -26,6 +26,8 @@ namespace microwiki.Helpers
                                          .Select(c => c.Split('^'))
                                          .Select(c => new[] { c[0], c[1] })
                                          .ToDictionary(c => c[0], c => c[1]);
+
+            _requireSecureConnection = Convert.ToBoolean(ConfigurationManager.AppSettings["RequireSecureConnection"]);
         }
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
