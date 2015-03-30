@@ -13,7 +13,17 @@ CREATE PROCEDURE [dbo].[mw_Delete_Document]
 AS
 BEGIN 
 	SET NOCOUNT ON
-	
+
+    -- Use a recursive CTE to get all ancestors of the deleted page
+    ;WITH Tree AS (
+        SELECT *
+        FROM Documents dp
+        WHERE dp.ID = @ID
+        UNION ALL
+        SELECT dc.*
+        FROM Documents dc
+        JOIN Tree ON dc.ParentID = Tree.ID
+    )
 	INSERT INTO DeletedDocuments 
 	    (ID, ParentID, Title, Body, Slug, Location, Username, Created, Updated, Deleted)
     SELECT
@@ -28,11 +38,23 @@ BEGIN
         Updated,
         GETDATE()
     FROM
-        Documents 
-    WHERE
-        ID = @ID
-       
-    DELETE FROM Documents WHERE ID = @ID
+        Tree
+    
+	;WITH Tree AS (
+        SELECT *
+        FROM Documents dp
+        WHERE dp.ID = @ID
+        UNION ALL
+        SELECT dc.*
+        FROM Documents dc
+        JOIN Tree ON dc.ParentID = Tree.ID
+    )
+    DELETE 
+        Documents
+    FROM 
+        Tree
+    WHERE 
+        Documents.ID = Tree.ID
 END	
 GO
 

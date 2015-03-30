@@ -34,7 +34,7 @@
     });
 
     $('.delete-page').on('click', function (e) {
-        var result = prompt('Are you sure you want to delete this page?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+        var result = prompt('Are you sure you want to delete this page and all of its ancestors?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
         return (result === 'YES');
     });
 
