@@ -19,6 +19,7 @@
                 @Html.LabelFor(x => x.Slug)
                 @Html.TextBoxFor(x => x.Slug, new { @class = "form-control" })
                 @Html.ValidationMessageFor(x => x.Slug)
+                <span class="help-block">If left blank, this will be generated automatically from the title</span>
             </div>
 
             <div class="wmd-panel">

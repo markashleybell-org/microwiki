@@ -11,7 +11,7 @@ namespace microwiki.Models
         [Required]
         public string Title { get; set; }
         public string Body { get; set; }
-
+        [Display(Name="Url")]
         public string Slug { get; set; }
 
         public bool IsRoot { get; set; }
