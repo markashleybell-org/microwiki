@@ -123,4 +123,10 @@ li {
     line-height: 2.2em;
 }
 
+code {
+    font-size: 100%;
+}
+
+pre code {
+    font-size: 90%;
 }
