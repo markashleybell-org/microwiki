@@ -12,7 +12,15 @@
         {
             <div class="form-group">
                 @Html.LabelFor(x => x.UploadedFile)
-                <input type="file" name="UploadedFile">
+
+                <div class="input-group file-input-group col-md-4">
+                    <span class="input-group-btn">
+                        <span class="btn btn-primary btn-file">
+                            Browse… <input type="file" name="UploadedFile" id="UploadedFile">
+                        </span>
+                    </span>
+                    <input type="text" class="form-control" readonly="">
+                </div>
             </div>
 
             <div class="form-group form-group-submit">

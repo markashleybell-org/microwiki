@@ -1,4 +1,11 @@
-﻿$(function () {
+﻿$(document).on('change', '.btn-file :file', function () {
+    var input = $(this),
+        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+    input.trigger('fileselect', [numFiles, label]);
+});
+
+$(function () {
     if ($('#wmd-input').length) {
         var converter = new Markdown.Converter();
         //    converter.hooks.chain("preConversion", function (text) {
@@ -41,6 +48,16 @@
     $('.delete-upload').on('click', function (e) {
         var result = prompt('Are you sure you want to delete this file?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
         return (result === 'YES');
+    });
+
+    // This code (and corresponding CSS) stolen from:
+    // http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
+    $('.btn-file :file').on('fileselect', function (event, numFiles, label) {
+        var input = $(this).parents('.input-group').find(':text'),
+            log = numFiles > 1 ? numFiles + ' files selected' : label;
+        if (input.length) {
+            input.val(log);
+        } 
     });
 });
 
