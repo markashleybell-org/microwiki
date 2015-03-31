@@ -33,13 +33,38 @@ h4 {
     font-weight: bold;
 }
 
+li {
+    margin-top: 0.5em;
+    margin-bottom: 0.6em;
+}
+
+code {
+    font-size: 100%;
+}
+
+pre code {
+    font-size: 90%;
+}
+
 .child-pages {
     list-style: none;
     padding-left: 5px;
 }
 
-.child-pages .glyphicon {
-    margin-right: 5px;
+.child-pages li {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+
+.child-pages li:before {
+    float: left;
+    font-family: 'Glyphicons Halflings';
+    content: "\e022";
+}
+
+.child-pages a {
+    display: block;
+    margin-left: 22px;
 }
 
 .form-group-submit {
@@ -117,16 +142,4 @@ footer {
 .field-validation-error {
     color: #cc0000;
     font-weight: bold;
-}
-
-li {
-    line-height: 2.2em;
-}
-
-code {
-    font-size: 100%;
-}
-
-pre code {
-    font-size: 90%;
 }

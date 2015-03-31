@@ -41,7 +41,7 @@
             <ul class="child-pages">
                 @foreach (var child in Model.Children)
                 {
-                    <li><span class="glyphicon glyphicon-file"></span><a href="@child.Location">@child.Title</a></li>
+                    <li><a href="@child.Location">@child.Title</a></li>
                 }
             </ul>
         }
