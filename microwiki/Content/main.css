@@ -46,6 +46,11 @@ pre code {
     font-size: 90%;
 }
 
+.wmd-button-row li {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .child-pages {
     list-style: none;
     padding-left: 5px;
