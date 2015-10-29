@@ -7,7 +7,7 @@
 @{ Html.RenderAction("Breadcrumb", "Wiki", new { id = Model.ID }); }
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-9 wiki-content">
         <h1>@Model.Title</h1>
         @Html.Raw(Model.Body)
         <p class="document-meta-data">Created on @Model.Created.ToString("dd/MM/yyyy HH:mm") | Last update @Model.Updated.ToString("dd/MM/yyyy HH:mm") by @Model.Username</p>
