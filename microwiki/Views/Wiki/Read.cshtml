@@ -44,7 +44,7 @@
             }
         }
 
-        @if (Model.Children != null && Model.Children.Count > 0)
+        @if (!Model.TOC && Model.Children != null && Model.Children.Count > 0)
         {
             <h1>Child Pages</h1>
             <ul class="child-pages">
