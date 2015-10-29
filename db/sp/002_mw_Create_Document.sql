@@ -12,7 +12,8 @@ CREATE PROCEDURE [dbo].[mw_Create_Document]
     @Title nvarchar(128),
     @Body nvarchar(max),
     @Slug nvarchar(256),
-    @Username nvarchar(128)
+    @Username nvarchar(128),
+    @TOC bit
 )
 AS
 BEGIN 
@@ -27,9 +28,9 @@ BEGIN
 	END
 	
 	INSERT INTO Documents 
-	    (ID, ParentID, Title, Body, Slug, Username)
+	    (ID, ParentID, Title, Body, Slug, Username, TOC)
     VALUES 
-        (@ID, @ParentID, @Title, @Body, @Slug, @Username)
+        (@ID, @ParentID, @Title, @Body, @Slug, @Username, @TOC)
         
     EXEC mw_Update_Document_Locations
     

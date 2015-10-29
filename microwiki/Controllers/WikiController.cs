@@ -68,7 +68,7 @@ namespace microwiki.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var sql = "EXEC mw_Create_Document @ID, @ParentID, @Title, @Body, @Slug, @Username";
+            var sql = "EXEC mw_Create_Document @ID, @ParentID, @Title, @Body, @Slug, @Username, @TOC";
 
             var data = new {
                 ID = Guid.NewGuid().ToString().ToLower(),
@@ -76,7 +76,8 @@ namespace microwiki.Controllers
                 Title = model.Title,
                 Body = model.Body,
                 Slug = WikiHelpers.CreateSlug(model.Title),
-                Username = User.Identity.Name
+                Username = User.Identity.Name,
+                TOC = model.TOC
             };
 
             using (_db = new SqlConnection(_connString))
@@ -133,7 +134,7 @@ namespace microwiki.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var sql = "EXEC mw_Update_Document @ID, @ParentID, @Title, @Body, @Slug, @Username";
+            var sql = "EXEC mw_Update_Document @ID, @ParentID, @Title, @Body, @Slug, @Username, @TOC";
 
             var data = new {
                 ID = model.ID,
@@ -141,7 +142,8 @@ namespace microwiki.Controllers
                 Title = model.Title,
                 Body = model.Body,
                 Slug = WikiHelpers.CreateSlug(model.Slug),
-                Username = User.Identity.Name
+                Username = User.Identity.Name,
+                TOC = model.TOC
             };
 
             using (_db = new SqlConnection(_connString))

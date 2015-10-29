@@ -25,7 +25,7 @@ BEGIN
         JOIN Tree ON dc.ParentID = Tree.ID
     )
 	INSERT INTO DeletedDocuments 
-	    (ID, ParentID, Title, Body, Slug, Location, Username, Created, Updated, Deleted)
+	    (ID, ParentID, Title, Body, Slug, Location, Username, TOC, Created, Updated, Deleted)
     SELECT
         ID,
         ParentID,
@@ -34,6 +34,7 @@ BEGIN
         Slug,
         Location,
         @Username,
+        TOC,
         Created,
         Updated,
         GETDATE()

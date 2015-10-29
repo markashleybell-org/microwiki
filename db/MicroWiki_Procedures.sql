@@ -64,7 +64,8 @@ CREATE PROCEDURE [dbo].[mw_Create_Document]
     @Title nvarchar(128),
     @Body nvarchar(max),
     @Slug nvarchar(256),
-    @Username nvarchar(128)
+    @Username nvarchar(128),
+    @TOC bit
 )
 AS
 BEGIN 
@@ -79,9 +80,9 @@ BEGIN
 	END
 	
 	INSERT INTO Documents 
-	    (ID, ParentID, Title, Body, Slug, Username)
+	    (ID, ParentID, Title, Body, Slug, Username, TOC)
     VALUES 
-        (@ID, @ParentID, @Title, @Body, @Slug, @Username)
+        (@ID, @ParentID, @Title, @Body, @Slug, @Username, @TOC)
         
     EXEC mw_Update_Document_Locations
     
@@ -103,7 +104,8 @@ CREATE PROCEDURE [dbo].[mw_Update_Document]
     @Title nvarchar(128),
     @Body nvarchar(max),
     @Slug nvarchar(256),
-    @Username nvarchar(128)
+    @Username nvarchar(128),
+    @TOC bit
 )
 AS
 BEGIN 
@@ -123,6 +125,7 @@ BEGIN
 	    Body = @Body, 
 	    Slug = @Slug, 
 	    Username = @Username,
+	    TOC = @TOC,
 	    Updated = GETDATE()
     WHERE 
         ID = @ID
@@ -200,7 +203,8 @@ BEGIN
             Location,
             Created, 
             Updated,
-            Username 
+            Username,
+            TOC
         FROM 
             Documents 
         WHERE 
@@ -217,7 +221,8 @@ BEGIN
             Location,
             Created, 
             Updated,
-            Username 
+            Username,
+            TOC
         FROM 
             Documents 
         WHERE 
@@ -329,7 +334,7 @@ BEGIN
         JOIN Tree ON dc.ParentID = Tree.ID
     )
 	INSERT INTO DeletedDocuments 
-	    (ID, ParentID, Title, Body, Slug, Location, Username, Created, Updated, Deleted)
+	    (ID, ParentID, Title, Body, Slug, Location, Username, TOC, Created, Updated, Deleted)
     SELECT
         ID,
         ParentID,
@@ -338,6 +343,7 @@ BEGIN
         Slug,
         Location,
         @Username,
+        TOC,
         Created,
         Updated,
         GETDATE()

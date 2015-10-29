@@ -155,3 +155,17 @@ footer {
     border-radius: 4px;
     padding: 4px;
 }
+
+.toc {
+    font-size: 24px;
+    padding: 0;
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.toc li {
+    margin: 0;
+    padding: 0;
+    color: #337ab7;
+    line-height: 42px;
+}

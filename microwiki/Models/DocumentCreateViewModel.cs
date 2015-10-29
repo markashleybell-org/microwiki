@@ -11,5 +11,7 @@ namespace microwiki.Models
         public string Body { get; set; }
         [Display(Name = "Url")]
         public string Slug { get; set; }
+        [Display(Name="Table Of Contents")]
+        public bool TOC { get; set; }
     }
 }

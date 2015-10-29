@@ -27,7 +27,8 @@
 .wmd-preview {
     margin-top: 20px;
     border-top: 1px solid #ccc;
-    padding: 20px 0;
+    border-bottom: 1px solid #ccc;
+    padding: 20px 0 10px 0;
 }
 
 .wmd-button-row {

@@ -28,6 +28,12 @@
             </div>
             <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
 
+            <div class="checkbox">
+                <label>
+                    @Html.CheckBoxFor(x => x.TOC) Table Of Contents (show large list of child page links at bottom of main content area)
+                </label>
+            </div>
+
             @Html.HiddenFor(x => x.ParentID)
 
             <div class="form-group form-group-submit">

@@ -9,6 +9,16 @@
 <div class="row">
     <div class="col-md-9 wiki-content">
         <h1>@Model.Title</h1>
+        @if(Model.TOC && Model.Children != null && Model.Children.Count > 0)
+        {
+            <ul class="toc">
+                @foreach (var child in Model.Children)
+                {
+                    <li><a href="@child.Location">@child.Title</a> &raquo;</li>
+                }
+            </ul>
+        }
+
         @Html.Raw(Model.Body)
         <p class="document-meta-data">Created on @Model.Created.ToString("dd/MM/yyyy HH:mm") | Last update @Model.Updated.ToString("dd/MM/yyyy HH:mm") by @Model.Username</p>
     </div>

@@ -25,7 +25,8 @@ BEGIN
             Location,
             Created, 
             Updated,
-            Username 
+            Username,
+            TOC
         FROM 
             Documents 
         WHERE 
@@ -42,7 +43,8 @@ BEGIN
             Location,
             Created, 
             Updated,
-            Username 
+            Username,
+            TOC
         FROM 
             Documents 
         WHERE 

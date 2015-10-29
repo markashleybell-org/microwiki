@@ -12,7 +12,8 @@ CREATE PROCEDURE [dbo].[mw_Update_Document]
     @Title nvarchar(128),
     @Body nvarchar(max),
     @Slug nvarchar(256),
-    @Username nvarchar(128)
+    @Username nvarchar(128),
+    @TOC bit
 )
 AS
 BEGIN 
@@ -32,6 +33,7 @@ BEGIN
 	    Body = @Body, 
 	    Slug = @Slug, 
 	    Username = @Username,
+	    TOC = @TOC,
 	    Updated = GETDATE()
     WHERE 
         ID = @ID
