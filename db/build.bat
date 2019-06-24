@@ -1,1 +1,0 @@
-COPY /Y "001_Create_Database.sql" + "002_Create_Schema.sql" + "sp\*.sql" + "003_Create_Seed_Data.sql" MicroWiki.sql

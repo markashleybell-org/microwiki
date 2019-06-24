@@ -1,0 +1,57 @@
+{
+    "version": "1.0.0",
+    "name": "money",
+    "private": true,
+    "devDependencies": {
+        "@types/bootstrap": "4.3.0",
+        "@types/jest": "24.0.13",
+        "@types/jquery": "3.3.29",
+        "@types/jquery-validation-unobtrusive": "3.2.32",
+        "@types/jquery.validation": "1.16.6",
+        "@types/js-cookie": "2.2.2",
+        "clean-webpack-plugin": "2.0.2",
+        "gulp": "4.0.2",
+        "gulp-sass": "4.0.2",
+        "gulp-autoprefixer": "6.1.0",
+        "jest": "24.8.0",
+        "source-map-loader": "0.2.4",
+        "ts-jest": "24.0.2",
+        "ts-loader": "6.0.0",
+        "ts-node": "8.1.0",
+        "typescript": "3.5.2",
+        "webpack": "4.31.0",
+        "webpack-cli": "3.3.2"
+    },
+    "dependencies": {
+        "bootstrap": "4.3.1",
+        "jquery": "3.4.1",
+        "jquery-validation": "1.19.0",
+        "jquery-validation-unobtrusive": "3.2.11",
+        "js-cookie": "2.2.0",
+        "tslib": "1.9.3"
+    },
+    "scripts": {
+        "build": "webpack --mode=production --display-modules",
+        "watch-ts": "webpack --watch --mode=production",
+        "test": "jest",
+        "coverage": "jest --coverage"
+    },
+    "browserslist": [
+        "defaults"
+    ],
+    "jest": {
+        "preset": "ts-jest",
+        "testEnvironment": "jsdom",
+        "coveragePathIgnorePatterns": [
+            "/node_modules/",
+            "/legacy/",
+            "Fake.*",
+            "all.ts"
+        ]
+    },
+    "-vs-binding": {
+        "ProjectOpened": [
+            "watch"
+        ]
+    }
+}
