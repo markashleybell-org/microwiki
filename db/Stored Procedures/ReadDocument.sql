@@ -1,7 +1,7 @@
 ﻿
 CREATE PROCEDURE [dbo].[ReadDocument] 
 (
-    @ID nvarchar(64) = NULL,
+    @ID UNIQUEIDENTIFIER = NULL,
     @Location nvarchar(256) = NULL
 )
 AS
@@ -17,10 +17,10 @@ BEGIN
             Body,
             Slug,
             Location,
-            Created, 
-            Updated,
+            TOC,
             Username,
-            TOC
+            Created, 
+            Updated
         FROM 
             Documents 
         WHERE 
@@ -35,10 +35,10 @@ BEGIN
             Body,
             Slug,
             Location,
-            Created, 
-            Updated,
+            TOC,
             Username,
-            TOC
+            Created, 
+            Updated
         FROM 
             Documents 
         WHERE 

@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"bin/": true,
+			"db.*": true,
+			"Import Schema Logs/": true,
+			"obj/": true,
+			"Publish/": true
+		}
+	}
+}

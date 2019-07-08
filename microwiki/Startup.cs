@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MicroWiki.Abstract;
+using MicroWiki.Concrete;
 using MicroWiki.Support;
 
 namespace MicroWiki
@@ -41,6 +43,8 @@ namespace MicroWiki
                     // options.AccessDeniedPath = "????";
                 });
 
+            services.AddScoped<IRepository, SqlServerRepository>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -60,7 +64,19 @@ namespace MicroWiki
 
             app.UseAuthentication();
 
-            app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "default",
+                    template: "wiki/{action}/{id?}",
+                    defaults: new { controller = "Wiki", action = "Index" }
+                );
+
+                routes.MapRoute(
+                    name: "read",
+                    template: "{*location}",
+                    defaults: new { controller = "Wiki", action = "Read" }
+                );
+            });
         }
     }
 }

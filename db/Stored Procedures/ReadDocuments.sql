@@ -1,7 +1,7 @@
 ﻿
 CREATE PROCEDURE [dbo].[ReadDocuments] 
 (
-    @ParentID nvarchar(64) = NULL
+    @ParentID UNIQUEIDENTIFIER = NULL
 )
 AS
 BEGIN 

@@ -16,17 +16,17 @@
 <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">MicroWiki</a>
+            <a class="navbar-brand" href="~/">MicroWiki</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Page1">Page1</a>
+                        <a class="nav-link" asp-controller="Wiki" asp-action="Page1">Page1</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Page2">Page2</a>
+                        <a class="nav-link" asp-controller="Wiki" asp-action="Page2">Page2</a>
                     </li>
                     <li class="nav-item">
                         @if (User.Identity.IsAuthenticated)
