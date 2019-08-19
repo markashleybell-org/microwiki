@@ -35,6 +35,19 @@ namespace MicroWiki.Concrete
                 return document.WithChildren(children);
             });
 
+        public async Task<Document> ReadDocument(Guid id) =>
+            await WithConnection(async conn => {
+                var document = await conn.QuerySingleSp<Document>(
+                    sql: "ReadDocument",
+                    param: new { ID = id }
+                );
+
+                return document;
+            });
+
+        public async Task<Document> UpdateDocument(Document document) =>
+            throw new NotImplementedException();
+
         private async Task<T> WithConnection<T>(Func<SqlConnection, Task<T>> action)
         {
             using (var connection = new SqlConnection(_cfg.ConnectionString))
