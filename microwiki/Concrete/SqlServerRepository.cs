@@ -46,7 +46,24 @@ namespace MicroWiki.Concrete
             });
 
         public async Task<Document> UpdateDocument(Document document) =>
-            throw new NotImplementedException();
+            await WithConnection(async conn => {
+                var param = new {
+                    document.ID,
+                    document.ParentID,
+                    document.Title,
+                    document.Body,
+                    document.Slug,
+                    document.Username,
+                    document.TOC
+                };
+
+                await conn.ExecuteSp(
+                    sql: "UpdateDocument",
+                    param: param
+                );
+
+                return await ReadDocument(document.ID);
+            });
 
         private async Task<T> WithConnection<T>(Func<SqlConnection, Task<T>> action)
         {

@@ -16,9 +16,7 @@ BEGIN
             Location
         FROM 
             Documents 
-        WHERE 
-            ID != @ParentID
-        AND
+        WHERE
             ParentID = @ParentID
         ORDER BY 
             Title

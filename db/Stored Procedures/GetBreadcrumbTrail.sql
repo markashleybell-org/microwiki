@@ -1,18 +1,18 @@
 ﻿
 CREATE PROCEDURE [dbo].[GetBreadcrumbTrail] 
 (
-    @ID nvarchar(64)
+    @ID UNIQUEIDENTIFIER
 )
 AS
 BEGIN 
 	SET NOCOUNT ON
 
 	DECLARE @Documents TABLE (
-		Idx int NOT NULL,
-		ID nvarchar(64) NOT NULL, 
-        ParentID nvarchar(64) NOT NULL, 
-        Title nvarchar(128) NOT NULL, 
-        Location nvarchar(256) NULL
+		Idx INT NOT NULL,
+		ID UNIQUEIDENTIFIER NOT NULL, 
+        ParentID UNIQUEIDENTIFIER NOT NULL, 
+        Title NVARCHAR(128) NOT NULL, 
+        Location NVARCHAR(256) NULL
 	)
 
 	INSERT INTO @Documents 
@@ -22,8 +22,8 @@ BEGIN
 	FROM 
 		Documents WHERE ID = @ID
 
-	DECLARE @CurrentID nvarchar(64)
-	DECLARE @ParentID nvarchar(64)
+	DECLARE @CurrentID UNIQUEIDENTIFIER
+	DECLARE @ParentID UNIQUEIDENTIFIER
 	DECLARE @Idx int = 1
 	
 	SELECT @ParentID = ParentID, @CurrentID = ID FROM @Documents WHERE ID = @ID

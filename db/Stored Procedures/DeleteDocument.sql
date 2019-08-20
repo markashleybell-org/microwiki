@@ -1,8 +1,8 @@
 ﻿
 CREATE PROCEDURE [dbo].[DeleteDocument] 
 (
-    @ID nvarchar(64),
-    @Username nvarchar(128)
+    @ID UNIQUEIDENTIFIER,
+    @Username NVARCHAR(128)
 )
 AS
 BEGIN 

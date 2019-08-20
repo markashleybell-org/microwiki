@@ -13,5 +13,8 @@ namespace MicroWiki.Support
 
         public static Task<T> QuerySingleSp<T>(this SqlConnection conn, string sql, object param) =>
             conn.QuerySingleAsync<T>(sql, param, commandType: CommandType.StoredProcedure);
+
+        public static Task ExecuteSp(this SqlConnection conn, string sql, object param) =>
+            conn.ExecuteAsync(sql, param, commandType: CommandType.StoredProcedure);
     }
 }

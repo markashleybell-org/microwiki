@@ -1,7 +1,7 @@
 ﻿
 CREATE PROCEDURE [dbo].[CheckFileUse] 
 (
-    @Location nvarchar(512)
+    @Location NVARCHAR(512)
 )
 AS
 BEGIN 

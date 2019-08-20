@@ -2,7 +2,7 @@
 CREATE PROCEDURE [dbo].[ReadDocument] 
 (
     @ID UNIQUEIDENTIFIER = NULL,
-    @Location nvarchar(256) = NULL
+    @Location NVARCHAR(256) = NULL
 )
 AS
 BEGIN 

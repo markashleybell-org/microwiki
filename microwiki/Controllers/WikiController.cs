@@ -29,18 +29,12 @@ namespace MicroWiki.Controllers
         {
             var document = await _repository.ReadDocument(id);
 
-            if (document == null)
-            {
-                return NotFound();
-            }
-
-            var model = UpdateViewModel.From(document);
-
-            return View(model);
+            return document != null
+                ? (IActionResult)View(UpdateViewModel.From(document))
+                : NotFound();
         }
 
         [HttpPost]
-        // [ValidateInput(false)]
         public async Task<IActionResult> Update(UpdateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -48,31 +42,11 @@ namespace MicroWiki.Controllers
                 return View(model);
             }
 
-            /*
+            var update = UpdateViewModel.ToDocument(model, "markb");
 
-            var sql = "EXEC mw_Update_Document @ID, @ParentID, @Title, @Body, @Slug, @Username, @TOC";
+            var document = await _repository.UpdateDocument(update);
 
-            var data = new {
-                ID = model.ID,
-                ParentID = model.ParentID,
-                Title = model.Title,
-                Body = model.Body,
-                Slug = CreateSlug(model.Slug),
-                Username = User.Identity.Name,
-                TOC = model.TOC
-            };
-
-            using (_db = new SqlConnection(_connString))
-            {
-                _db.Open();
-                var location = _db.ExecuteScalar<string>(sql, data);
-
-                return Redirect(location);
-            }
-
-            */
-
-            return View(model);
+            return Redirect(document.Location);
         }
     }
 }

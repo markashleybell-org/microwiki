@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Documents] (
     [ID]       UNIQUEIDENTIFIER  NOT NULL,
-    [ParentID] UNIQUEIDENTIFIER  CONSTRAINT [DF_Documents_ParentID] DEFAULT ('home') NOT NULL,
+    [ParentID] UNIQUEIDENTIFIER   NULL,
     [Title]    NVARCHAR (128) NOT NULL,
     [Body]     NVARCHAR (MAX) NULL,
     [Slug]     NVARCHAR (256) NULL,

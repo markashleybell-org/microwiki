@@ -1,9 +1,9 @@
 ﻿
 CREATE PROCEDURE [dbo].[MoveDocument] 
 (
-    @ID nvarchar(64),
-    @ParentID nvarchar(64),
-    @Username nvarchar(128)
+    @ID UNIQUEIDENTIFIER,
+    @ParentID UNIQUEIDENTIFIER,
+    @Username NVARCHAR(128)
 )
 AS
 BEGIN 

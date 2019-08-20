@@ -8,7 +8,7 @@ BEGIN
 			-- Insert all documents into a temporary table
 			SELECT ID, ParentID, Slug, Location INTO #Documents FROM Documents
 			-- Find the root/home document
-			DECLARE @RootID nvarchar(64) = (SELECT ID FROM #Documents WHERE ParentID = ID)
+			DECLARE @RootID UNIQUEIDENTIFIER = (SELECT ID FROM #Documents WHERE ParentID IS NULL)
 			-- NULL out all Location fields
 			UPDATE #Documents SET Location = NULL
 			-- Update root/home document location specifically

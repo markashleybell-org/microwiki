@@ -7,51 +7,49 @@
 <div class="row">
     <div class="col-md-9">
         <h1>Update @Model.Title</h1>
-        @using (Html.BeginForm("Update", "Wiki", FormMethod.Post, new object { }))
-        {
+        <form asp-controller="Wiki" asp-action="Update" method="post">
             <div class="form-group">
-                @Html.LabelFor(x => x.Title)
-                @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
-                @Html.ValidationMessageFor(x => x.Title)
+                <label asp-for="Title">Page Title</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title"></span>
             </div>
 
-            if (Model.IsRootDocument)
+            @if (Model.IsRootDocument)
             {
-                @Html.HiddenFor(x => x.Slug)
+                <input asp-for="Slug" type="hidden" />
             }
             else
             {
                 <div class="form-group">
-                    @Html.LabelFor(x => x.Slug)
-                    @Html.TextBoxFor(x => x.Slug, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(x => x.Slug)
-                    <span class="help-block">If blank, this will be regenerated automatically from the title.</span>
+                    <label asp-for="Slug">Url Slug</label>
+                    <input asp-for="Slug" class="form-control" />
+                    <span asp-validation-for="Slug"></span>
+                    <small class="form-text text-muted">If blank, this will be regenerated automatically from the title.</small>
                 </div>
             }
-
-            <div class="wmd-panel">
-                <div id="wmd-button-bar"></div>
-                @Html.TextAreaFor(x => x.Body, new { id = "wmd-input", @class = "wmd-input" })
+        
+            <div class="form-group">
+                <label asp-for="Body">Body Text</label>
+                <textarea asp-for="Body" class="form-control"></textarea>
             </div>
-            <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
 
             <div class="checkbox">
                 <label>
-                    @Html.CheckBoxFor(x => x.IsTableOfContents) Table Of Contents (show large list of child page links at bottom of main content area)
+                    <input asp-for="IsTableOfContents" /> Table Of Contents (show large list of child page links at bottom of main content area)
                 </label>
             </div>
 
-            @Html.HiddenFor(x => x.ID)
-            @Html.HiddenFor(x => x.IsRootDocument)
-            @Html.HiddenFor(x => x.ParentID)
+            <input asp-for="ID" type="hidden" />
+            <input asp-for="IsRootDocument" type="hidden" />
+            <input asp-for="ParentID" type="hidden" />
 
             <div class="form-group form-group-submit">
                 <input type="submit" class="btn btn-primary" value="Save Page">
             </div>
-        }
+        </form>
     </div>
     <div class="col-md-3">
         <h1>Actions</h1>
-        <p>@Html.ActionLink("Upload File", "Upload", null, new { @class = "btn btn-default btn-block btn-xs", target = "_blank" })</p>
+        <p><a asp-controller="Wiki" asp-action="Upload" target="_blank" class="btn btn-secondary btn-block">Upload File</a></p>
     </div>
 </div>

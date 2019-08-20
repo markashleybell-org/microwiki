@@ -33,7 +33,7 @@ namespace MicroWiki.Models
         public static ReadViewModel From(Document document) =>
             new ReadViewModel {
                 ID = document.ID,
-                IsRootDocument = document.ID != document.ParentID,
+                IsRootDocument = !document.ParentID.HasValue,
                 Location = document.Location,
                 Username = document.Username,
                 Title = document.Title,

@@ -8,7 +8,29 @@ namespace MicroWiki.Domain
     {
         public Document(
             Guid id,
-            Guid parentID,
+            Guid? parentID,
+            string title,
+            string body,
+            string slug,
+            bool toc,
+            string username)
+            : this(
+                  id,
+                  parentID,
+                  title,
+                  body,
+                  slug,
+                  default,
+                  toc,
+                  username,
+                  default,
+                  default)
+        {
+        }
+
+        public Document(
+            Guid id,
+            Guid? parentID,
             string title,
             string body,
             string slug,
@@ -34,7 +56,7 @@ namespace MicroWiki.Domain
 
         private Document(
             Guid id,
-            Guid parentID,
+            Guid? parentID,
             string title,
             string body,
             string slug,
@@ -60,7 +82,7 @@ namespace MicroWiki.Domain
 
         public Guid ID { get; }
 
-        public Guid ParentID { get; }
+        public Guid? ParentID { get; }
 
         public string Title { get; }
 

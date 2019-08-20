@@ -1,19 +1,19 @@
 ﻿
 CREATE PROCEDURE [dbo].[CreateDocument] 
 (
-    @ID nvarchar(64),
-    @ParentID nvarchar(64),
-    @Title nvarchar(128),
-    @Body nvarchar(max),
-    @Slug nvarchar(256),
-    @Username nvarchar(128),
-    @TOC bit
+    @ID UNIQUEIDENTIFIER,
+    @ParentID UNIQUEIDENTIFIER,
+    @Title NVARCHAR(128),
+    @Body NVARCHAR(max),
+    @Slug NVARCHAR(256),
+    @Username NVARCHAR(128),
+    @TOC BIT
 )
 AS
 BEGIN 
 	SET NOCOUNT ON
 	
-	DECLARE @RandomSlug nvarchar(5)
+	DECLARE @RandomSlug NVARCHAR(5)
 	
 	WHILE EXISTS (SELECT * FROM Documents WHERE Slug = @Slug)
 	BEGIN
