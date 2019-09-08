@@ -15,6 +15,36 @@ namespace MicroWiki.Controllers
             IRepository repository) =>
             _repository = repository;
 
+        [HttpGet]
+        public async Task<IActionResult> Create(Guid parentID)
+        {
+            var parentDocument = await _repository.ReadDocument(parentID);
+
+            if (parentDocument == null)
+            {
+                return NotFound();
+            }
+
+            var model = CreateViewModel.From(parentDocument);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var create = CreateViewModel.ToDocument(model, "markb");
+
+            var document = await _repository.CreateDocument(create);
+
+            return Redirect(document.Location);
+        }
+
         public async Task<IActionResult> Read(string location)
         {
             var document = await _repository.ReadDocument(location);

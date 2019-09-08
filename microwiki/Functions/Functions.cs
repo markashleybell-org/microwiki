@@ -47,7 +47,7 @@ namespace MicroWiki.Functions
             var options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
 
             // Remove all special chars (but not spaces or dashes)
-            var output = Regex.Replace(input, @"[^a-z0-9\s\-]", "", options);
+            var output = Regex.Replace(input, @"[^a-z0-9\s\-]", string.Empty, options);
 
             // Replace spaces with hyphens
             output = Regex.Replace(output, @"[\s]", "-", options);

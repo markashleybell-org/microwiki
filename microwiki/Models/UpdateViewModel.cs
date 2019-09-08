@@ -36,13 +36,13 @@ namespace MicroWiki.Models
 
         public static Document ToDocument(UpdateViewModel model, string username) =>
             new Document(
-               model.ID,
-               model.ParentID,
-               model.Title,
-               model.Body,
-               CreateSlug(model.Slug),
-               model.IsTableOfContents,
-               username
+                model.ID,
+                model.ParentID,
+                model.Title,
+                model.Body,
+                CreateSlug(model.Slug),
+                model.IsTableOfContents,
+                username
             );
     }
 }

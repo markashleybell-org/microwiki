@@ -15,6 +15,26 @@ namespace MicroWiki.Concrete
         public SqlServerRepository(IOptionsMonitor<Settings> optionsMonitor) =>
             _cfg = optionsMonitor.CurrentValue;
 
+        public async Task<Document> CreateDocument(Document document) =>
+            await WithConnection(async conn => {
+                var param = new {
+                    document.ID,
+                    document.ParentID,
+                    document.Title,
+                    document.Body,
+                    document.Slug,
+                    document.Username,
+                    document.TOC
+                };
+
+                await conn.ExecuteSp(
+                    sql: "CreateDocument",
+                    param: param
+                );
+
+                return await ReadDocument(document.ID);
+            });
+
         public async Task<Document> ReadDocument(string location) =>
             await WithConnection(async conn => {
                 var document = await conn.QuerySingleSp<Document>(
