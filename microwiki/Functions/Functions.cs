@@ -1,6 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using Microsoft.AspNetCore.Html;
+using MicroWiki.Domain;
+using MicroWiki.Models;
 
 namespace MicroWiki.Functions
 {
@@ -64,59 +69,47 @@ namespace MicroWiki.Functions
             return output.ToLower();
         }
 
-        /*
-
-        public static void BuildNode(List<DocumentSiteMapViewModel> documents, DocumentSiteMapViewModel document, string id)
+        public static SiteMapDocumentViewModel AsTree(
+            this SiteMapDocument document,
+            IEnumerable<SiteMapDocument> documents)
         {
-            foreach (var d in documents)
-            {
-                if (d.ParentID == document.ID)
-                {
-                    if (document.Children == null)
-                    {
-                        document.Children = new List<DocumentSiteMapViewModel>();
-                    }
+            var children = documents.Where(d => d.ParentID == document.ID)
+                .Select(c => c.AsTree(documents));
 
-                    document.Children.Add(d);
-
-                    BuildNode(documents, d, id);
-                }
-            }
+            return SiteMapDocumentViewModel.From(document).WithChildren(children);
         }
 
-        public static MvcHtmlString WriteNode(DocumentSiteMapViewModel document, string id)
+        public static HtmlString GetTreeHtml(SiteMapDocumentViewModel document, Guid id)
         {
-            var output = new List<MvcHtmlString>();
+            var output = new List<HtmlString> {
+                new HtmlString("<li><span class=\"glyphicon glyphicon-file\"></span> ")
+            };
 
-            output.Add(new MvcHtmlString("<li><span class=\"glyphicon glyphicon-file\"></span> "));
-
-            if(id != document.ID)
+            if (id != document.ID)
             {
-                output.Add(new MvcHtmlString("<a class=\"document\" href=\"" + document.Location + "\" data-moveid=\"" + id + "\" data-documentid=\"" + document.ID + "\">" + document.Title + "</a>"));
+                output.Add(new HtmlString("<a class=\"document\" href=\"" + document.Location + "\" data-moveid=\"" + id + "\" data-documentid=\"" + document.ID + "\">" + document.Title + "</a>"));
             }
             else
             {
-                output.Add(new MvcHtmlString(document.Title));
+                output.Add(new HtmlString(document.Title));
             }
 
-            if (document.Children != null && document.Children.Count > 0)
+            if (document.Children.Any())
             {
-                output.Add(new MvcHtmlString("<ul>"));
+                output.Add(new HtmlString("<ul>"));
 
                 foreach (var child in document.Children)
                 {
-                    output.Add(WriteNode(child, id));
+                    output.Add(GetTreeHtml(child, id));
                 }
 
-                output.Add(new MvcHtmlString("</ul>"));
+                output.Add(new HtmlString("</ul>"));
             }
 
-            output.Add(new MvcHtmlString("</li>"));
+            output.Add(new HtmlString("</li>"));
 
-            return new MvcHtmlString(string.Join("", output));
+            return new HtmlString(string.Join(string.Empty, output));
         }
-
-        */
 
         public static string AddCodeHintClasses(string content)
         {

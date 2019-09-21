@@ -86,5 +86,21 @@ namespace MicroWiki.Controllers
 
             return Redirect("/");
         }
+
+        [HttpPost]
+        public ActionResult Move(Guid id, Guid newParentID)
+        {
+            var newLocation = _repository.MoveDocument(id, newParentID);
+
+            return Json(new { newLocation });
+        }
+
+        /*
+        public ActionResult SiteMapTreeView(Guid selected)
+        {
+            var allDocuments = _repository.ReadAllDocuments();
+
+        }
+        */
     }
 }

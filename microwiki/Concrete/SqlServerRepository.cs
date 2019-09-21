@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -71,6 +72,14 @@ namespace MicroWiki.Concrete
                 return document;
             });
 
+        public async Task<IEnumerable<SiteMapDocument>> ReadAllDocuments() =>
+            await WithConnection(async conn => {
+                return await conn.QuerySp<SiteMapDocument>(
+                    sql: "ReadDocuments",
+                    param: new { ParentID = default(Guid?) }
+                );
+            });
+
         public async Task<Document> UpdateDocument(Document document) =>
             await WithConnection(async conn => {
                 var param = new {
@@ -99,6 +108,20 @@ namespace MicroWiki.Concrete
                         ID = id,
                         Username = _username
                     }
+                );
+            });
+
+        public async Task<string> MoveDocument(Guid id, Guid newParentId) =>
+            await WithConnection(async conn => {
+                var param = new {
+                    ID = id,
+                    ParentID = newParentId,
+                    Username = _username
+                };
+
+                return await conn.QuerySingleSp<string>(
+                    sql: "MoveDocument",
+                    param: param
                 );
             });
 

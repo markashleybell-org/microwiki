@@ -1,0 +1,11 @@
+﻿@model MicroWiki.Models.SiteMapTreeViewViewModel
+
+@using static MicroWiki.Functions.Functions
+
+@{
+    Layout = null;
+}
+
+<ul class="sitemap">
+    @GetTreeHtml(Model.Root, Model.ID)
+</ul>

@@ -2,11 +2,11 @@ using System;
 
 namespace MicroWiki.Domain
 {
-    public class ChildDocument
+    public class SiteMapDocument
     {
-        public ChildDocument(
+        public SiteMapDocument(
             Guid id,
-            Guid parentID,
+            Guid? parentID,
             string title,
             string location)
         {
@@ -18,7 +18,7 @@ namespace MicroWiki.Domain
 
         public Guid ID { get; }
 
-        public Guid ParentID { get; }
+        public Guid? ParentID { get; }
 
         public string Title { get; }
 
