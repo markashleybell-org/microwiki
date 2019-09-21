@@ -13,5 +13,7 @@ namespace MicroWiki.Abstract
         Task<Document> ReadDocument(Guid id);
 
         Task<Document> UpdateDocument(Document document);
+
+        Task DeleteDocument(Guid id);
     }
 }

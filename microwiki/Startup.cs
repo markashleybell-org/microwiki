@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
 using MicroWiki.Concrete;
 using MicroWiki.Support;
@@ -43,7 +45,14 @@ namespace MicroWiki
                     // options.AccessDeniedPath = "????";
                 });
 
-            services.AddScoped<IRepository, SqlServerRepository>();
+            services.AddScoped<IRepository, SqlServerRepository>(sp => {
+                var ctxAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+                var optionsMonitor = sp.GetRequiredService<IOptionsMonitor<Settings>>();
+
+                // TODO: Tidy this up!!
+                var userName = "markb"; // ctxAccessor.HttpContext.User.Identity.Name;
+                return new SqlServerRepository(optionsMonitor, userName);
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

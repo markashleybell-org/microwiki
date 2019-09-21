@@ -78,5 +78,13 @@ namespace MicroWiki.Controllers
 
             return Redirect(document.Location);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _repository.DeleteDocument(id);
+
+            return Redirect("/");
+        }
     }
 }

@@ -11,9 +11,15 @@ namespace MicroWiki.Concrete
     public class SqlServerRepository : IRepository
     {
         private readonly Settings _cfg;
+        private readonly string _username;
 
-        public SqlServerRepository(IOptionsMonitor<Settings> optionsMonitor) =>
+        public SqlServerRepository(
+            IOptionsMonitor<Settings> optionsMonitor,
+            string username)
+        {
             _cfg = optionsMonitor.CurrentValue;
+            _username = username;
+        }
 
         public async Task<Document> CreateDocument(Document document) =>
             await WithConnection(async conn => {
@@ -84,6 +90,25 @@ namespace MicroWiki.Concrete
 
                 return await ReadDocument(document.ID);
             });
+
+        public async Task DeleteDocument(Guid id) =>
+            await WithConnection(async conn => {
+                await conn.ExecuteSp(
+                    sql: "DeleteDocument",
+                    param: new {
+                        ID = id,
+                        Username = _username
+                    }
+                );
+            });
+
+        private async Task WithConnection(Func<SqlConnection, Task> action)
+        {
+            using (var connection = new SqlConnection(_cfg.ConnectionString))
+            {
+                await action(connection);
+            }
+        }
 
         private async Task<T> WithConnection<T>(Func<SqlConnection, Task<T>> action)
         {
