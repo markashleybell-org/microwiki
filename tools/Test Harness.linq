@@ -19,20 +19,22 @@ async Task Main()
     var repository = new SqlServerRepository(new TestOptionsMonitor(), "markb");
     
     var documents = await repository.ReadAllDocuments();
-    
-    var root = documents.Single(d => !d.ParentID.HasValue);
-    
-    var mapRoot = root.AsTree(documents);
-    
-    // documents.Dump();
-    // root.Dump();
-    // mapRoot.Dump();
+//    
+//    var root = documents.Single(d => !d.ParentID.HasValue);
+//    
+//    var mapRoot = root.AsTree(documents);
+//    
+    documents.Dump();
+//    // root.Dump();
+//    // mapRoot.Dump();
+//
+//    var htmlTree = Functions.GetSiteMapTreeHtml(mapRoot, root.ID).Value;
+//
+//    var html = $"<html>{htmlTree}<html>";
+//    
+//    Util.RawHtml(html).Dump();
 
-    var htmlTree = Functions.GetTreeHtml(mapRoot, root.ID).Value;
-
-    var html = $"<html>{htmlTree}<html>";
-    
-    Util.RawHtml(html).Dump();
+    repository.GetBreadcrumbTrail();
 }
 
 public class TestOptionsMonitor : IOptionsMonitor<Settings> 

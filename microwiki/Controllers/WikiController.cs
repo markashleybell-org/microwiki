@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MicroWiki.Abstract;
 using MicroWiki.Functions;
@@ -11,11 +13,29 @@ namespace MicroWiki.Controllers
 {
     public class WikiController : Controller
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRepository _repository;
 
         public WikiController(
-            IRepository repository) =>
+            IHttpContextAccessor httpContextAccessor,
+            IRepository repository)
+        {
             _repository = repository;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public override PartialViewResult PartialView(string name, object model) =>
+            PartialView($"_{name}", model);
+
+        public async Task<IActionResult> BreadcrumbTrail(Guid id)
+        {
+            var model = new BreadcrumbTrailViewModel {
+                Segments = await _repository.GetBreadcrumbTrail(id),
+                CurrentUrl = _httpContextAccessor.HttpContext.Request.GetDisplayUrl()
+            };
+
+            return PartialView(nameof(BreadcrumbTrail), model);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Create(Guid parentID)
@@ -51,9 +71,17 @@ namespace MicroWiki.Controllers
         {
             var document = await _repository.ReadDocument(location);
 
-            return document != null
-                ? (IActionResult)View(ReadViewModel.From(document))
-                : NotFound();
+            if (document == null)
+            {
+                return NotFound();
+            }
+
+            var breadcrumbTrailViewModel = new BreadcrumbTrailViewModel {
+                Segments = await _repository.GetBreadcrumbTrail(document.ID),
+                CurrentUrl = _httpContextAccessor.HttpContext.Request.GetDisplayUrl()
+            };
+
+            return View(ReadViewModel.From(document, breadcrumbTrailViewModel));
         }
 
         [HttpGet]
@@ -114,7 +142,7 @@ namespace MicroWiki.Controllers
                 Root = await GetSiteMap()
             };
 
-            return PartialView($"_{nameof(MoveDocumentModal)}", model);
+            return PartialView(nameof(MoveDocumentModal), model);
         }
 
         private async Task<SiteMapDocumentViewModel> GetSiteMap()

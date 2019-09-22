@@ -1,0 +1,23 @@
+﻿@model BreadcrumbTrailViewModel
+
+@{ Layout = null; }
+
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                @foreach (var segment in Model.Segments)
+                {
+                    if (segment.Location == Model.CurrentUrl)
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@segment.Title</li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item"><a href="@segment.Location">@segment.Title</a></li>
+                    }
+                }
+            </ol>
+        </nav>
+    </div>
+</div>

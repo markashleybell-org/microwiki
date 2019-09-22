@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
@@ -21,6 +22,14 @@ namespace MicroWiki.Concrete
             _cfg = optionsMonitor.CurrentValue;
             _username = username;
         }
+
+        public async Task<IEnumerable<BreadcrumbTrailSegment>> GetBreadcrumbTrail(Guid id) =>
+            await WithConnection(async conn => {
+                return await conn.QuerySp<BreadcrumbTrailSegment>(
+                    sql: "GetBreadcrumbTrail",
+                    param: new { ID = id }
+                );
+            });
 
         public async Task<Document> CreateDocument(Document document) =>
             await WithConnection(async conn => {

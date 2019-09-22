@@ -7,6 +7,8 @@ namespace MicroWiki.Abstract
 {
     public interface IRepository
     {
+        Task<IEnumerable<BreadcrumbTrailSegment>> GetBreadcrumbTrail(Guid id);
+
         Task<Document> CreateDocument(Document document);
 
         Task<Document> ReadDocument(string location);

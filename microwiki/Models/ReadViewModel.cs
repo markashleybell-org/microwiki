@@ -30,7 +30,9 @@ namespace MicroWiki.Models
 
         public IEnumerable<ChildDocumentViewModel> Children { get; set; }
 
-        public static ReadViewModel From(Document document) =>
+        public BreadcrumbTrailViewModel BreadcrumbTrailViewModel { get; set; }
+
+        public static ReadViewModel From(Document document, BreadcrumbTrailViewModel breadcrumbTrailViewModel) =>
             new ReadViewModel {
                 ID = document.ID,
                 IsRootDocument = !document.ParentID.HasValue,
@@ -46,6 +48,7 @@ namespace MicroWiki.Models
                     Location = c.Location,
                     Title = c.Title
                 }),
+                BreadcrumbTrailViewModel = breadcrumbTrailViewModel
             };
     }
 }

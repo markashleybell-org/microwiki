@@ -8,6 +8,10 @@
     <title>@Model.Title</title>
 }
 
+@{
+    await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailViewModel); 
+}
+
 <div class="row">
     <div class="col-sm-9">
         <h1>@Model.Title</h1>
