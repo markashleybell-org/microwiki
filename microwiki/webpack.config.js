@@ -1,5 +1,5 @@
 const ProvidePlugin = require('webpack').ProvidePlugin;
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     output: {
