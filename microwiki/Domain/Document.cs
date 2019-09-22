@@ -12,8 +12,7 @@ namespace MicroWiki.Domain
             string title,
             string body,
             string slug,
-            bool toc,
-            string username)
+            bool toc)
             : this(
                   id,
                   parentID,
@@ -22,7 +21,7 @@ namespace MicroWiki.Domain
                   slug,
                   default,
                   toc,
-                  username,
+                  default,
                   default,
                   default)
         {

@@ -27,15 +27,14 @@ namespace MicroWiki.Models
                 ParentTitle = parentDocument.Title
             };
 
-        public static Document ToDocument(CreateViewModel model, string username) =>
+        public static Document ToDocument(CreateViewModel model) =>
             new Document(
                 Guid.NewGuid(),
                 model.ParentID,
                 model.Title,
                 model.Body,
                 CreateSlug(model.Title),
-                model.IsTableOfContents,
-                username
+                model.IsTableOfContents
             );
     }
 }

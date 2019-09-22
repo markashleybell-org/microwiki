@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Controllers
 {
+    [Authorize]
     public class WikiController : Controller
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -23,8 +25,8 @@ namespace MicroWiki.Controllers
             IRepository repository,
             IFileManager fileManager)
         {
-            _repository = repository;
             _httpContextAccessor = httpContextAccessor;
+            _repository = repository;
             _fileManager = fileManager;
         }
 
@@ -64,7 +66,7 @@ namespace MicroWiki.Controllers
                 return View(model);
             }
 
-            var create = CreateViewModel.ToDocument(model, "markb");
+            var create = CreateViewModel.ToDocument(model);
 
             var document = await _repository.CreateDocument(create);
 
@@ -106,8 +108,7 @@ namespace MicroWiki.Controllers
                 return View(model);
             }
 
-            // TODO: Fix users
-            var update = UpdateViewModel.ToDocument(model, "markb");
+            var update = UpdateViewModel.ToDocument(model);
 
             var document = await _repository.UpdateDocument(update);
 

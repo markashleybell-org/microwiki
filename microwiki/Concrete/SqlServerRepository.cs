@@ -39,8 +39,8 @@ namespace MicroWiki.Concrete
                     document.Title,
                     document.Body,
                     document.Slug,
-                    document.Username,
-                    document.TOC
+                    document.TOC,
+                    Username = _username
                 };
 
                 await conn.ExecuteSp(
@@ -97,8 +97,8 @@ namespace MicroWiki.Concrete
                     document.Title,
                     document.Body,
                     document.Slug,
-                    document.Username,
-                    document.TOC
+                    document.TOC,
+                    Username = _username
                 };
 
                 await conn.ExecuteSp(
@@ -139,6 +139,14 @@ namespace MicroWiki.Concrete
                 return await conn.QuerySp<SiteMapDocument>(
                     sql: "CheckFileUse",
                     param: new { Location = location }
+                );
+            });
+
+        public async Task<User> FindUserByEmail(string email) =>
+            await WithConnection(async conn => {
+                return await conn.QuerySingle<User>(
+                    sql: "SELECT * FROM Users WHERE Email = @Email",
+                    param: new { Email = email }
                 );
             });
 

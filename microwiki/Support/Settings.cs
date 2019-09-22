@@ -5,5 +5,7 @@ namespace MicroWiki.Support
         public string ConnectionString { get; set; }
 
         public string LocalFileManagerLibraryFolderPath { get; set; }
+
+        public int PersistentSessionLengthInDays { get; set; }
     }
 }

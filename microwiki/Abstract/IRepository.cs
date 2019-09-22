@@ -24,5 +24,7 @@ namespace MicroWiki.Abstract
         Task<string> MoveDocument(Guid id, Guid newParentId);
 
         Task<IEnumerable<SiteMapDocument>> CheckFileUse(string location);
+
+        Task<User> FindUserByEmail(string email);
     }
 }

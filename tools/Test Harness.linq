@@ -12,19 +12,20 @@
   <Namespace>MicroWiki.Support</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
   <Namespace>Microsoft.Extensions.Options</Namespace>
+  <Namespace>Microsoft.AspNetCore.Identity</Namespace>
 </Query>
 
 async Task Main()
 {
     var repository = new SqlServerRepository(new TestOptionsMonitor(), "markb");
     
-    var documents = await repository.ReadAllDocuments();
+    //var documents = await repository.ReadAllDocuments();
 //    
 //    var root = documents.Single(d => !d.ParentID.HasValue);
 //    
 //    var mapRoot = root.AsTree(documents);
 //    
-    documents.Dump();
+    // documents.Dump();
 //    // root.Dump();
 //    // mapRoot.Dump();
 //
@@ -34,9 +35,11 @@ async Task Main()
 //    
 //    Util.RawHtml(html).Dump();
 
-    var trail = await repository.GetBreadcrumbTrail(new Guid("9883784f-716f-4171-a5a3-659f111eee4b"));
-    
-    trail.Dump();
+    //var trail = await repository.GetBreadcrumbTrail(new Guid("9883784f-716f-4171-a5a3-659f111eee4b"));
+    //
+    //trail.Dump();
+    //
+    new PasswordHasher<User>().HashPassword(new User(new Guid("e5754cce-838b-4446-ada8-2d5a6e057555"), "me@markb.co.uk", "test123"), "test123").Dump();
 }
 
 public class TestOptionsMonitor : IOptionsMonitor<Settings> 

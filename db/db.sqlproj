@@ -170,6 +170,7 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="Tables\Users.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Publish\db.publish.xml" />

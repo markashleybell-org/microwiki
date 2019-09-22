@@ -45,12 +45,13 @@ namespace MicroWiki
                     // options.AccessDeniedPath = "????";
                 });
 
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDateTimeService, DateTimeService>();
+
             services.AddScoped<IRepository, SqlServerRepository>(sp => {
                 var ctxAccessor = sp.GetRequiredService<IHttpContextAccessor>();
                 var optionsMonitor = sp.GetRequiredService<IOptionsMonitor<Settings>>();
-
-                // TODO: Tidy this up!!
-                var userName = "markb"; // ctxAccessor.HttpContext.User.Identity.Name;
+                var userName = ctxAccessor.HttpContext.User.Identity.Name;
                 return new SqlServerRepository(optionsMonitor, userName);
             });
 
@@ -80,6 +81,12 @@ namespace MicroWiki
                     name: "default",
                     template: "wiki/{action}/{id?}",
                     defaults: new { controller = "Wiki", action = "Index" }
+                );
+
+                routes.MapRoute(
+                    name: "users",
+                    template: "users/{action}/{id?}",
+                    defaults: new { controller = "Users", action = "Index" }
                 );
 
                 routes.MapRoute(

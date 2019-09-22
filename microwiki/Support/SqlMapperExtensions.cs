@@ -8,6 +8,9 @@ namespace MicroWiki.Support
 {
     public static class SqlMapperExtensions
     {
+        public static Task<T> QuerySingle<T>(this SqlConnection conn, string sql, object param) =>
+            conn.QuerySingleAsync<T>(sql, param);
+
         public static Task<IEnumerable<T>> QuerySp<T>(this SqlConnection conn, string sql, object param) =>
             conn.QueryAsync<T>(sql, param, commandType: CommandType.StoredProcedure);
 

@@ -34,15 +34,14 @@ namespace MicroWiki.Models
                 Slug = document.Slug
             };
 
-        public static Document ToDocument(UpdateViewModel model, string username) =>
+        public static Document ToDocument(UpdateViewModel model) =>
             new Document(
                 model.ID,
                 model.ParentID,
                 model.Title,
                 model.Body,
                 CreateSlug(model.Slug),
-                model.IsTableOfContents,
-                username
+                model.IsTableOfContents
             );
     }
 }
