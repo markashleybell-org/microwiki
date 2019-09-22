@@ -25,7 +25,7 @@ namespace MicroWiki.Controllers
         }
 
         public override PartialViewResult PartialView(string name, object model) =>
-            PartialView($"_{name}", model);
+            base.PartialView($"_{name}", model);
 
         public async Task<IActionResult> BreadcrumbTrail(Guid id)
         {

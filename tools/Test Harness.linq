@@ -34,7 +34,9 @@ async Task Main()
 //    
 //    Util.RawHtml(html).Dump();
 
-    repository.GetBreadcrumbTrail();
+    var trail = await repository.GetBreadcrumbTrail(new Guid("9883784f-716f-4171-a5a3-659f111eee4b"));
+    
+    trail.Dump();
 }
 
 public class TestOptionsMonitor : IOptionsMonitor<Settings> 
