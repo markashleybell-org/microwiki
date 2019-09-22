@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace MicroWiki.Models
 {
-    public class SiteMapTreeViewViewModel
+    public class MoveDocumentModalViewModel
     {
         public Guid ID { get; set; }
+
+        public string Title { get; set; }
 
         public SiteMapDocumentViewModel Root { get; set; }
     }

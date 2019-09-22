@@ -1,0 +1,12 @@
+﻿@model ContentsViewModel
+
+@section title {
+    <title>Contents</title>
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>Contents</h1>
+        @GetSiteMapTreeHtml(Model.Root)
+    </div>
+</div>

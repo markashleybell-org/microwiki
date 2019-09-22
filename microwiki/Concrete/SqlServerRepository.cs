@@ -44,14 +44,14 @@ namespace MicroWiki.Concrete
 
         public async Task<Document> ReadDocument(string location) =>
             await WithConnection(async conn => {
-                var document = await conn.QuerySingleSp<Document>(
+                var document = await conn.QuerySingleOrDefaultSp<Document>(
                     sql: "ReadDocument",
                     param: new { Location = "/" + location }
                 );
 
                 if (document == null)
                 {
-                    return null;
+                    return default;
                 }
 
                 var children = await conn.QuerySp<ChildDocument>(

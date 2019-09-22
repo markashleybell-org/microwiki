@@ -1,5 +1,9 @@
 ﻿@model ReadViewModel
 
+@{ 
+    var buttonClasses = "btn btn-default btn-block btn-xs";
+}
+
 @section title {
     <title>@Model.Title</title>
 }
@@ -7,7 +11,7 @@
 <div class="row">
     <div class="col-sm-9">
         <h1>@Model.Title</h1>
-        
+
         @Html.Raw(Model.Body)
 
         @if (Model.IsTableOfContents && Model.Children.Count() > 0)
@@ -23,14 +27,16 @@
     </div>
     <div class="col-sm-3">
         <h1>Actions</h1>
-        <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = "btn btn-default btn-block btn-xs" })</p>
+        <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = buttonClasses })</p>
 
         @if (!Model.IsRootDocument)
         {
-            <p><a href="#document-move-modal" data-toggle="modal" data-target="#document-move-modal" class="btn btn-default btn-block btn-xs">Move This Page</a></p>
+            <p>
+                <a id="move-document-button" href="#move-document-modal" data-id="@Model.ID" data-title="@Model.Title" class="@buttonClasses">Move This Page</a>
+            </p>
         }
 
-        <p>@Html.ActionLink("Add A New Child Page", "Create", new { parentID = Model.ID }, new { @class = "btn btn-default btn-block btn-xs" })</p>
+        <p>@Html.ActionLink("Add A New Child Page", "Create", new { parentID = Model.ID }, new { @class = buttonClasses })</p>
 
         @if (!Model.IsRootDocument)
         {
@@ -56,22 +62,4 @@
     </div>
 </div>
 
-@*
-<!-- Move Page Modal -->
-<div class="modal" id="document-move-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title" id="myModalLabel">Move Page</h2>
-            </div>
-            <div class="modal-body">
-                <p>Click on the page you want to move '<strong>@Model.Title</strong>' to:</p>
-                @{ Html.RenderAction("WikiTreeView", "Wiki", new { id = Model.ID }); }
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>*@
+<div class="modal" id="move-document-modal" tabindex="-1" role="dialog"></div>

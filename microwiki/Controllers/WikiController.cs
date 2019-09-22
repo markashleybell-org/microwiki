@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MicroWiki.Abstract;
+using MicroWiki.Functions;
 using MicroWiki.Models;
 using static MicroWiki.Functions.Functions;
 
@@ -87,20 +89,41 @@ namespace MicroWiki.Controllers
             return Redirect("/");
         }
 
-        [HttpPost]
-        public ActionResult Move(Guid id, Guid newParentID)
+        public async Task<IActionResult> Contents()
         {
-            var newLocation = _repository.MoveDocument(id, newParentID);
+            var model = new ContentsViewModel {
+                Root = await GetSiteMap()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Move(Guid id, Guid newParentID)
+        {
+            var newLocation = await _repository.MoveDocument(id, newParentID);
 
             return Json(new { newLocation });
         }
 
-        /*
-        public ActionResult SiteMapTreeView(Guid selected)
+        public async Task<IActionResult> MoveDocumentModal(Guid currentDocumentId, string currentDocumentTitle)
         {
-            var allDocuments = _repository.ReadAllDocuments();
+            var model = new MoveDocumentModalViewModel {
+                ID = currentDocumentId,
+                Title = currentDocumentTitle,
+                Root = await GetSiteMap()
+            };
 
+            return PartialView($"_{nameof(MoveDocumentModal)}", model);
         }
-        */
+
+        private async Task<SiteMapDocumentViewModel> GetSiteMap()
+        {
+            var documents = await _repository.ReadAllDocuments();
+
+            var root = documents.Single(d => !d.ParentID.HasValue);
+
+            return root.AsTree(documents);
+        }
     }
 }

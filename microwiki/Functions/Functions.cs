@@ -79,36 +79,26 @@ namespace MicroWiki.Functions
             return SiteMapDocumentViewModel.From(document).WithChildren(children);
         }
 
-        public static HtmlString GetTreeHtml(SiteMapDocumentViewModel document, Guid id)
+        public static HtmlString GetSiteMapTreeHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null)
         {
-            var output = new List<HtmlString> {
-                new HtmlString("<li><span class=\"glyphicon glyphicon-file\"></span> ")
-            };
+            // If an ID has been passed in, don't link the item for that document
+            var itemContent = currentDocumentId != document.ID
+                ? $"<a class=\"document\" href=\"{document.Location}\" data-id=\"{document.ID}\">{document.Title}</a>"
+                : document.Title;
 
-            if (id != document.ID)
-            {
-                output.Add(new HtmlString("<a class=\"document\" href=\"" + document.Location + "\" data-moveid=\"" + id + "\" data-documentid=\"" + document.ID + "\">" + document.Title + "</a>"));
-            }
-            else
-            {
-                output.Add(new HtmlString(document.Title));
-            }
+            var childPageLinks = document.Children.Select(c => GetSiteMapTreeHtml(c, currentDocumentId));
 
-            if (document.Children.Any())
-            {
-                output.Add(new HtmlString("<ul>"));
+            var html = $@"
+<ul>
+    <li>
+        <span class=""glyphicon glyphicon-file""></span> 
+        {itemContent}
+        {string.Join(string.Empty, childPageLinks)}
+    </li>
+</ul>
+";
 
-                foreach (var child in document.Children)
-                {
-                    output.Add(GetTreeHtml(child, id));
-                }
-
-                output.Add(new HtmlString("</ul>"));
-            }
-
-            output.Add(new HtmlString("</li>"));
-
-            return new HtmlString(string.Join(string.Empty, output));
+            return new HtmlString(html);
         }
 
         public static string AddCodeHintClasses(string content)
