@@ -22,5 +22,7 @@ namespace MicroWiki.Abstract
         Task DeleteDocument(Guid id);
 
         Task<string> MoveDocument(Guid id, Guid newParentId);
+
+        Task<IEnumerable<SiteMapDocument>> CheckFileUse(string location);
     }
 }

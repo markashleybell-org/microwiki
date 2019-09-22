@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
@@ -11,6 +12,9 @@ namespace MicroWiki.Functions
 {
     public static class Functions
     {
+        public static bool IsImageFile(this string filePath) =>
+            Regex.IsMatch(Path.GetExtension(filePath), @"\.(?:jpe?g|png|gif)", RegexOptions.IgnoreCase);
+
         public static string GetUniqueCode()
         {
             var characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

@@ -1,0 +1,20 @@
+﻿@model DeleteUploadViewModel
+
+@section title {
+    <title>Delete Upload - File In Use</title>
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1>File In Use</h1>
+        <h2><strong>@Model.Location</strong></h2>
+        <p>You cannot delete this upload, as it is currently linked to the following pages:</p>
+        <ul>
+            @foreach (var document in Model.InUseByDocuments)
+            {
+            <li><a href="@(document.Location)" target="_blank">@(document.Title)</a></li>
+            }
+        </ul>
+        <p>Please remove any links to this upload before continuing.</p>
+    </div>
+</div>

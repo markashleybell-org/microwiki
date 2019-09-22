@@ -134,6 +134,14 @@ namespace MicroWiki.Concrete
                 );
             });
 
+        public async Task<IEnumerable<SiteMapDocument>> CheckFileUse(string location) =>
+            await WithConnection(async conn => {
+                return await conn.QuerySp<SiteMapDocument>(
+                    sql: "CheckFileUse",
+                    param: new { Location = location }
+                );
+            });
+
         private async Task WithConnection(Func<SqlConnection, Task> action)
         {
             using (var connection = new SqlConnection(_cfg.ConnectionString))

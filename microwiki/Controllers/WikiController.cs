@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MicroWiki.Abstract;
 using MicroWiki.Functions;
 using MicroWiki.Models;
+using static MicroWiki.Domain.Constants;
 using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Controllers
@@ -15,13 +16,16 @@ namespace MicroWiki.Controllers
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRepository _repository;
+        private readonly IFileManager _fileManager;
 
         public WikiController(
             IHttpContextAccessor httpContextAccessor,
-            IRepository repository)
+            IRepository repository,
+            IFileManager fileManager)
         {
             _repository = repository;
             _httpContextAccessor = httpContextAccessor;
+            _fileManager = fileManager;
         }
 
         public override PartialViewResult PartialView(string name, object model) =>
@@ -102,6 +106,7 @@ namespace MicroWiki.Controllers
                 return View(model);
             }
 
+            // TODO: Fix users
             var update = UpdateViewModel.ToDocument(model, "markb");
 
             var document = await _repository.UpdateDocument(update);
@@ -114,7 +119,7 @@ namespace MicroWiki.Controllers
         {
             await _repository.DeleteDocument(id);
 
-            return Redirect("/");
+            return Redirect(SiteRootUrl);
         }
 
         public async Task<IActionResult> Contents()
@@ -143,6 +148,48 @@ namespace MicroWiki.Controllers
             };
 
             return PartialView(nameof(MoveDocumentModal), model);
+        }
+
+        public IActionResult Upload(string uploadedFileName)
+        {
+            var model = new UploadViewModel {
+                UploadedFileName = uploadedFileName,
+                Files = _fileManager.GetFiles()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(UploadViewModel model)
+        {
+            var file = model.UploadedFile;
+
+            if (file == null)
+            {
+                return RedirectToAction(nameof(Upload));
+            }
+
+            var uploadedFilePath = await _fileManager.UploadFile(file);
+
+            return RedirectToAction(nameof(Upload), new { UploadedFileName = uploadedFilePath });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUpload(DeleteUploadViewModel model)
+        {
+            var usedInLocations = await _repository.CheckFileUse(model.Location);
+
+            if (usedInLocations.Any())
+            {
+                model.InUseByDocuments = usedInLocations;
+
+                return View(model);
+            }
+
+            _fileManager.DeleteFile(model.Location);
+
+            return RedirectToAction(nameof(Upload));
         }
 
         private async Task<SiteMapDocumentViewModel> GetSiteMap()

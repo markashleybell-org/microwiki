@@ -54,6 +54,8 @@ namespace MicroWiki
                 return new SqlServerRepository(optionsMonitor, userName);
             });
 
+            services.AddScoped<IFileManager, LocalFileManager>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
