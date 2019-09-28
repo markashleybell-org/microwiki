@@ -18,6 +18,7 @@ BEGIN
             Slug,
             Location,
             TOC,
+            Tags,
             Username,
             Created, 
             Updated
@@ -36,6 +37,7 @@ BEGIN
             Slug,
             Location,
             TOC,
+            Tags,
             Username,
             Created, 
             Updated

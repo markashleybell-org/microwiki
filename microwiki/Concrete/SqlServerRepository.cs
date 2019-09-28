@@ -7,6 +7,9 @@ using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
 using MicroWiki.Domain;
 using MicroWiki.Support;
+using Dapper;
+using System.Data;
+using Microsoft.SqlServer.Server;
 
 namespace MicroWiki.Concrete
 {
@@ -91,6 +94,8 @@ namespace MicroWiki.Concrete
 
         public async Task<Document> UpdateDocument(Document document) =>
             await WithConnection(async conn => {
+                var tags = new TagList(document.Tags);
+
                 var param = new {
                     document.ID,
                     document.ParentID,
@@ -98,6 +103,7 @@ namespace MicroWiki.Concrete
                     document.Body,
                     document.Slug,
                     document.TOC,
+                    Tags = tags.AsTableValuedParameter("dbo.TagList"),
                     Username = _username
                 };
 
@@ -163,6 +169,24 @@ namespace MicroWiki.Concrete
             using (var connection = new SqlConnection(_cfg.ConnectionString))
             {
                 return await action(connection);
+            }
+        }
+
+        private class TagList : List<Tag>, IEnumerable<SqlDataRecord>
+        {
+            public TagList(IEnumerable<Tag> tags) => 
+                AddRange(tags);
+
+            IEnumerator<SqlDataRecord> IEnumerable<SqlDataRecord>.GetEnumerator()
+            {
+                var record = new SqlDataRecord(new SqlMetaData("Label", SqlDbType.NVarChar, maxLength: 64));
+
+                foreach (var tag in this)
+                {
+                    record.SetString(0, tag.Label);
+
+                    yield return record;
+                }
             }
         }
     }

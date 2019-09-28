@@ -7,6 +7,7 @@
     [Location] NVARCHAR (256) NULL,
     [Username] NVARCHAR (128) NOT NULL,
     [TOC]      BIT            CONSTRAINT [DF_Documents_TOC] DEFAULT ((0)) NOT NULL,
+    [Tags]     NVARCHAR(1024) NULL,
     [Created]  DATETIME       CONSTRAINT [DF_Documents_Created] DEFAULT (getdate()) NOT NULL,
     [Updated]  DATETIME       CONSTRAINT [DF_Documents_Updated] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED ([ID] ASC),

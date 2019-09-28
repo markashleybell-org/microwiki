@@ -7,7 +7,8 @@ CREATE PROCEDURE [dbo].[UpdateDocument]
     @Body NVARCHAR(max),
     @Slug NVARCHAR(256),
     @Username NVARCHAR(128),
-    @TOC BIT
+    @TOC BIT,
+    @Tags [dbo].[TagList] READONLY
 )
 AS
 BEGIN 
@@ -31,6 +32,8 @@ BEGIN
 	    Updated = GETDATE()
     WHERE 
         ID = @ID
-            
+
     EXEC UpdateDocumentLocations
+
+    EXEC UpdateTags @ID, @Tags
 END	

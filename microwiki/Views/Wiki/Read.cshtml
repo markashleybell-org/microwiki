@@ -16,6 +16,13 @@
     <div class="col-sm-9">
         <h1>@Model.Title</h1>
 
+        <p>
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="tag">@tag.Label</span>
+            }
+        </p>
+
         @Html.Raw(Model.Body)
 
         @if (Model.IsTableOfContents && Model.Children.Count() > 0)

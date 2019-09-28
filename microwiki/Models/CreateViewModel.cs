@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using MicroWiki.Domain;
 using static MicroWiki.Functions.Functions;
 
@@ -14,6 +15,8 @@ namespace MicroWiki.Models
 
         [Required]
         public string Title { get; set; }
+
+        public string Tags { get; set; }
 
         public string Body { get; set; }
 
@@ -34,7 +37,10 @@ namespace MicroWiki.Models
                 model.Title,
                 model.Body,
                 CreateSlug(model.Title),
-                model.IsTableOfContents
+                model.IsTableOfContents,
+                model.Tags
+                    .Split('|', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(t => new Tag(t))
             );
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Domain
 {
@@ -12,7 +13,8 @@ namespace MicroWiki.Domain
             string title,
             string body,
             string slug,
-            bool toc)
+            bool toc,
+            IEnumerable<Tag> tags)
             : this(
                   id,
                   parentID,
@@ -21,6 +23,7 @@ namespace MicroWiki.Domain
                   slug,
                   default,
                   toc,
+                  tags,
                   default,
                   default,
                   default)
@@ -35,6 +38,7 @@ namespace MicroWiki.Domain
             string slug,
             string location,
             bool toc,
+            string tags,
             string username,
             DateTime created,
             DateTime updated)
@@ -46,6 +50,35 @@ namespace MicroWiki.Domain
                   slug,
                   location,
                   toc,
+                  TagList(tags),
+                  username,
+                  created,
+                  updated,
+                  null)
+        {
+        }
+
+        public Document(
+            Guid id,
+            Guid? parentID,
+            string title,
+            string body,
+            string slug,
+            string location,
+            bool toc,
+            IEnumerable<Tag> tags,
+            string username,
+            DateTime created,
+            DateTime updated)
+            : this(
+                  id,
+                  parentID,
+                  title,
+                  body,
+                  slug,
+                  location,
+                  toc,
+                  tags,
                   username,
                   created,
                   updated,
@@ -61,6 +94,7 @@ namespace MicroWiki.Domain
             string slug,
             string location,
             bool toc,
+            IEnumerable<Tag> tags,
             string username,
             DateTime created,
             DateTime updated,
@@ -73,6 +107,7 @@ namespace MicroWiki.Domain
             Slug = slug;
             Location = location;
             TOC = toc;
+            Tags = tags ?? Enumerable.Empty<Tag>();
             Username = username;
             Created = created;
             Updated = updated;
@@ -93,6 +128,8 @@ namespace MicroWiki.Domain
 
         public bool TOC { get; }
 
+        public IEnumerable<Tag> Tags { get; }
+
         public string Username { get; }
 
         public DateTime Created { get; }
@@ -110,6 +147,7 @@ namespace MicroWiki.Domain
                 Slug,
                 Location,
                 TOC,
+                Tags,
                 Username,
                 Created,
                 Updated,

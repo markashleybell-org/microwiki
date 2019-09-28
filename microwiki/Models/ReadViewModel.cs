@@ -22,6 +22,8 @@ namespace MicroWiki.Models
 
         public bool IsTableOfContents { get; set; }
 
+        public IEnumerable<Tag> Tags { get; set; }
+
         public string Username { get; set; }
 
         public DateTime Created { get; set; }
@@ -42,6 +44,7 @@ namespace MicroWiki.Models
                 Body = CommonMarkConverter.Convert(document.Body),
                 BodyRaw = document.Body,
                 IsTableOfContents = document.TOC,
+                Tags = document.Tags,
                 Created = document.Created,
                 Updated = document.Updated,
                 Children = document.Children.Select(c => new ChildDocumentViewModel {

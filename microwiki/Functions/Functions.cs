@@ -105,6 +105,11 @@ namespace MicroWiki.Functions
             return new HtmlString(html);
         }
 
+        public static IEnumerable<Tag> TagList(string tags) =>
+            !string.IsNullOrWhiteSpace(tags)
+                ? tags.Split('|').Select(t => new Tag(t))
+                : Enumerable.Empty<Tag>();
+
         public static string AddCodeHintClasses(string content)
         {
             var html = new HtmlDocument();
