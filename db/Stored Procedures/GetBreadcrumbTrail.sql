@@ -15,31 +15,74 @@ BEGIN
         Location NVARCHAR(256) NULL
 	)
 
-	INSERT INTO @Documents 
-		(ID, ParentID, Title, Location, Idx)
+	INSERT INTO 
+        @Documents (
+            ID,
+            ParentID,
+            Title,
+            Location,
+            Idx
+        )
 	SELECT 
-		ID, ParentID, Title, Location, 0
+		ID,
+        ParentID,
+        Title,
+        Location, 
+        0
 	FROM 
-		Documents WHERE ID = @ID
+		Documents 
+    WHERE 
+        ID = @ID
 
 	DECLARE @CurrentID UNIQUEIDENTIFIER
 	DECLARE @ParentID UNIQUEIDENTIFIER
 	DECLARE @Idx int = 1
 	
-	SELECT @ParentID = ParentID, @CurrentID = ID FROM @Documents WHERE ID = @ID
+	SELECT 
+        @ParentID = ParentID,
+        @CurrentID = ID
+    FROM 
+        @Documents 
+    WHERE 
+        ID = @ID
 
 	WHILE (@ParentID IS NOT NULL AND @ParentID != @CurrentID)
 	BEGIN
-		INSERT INTO @Documents 
-			(ID, ParentID, Title, Location, Idx)
+		INSERT INTO 
+            @Documents (
+                ID, 
+                ParentID, 
+                Title, 
+                Location, 
+                Idx
+            )
 		SELECT 
-			ID, ParentID, Title, Location, @Idx
+			ID,
+            ParentID,
+            Title,
+            Location,
+            @Idx
 		FROM 
-			Documents WHERE ID = @ParentID
+			Documents 
+        WHERE 
+            ID = @ParentID
 
-		SELECT @ParentID = ParentID, @CurrentID = ID FROM @Documents WHERE ID = @ParentID
+		SELECT 
+            @ParentID = ParentID, 
+            @CurrentID = ID 
+        FROM 
+            @Documents 
+        WHERE 
+            ID = @ParentID
+
 		SET @Idx = @Idx + 1
 	END
 
-    SELECT Title, Location FROM @Documents ORDER BY Idx DESC
+    SELECT 
+        Title, 
+        Location 
+    FROM 
+        @Documents 
+    ORDER BY 
+        Idx DESC
 END	

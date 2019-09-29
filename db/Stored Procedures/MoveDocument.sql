@@ -9,7 +9,9 @@ AS
 BEGIN 
 	SET NOCOUNT ON
 	
-	UPDATE Documents SET 
+	UPDATE 
+        Documents 
+    SET 
 	    ParentID = @ParentID, 
 	    Username = @Username,
 	    Updated = GETDATE()

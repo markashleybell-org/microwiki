@@ -22,7 +22,9 @@ BEGIN
 	    SET @Slug = @Slug + '-' + @RandomSlug
 	END
 	
-	UPDATE Documents SET 
+	UPDATE 
+        Documents 
+    SET 
 	    ParentID = @ParentID, 
 	    Title = @Title, 
 	    Body = @Body, 

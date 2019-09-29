@@ -10,16 +10,34 @@ BEGIN
 
     -- Use a recursive CTE to get all ancestors of the deleted page
     ;WITH Tree AS (
-        SELECT *
-        FROM Documents dp
-        WHERE dp.ID = @ID
+        SELECT 
+            *
+        FROM 
+            Documents dp
+        WHERE 
+            dp.ID = @ID
         UNION ALL
-        SELECT dc.*
-        FROM Documents dc
-        JOIN Tree ON dc.ParentID = Tree.ID
+        SELECT 
+            dc.*
+        FROM 
+            Documents dc
+        JOIN 
+            Tree ON dc.ParentID = Tree.ID
     )
-	INSERT INTO DeletedDocuments 
-	    (ID, ParentID, Title, Body, Slug, Location, Username, TOC, Created, Updated, Deleted)
+	INSERT INTO 
+        DeletedDocuments (
+            ID,
+            ParentID,
+            Title,
+            Body,
+            Slug,
+            Location,
+            Username,
+            TOC,
+            Created,
+            Updated,
+            Deleted
+        )
     SELECT
         ID,
         ParentID,
@@ -36,13 +54,19 @@ BEGIN
         Tree
     
 	;WITH Tree AS (
-        SELECT *
-        FROM Documents dp
-        WHERE dp.ID = @ID
+        SELECT 
+            *
+        FROM 
+            Documents dp
+        WHERE 
+            dp.ID = @ID
         UNION ALL
-        SELECT dc.*
-        FROM Documents dc
-        JOIN Tree ON dc.ParentID = Tree.ID
+        SELECT 
+            dc.*
+        FROM 
+            Documents dc
+        JOIN 
+            Tree ON dc.ParentID = Tree.ID
     )
     DELETE 
         Documents

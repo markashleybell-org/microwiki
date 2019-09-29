@@ -36,6 +36,8 @@ namespace MicroWiki.Concrete
 
         public async Task<Document> CreateDocument(Document document) =>
             await WithConnection(async conn => {
+                var tags = new TagList(document.Tags);
+
                 var param = new {
                     document.ID,
                     document.ParentID,
@@ -43,6 +45,7 @@ namespace MicroWiki.Concrete
                     document.Body,
                     document.Slug,
                     document.TOC,
+                    Tags = tags.AsTableValuedParameter("dbo.TagList"),
                     Username = _username
                 };
 
