@@ -12,6 +12,7 @@
 
     <ItemGroup>
         <Content Remove="package-lock.json" />
+        <Content Remove="wwwroot\js\highlight.js.d.ts" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,6 +27,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <TypeScriptCompile Include="wwwroot\js\types\highlight.js.d.ts" />
     </ItemGroup>
 
 </Project>
