@@ -33,14 +33,10 @@
                     <small class="form-text text-muted">If blank, this will be regenerated automatically from the title.</small>
                 </div>
             }
-        
+
             <div class="form-group">
-                <label asp-for="Body">Body Text</label>
+                <label asp-for="Body">Body Text</label> <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Extra large modal</button>
                 <textarea asp-for="Body" class="form-control" rows="10"></textarea>
-            </div>
-
-            <div class="body-preview">
-
             </div>
 
             <div class="checkbox">
@@ -63,3 +59,4 @@
         <p><a asp-controller="Wiki" asp-action="Upload" target="_blank" class="btn btn-secondary btn-block">Upload File</a></p>
     </div>
 </div>
+

@@ -1,5 +1,6 @@
 import marked from 'marked';
 
+// TODO: Split out editor from main script
 import hljs from 'highlight.js/lib/highlight';
 
 import cs from 'highlight.js/lib/languages/cs';
@@ -68,53 +69,31 @@ hljs.registerLanguage('xml', xml);
 const supportedLanguages: string[] = hljs.listLanguages();
 
 marked.setOptions({
-    highlight: function (code, lang, callback) {
-        const langInvalid = !lang || supportedLanguages.indexOf(lang) === -1;
-
-        console.log(langInvalid);
-
-        return code;
-
-        //if (langValid) {
-        //    return hljs.highlight(lang, code).value;
-        //} else {
-        //    return code;
-        //}
-    },
+    highlight: null,
     gfm: false,
-    langPrefix: 'hljs language-'
+    langPrefix: 'language-'
 });
 
-
-
-const body = $('#Body');
-const preview = $('.body-preview');
-
-function updatePreview() {
-    const val = body.val() as string;
-    preview.html(marked(val));
+function highlightElement(i: number, el: HTMLElement) {
+    $(el).addClass('hljs');
+    el.innerHTML = hljs.highlightAuto(el.innerText, supportedLanguages).value;
 }
 
-console.log(supportedLanguages);
+function updatePreview() {
+    const val = bodyEditor.val() as string;
+    preview.html(marked(val));
+    preview.find('pre code').each(highlightElement);
+}
 
-if (body.length) {
-    updatePreview();
+const bodyEditor = $('#Body-Editor');
+const preview = $('.body-preview');
 
-    body.on('change keyup keypress keydown', e => {
+if (bodyEditor.length) {
+    // updatePreview();
+
+    bodyEditor.on('change keyup keypress keydown', e => {
         updatePreview();
     });
 } else {
-    $('pre code').each((i, el) => {
-        const langClass = Array
-            .from(el.classList)
-            .filter(cls => cls.indexOf('language-') === 0);
-
-        const lang = langClass.length ? langClass[0].split('-')[1] : null;
-
-        console.log(lang);
-
-        if (supportedLanguages.indexOf(lang) > -1) {
-            hljs.highlightBlock(el);
-        }
-    });
+    $('pre code').each(highlightElement);
 }
