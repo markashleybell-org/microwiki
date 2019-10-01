@@ -62,6 +62,8 @@ img {
     bottom: 60px;
     width: 100%;
     overflow: auto;
+    padding: 10px;
+    display: flex;
 }
 
 .modal.fullscreen .modal-footer {
@@ -73,21 +75,23 @@ img {
     padding: 10px;
 }
 
-.body-editor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
+textarea[name=Body] {
+    font-family: Courier New, Courier, monospace;
+}
+
+.body-editor, .body-preview {
     width: 50%;
 }
 
+.body-editor {
+    margin-right: 10px;
+    font-family: Courier New, Courier, monospace;
+}
+
 .body-preview {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 50%;
+    margin-left: 10px;
     overflow-y: scroll;
+    padding-right: 20px;
 }
 
 .body-editor-open-container {

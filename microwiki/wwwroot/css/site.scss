@@ -20,6 +20,8 @@ img {
     border: solid 1px #efefef;
 }
 
+$editor-modal-gutter: 10px;
+
 .modal.fullscreen {
     position: fixed;
     top: 0;
@@ -51,7 +53,7 @@ img {
         right: 0;
         left: 0;
         height: 50px;
-        padding: 10px;
+        padding: $editor-modal-gutter;
         border: 0;
     }
 
@@ -61,6 +63,8 @@ img {
         bottom: 60px;
         width: 100%;
         overflow: auto;
+        padding: $editor-modal-gutter;
+        display: flex;
     }
 
     .modal-footer {
@@ -69,25 +73,27 @@ img {
         bottom: 0;
         left: 0;
         height: 60px;
-        padding: 10px;
+        padding: $editor-modal-gutter;
     }
 }
 
-.body-editor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
+textarea[name=Body] {
+    font-family: Courier New, Courier, monospace;
+}
+
+.body-editor, .body-preview {
     width: 50%;
 }
 
+.body-editor {
+    margin-right: $editor-modal-gutter;
+    font-family: Courier New, Courier, monospace;
+}
+
 .body-preview {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 50%;
+    margin-left: $editor-modal-gutter;
     overflow-y: scroll;
+    padding-right: $editor-modal-gutter * 2;
 }
 
 .body-editor-open-container {
