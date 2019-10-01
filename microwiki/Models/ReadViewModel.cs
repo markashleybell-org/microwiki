@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommonMark;
+using Markdig;
 using MicroWiki.Domain;
+using static MicroWiki.Domain.Constants;
 
 namespace MicroWiki.Models
 {
@@ -41,7 +42,9 @@ namespace MicroWiki.Models
                 Location = document.Location,
                 Username = document.Username,
                 Title = document.Title,
-                Body = CommonMarkConverter.Convert(document.Body),
+                Body = !string.IsNullOrWhiteSpace(document.Body) 
+                    ? Markdown.ToHtml(document.Body, MarkdownFeatures)
+                    : default,
                 BodyRaw = document.Body,
                 IsTableOfContents = document.TOC,
                 Tags = document.Tags,

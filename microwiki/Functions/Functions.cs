@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using HtmlAgilityPack;
 using Microsoft.AspNetCore.Html;
 using MicroWiki.Domain;
 using MicroWiki.Models;
@@ -109,72 +108,5 @@ namespace MicroWiki.Functions
             !string.IsNullOrWhiteSpace(tags)
                 ? tags.Split('|').Select(t => new Tag(t))
                 : Enumerable.Empty<Tag>();
-
-        public static string AddCodeHintClasses(string content)
-        {
-            var html = new HtmlDocument();
-            html.LoadHtml(content);
-
-            var codeHintComments = html.DocumentNode.SelectNodes("//comment()[contains(., 'language:')]");
-
-            if (codeHintComments != null)
-            {
-                foreach (var comment in codeHintComments)
-                {
-                    var sibling = comment.NextSibling;
-
-                    if (sibling.NodeType == HtmlNodeType.Element && sibling.Name == "pre")
-                    {
-                        var lang = ParseCodeHintComment(comment.InnerText);
-
-                        if (lang == "lang-none")
-                        {
-                            sibling.Attributes.Add("class", "lang-none");
-                        }
-                        else
-                        {
-                            sibling.Attributes.Add("class", "prettyprint " + lang);
-                        }
-                    }
-                    else
-                    {
-                        sibling = sibling.NextSibling;
-
-                        if (sibling.NodeType == HtmlNodeType.Element && sibling.Name == "pre")
-                        {
-                            var lang = ParseCodeHintComment(comment.InnerText);
-
-                            if (lang == "lang-none")
-                            {
-                                sibling.Attributes.Add("class", "lang-none");
-                            }
-                            else
-                            {
-                                sibling.Attributes.Add("class", "prettyprint " + lang);
-                            }
-                        }
-                    }
-                }
-            }
-
-            var remainingPreElements = html.DocumentNode.SelectNodes("//pre[not(@class)]");
-
-            if (remainingPreElements != null)
-            {
-                foreach (var pre in remainingPreElements)
-                {
-                    pre.Attributes.Add("class", "prettyprint");
-                }
-            }
-
-            return html.DocumentNode.InnerHtml.ToString();
-        }
-
-        private static string ParseCodeHintComment(string content)
-        {
-            var lang = content.Trim(new char[] { '<', '>', '-', '!', ' ' }).Split(':')[1].Trim();
-
-            return !lang.StartsWith("lang-") ? "lang-" + lang : lang;
-        }
     }
 }

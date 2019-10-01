@@ -70,7 +70,6 @@ const supportedLanguages: string[] = hljs.listLanguages();
 
 marked.setOptions({
     highlight: null,
-    gfm: false,
     langPrefix: 'language-'
 });
 

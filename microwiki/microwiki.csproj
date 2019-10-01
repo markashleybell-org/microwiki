@@ -6,7 +6,7 @@
         <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <LangVersion>latest</LangVersion>
-        <CodeAnalysisRuleSet>$(SolutionDir)\microwiki.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>..\microwiki.ruleset</CodeAnalysisRuleSet>
         <RootNamespace>MicroWiki</RootNamespace>
     </PropertyGroup>
 
@@ -16,17 +16,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-        <PackageReference Include="Dapper" Version="1.60.6" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
-        <PackageReference Include="MarkdownSharp" Version="2.0.5" />
+        <PackageReference Include="Dapper" Version="2.0.30" />
+        <PackageReference Include="Markdig" Version="0.17.1" />
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="1.0.19269.1" />
+        <PackageReference Include="Microsoft.DocAsCode.MarkdownLite" Version="2.45.1" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
     </ItemGroup>
 
     <ItemGroup>
