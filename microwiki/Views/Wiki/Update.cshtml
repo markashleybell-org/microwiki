@@ -35,8 +35,9 @@
             }
 
             <div class="form-group">
-                <label asp-for="Body">Body Text</label> <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">Extra large modal</button>
-                <textarea asp-for="Body" class="form-control" rows="10"></textarea>
+                <label asp-for="Body">Body Text </label> 
+                <textarea asp-for="Body" class="form-control" rows="5"></textarea>
+                <p class="body-editor-open-container"><button type="button" class="btn btn-info btn-sm body-editor-open">Open Fullscreen Editor</button></p>
             </div>
 
             <div class="checkbox">
@@ -60,3 +61,27 @@
     </div>
 </div>
 
+@section modals {
+
+    <div class="modal fullscreen fade body-editor-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="body-editor form-control" rows="10"></textarea>
+                    <div class="body-preview"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Abandon Changes</button>
+                    <button type="button" class="btn btn-success">Save Changes and Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

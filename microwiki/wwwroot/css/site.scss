@@ -73,7 +73,7 @@ img {
     }
 }
 
-#Body-Editor {
+.body-editor {
     position: absolute;
     top: 0;
     left: 0;
@@ -88,4 +88,9 @@ img {
     bottom: 0;
     width: 50%;
     overflow-y: scroll;
+}
+
+.body-editor-open-container {
+    margin-top: 10px;
+    text-align: right;
 }

@@ -85,15 +85,27 @@ function updatePreview() {
     preview.find('pre code').each(highlightElement);
 }
 
-const bodyEditor = $('#Body-Editor');
+const bodyInput = $('[name=Body]');
+const bodyEditor = $('.body-editor');
 const preview = $('.body-preview');
 
 if (bodyEditor.length) {
-    // updatePreview();
-
     bodyEditor.on('change keyup keypress keydown', e => {
         updatePreview();
     });
 } else {
     $('pre code').each(highlightElement);
 }
+
+const bodyEditorModal = $('.body-editor-modal').modal({ show: false });
+
+bodyEditorModal.on('click', '.btn-success', e => {
+    bodyInput.val(bodyEditor.val());
+    bodyEditorModal.modal('hide');
+});
+
+$('.body-editor-open').on('click', e => {
+    bodyEditorModal.modal('show');
+    bodyEditor.val(bodyInput.val());
+    updatePreview();
+});
