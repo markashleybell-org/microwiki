@@ -75,8 +75,11 @@ marked.setOptions({
 });
 
 function highlightElement(i: number, el: HTMLElement) {
-    $(el).addClass('hljs');
-    el.innerHTML = hljs.highlightAuto(el.innerText, supportedLanguages).value;
+    const code = $(el);
+    code.addClass('hljs');
+    if (code.is('[class^=language]')) {
+        el.innerHTML = hljs.highlightAuto(el.innerText, supportedLanguages).value;
+    }
 }
 
 function updatePreview() {
