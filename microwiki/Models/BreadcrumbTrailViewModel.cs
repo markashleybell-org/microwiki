@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using MicroWiki.Domain;
 
 namespace MicroWiki.Models
@@ -6,7 +7,6 @@ namespace MicroWiki.Models
     public class BreadcrumbTrailViewModel
     {
         public IEnumerable<BreadcrumbTrailSegment> Segments { get; set; }
-
-        public string CurrentUrl { get; set; }
+            = Enumerable.Empty<BreadcrumbTrailSegment>();
     }
 }

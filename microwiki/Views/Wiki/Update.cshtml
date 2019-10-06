@@ -4,9 +4,13 @@
     <title>Update @Model.Title</title>
 }
 
+@{
+    await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailViewModel); 
+}
+
 <div class="row">
-    <div class="col-md-9">
-        <h1>Update @Model.Title</h1>
+    <div class="col-sm-9">
+        <h1>Update Page</h1>
         <form asp-controller="Wiki" asp-action="Update" method="post">
             <div class="form-group">
                 <label asp-for="Title">Page Title</label>
@@ -51,13 +55,12 @@
             <input asp-for="ParentID" type="hidden" />
 
             <div class="form-group form-group-submit">
-                <input type="submit" class="btn btn-primary" value="Save Page">
+                <button type="submit" class="@SaveButtonClasses"><i class="fa fa-floppy-o"></i> Save Page</button>
             </div>
         </form>
     </div>
-    <div class="col-md-3">
-        <h1>Actions</h1>
-        <p><a asp-controller="Wiki" asp-action="Upload" target="_blank" class="btn btn-secondary btn-block">Upload File</a></p>
+    <div class="col-sm-3 col-actions">
+        <p><a asp-controller="Wiki" asp-action="Upload" target="_blank" class="@ActionButtonClasses">Upload File</a></p>
     </div>
 </div>
 

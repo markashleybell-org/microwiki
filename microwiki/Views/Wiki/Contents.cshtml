@@ -4,8 +4,12 @@
     <title>Contents</title>
 }
 
+@{
+    await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailViewModel); 
+}
+
 <div class="row">
-    <div class="col-md-12">
+    <div class="col">
         <h1>Contents</h1>
         @GetSiteMapTreeHtml(Model.Root)
     </div>

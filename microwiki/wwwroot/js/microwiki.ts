@@ -111,3 +111,19 @@ $('.body-editor-open').on('click', e => {
     bodyEditor.val(bodyInput.val());
     updatePreview();
 });
+
+$('.delete-page').on('click', e => {
+    const result = prompt('Are you sure you want to delete this page and all of its ancestors?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+    return result === 'YES';
+});
+
+$('.delete-upload').on('click', e => {
+    const result = prompt('Are you sure you want to delete this file?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+    return result === 'YES';
+});
+
+$('.custom-file-input').on('change', e => {
+    const input = $(e.target);
+    const fileName = (input.val() as string).split('\\').pop();
+    input.siblings('.custom-file-label').addClass('selected').html(fileName);
+});

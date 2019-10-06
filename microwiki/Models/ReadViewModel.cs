@@ -7,8 +7,16 @@ using static MicroWiki.Domain.Constants;
 
 namespace MicroWiki.Models
 {
-    public class ReadViewModel
+    public class ReadViewModel : ViewModelBase
     {
+        private readonly BreadcrumbTrailViewModel _breadcrumbTrailViewModel;
+
+        public ReadViewModel() =>
+            _breadcrumbTrailViewModel = new BreadcrumbTrailViewModel();
+
+        public ReadViewModel(BreadcrumbTrailViewModel breadcrumbTrailViewModel) =>
+            _breadcrumbTrailViewModel = breadcrumbTrailViewModel;
+
         public Guid ID { get; set; }
 
         public string Title { get; set; }
@@ -33,16 +41,17 @@ namespace MicroWiki.Models
 
         public IEnumerable<ChildDocumentViewModel> Children { get; set; }
 
-        public BreadcrumbTrailViewModel BreadcrumbTrailViewModel { get; set; }
+        public override BreadcrumbTrailViewModel BreadcrumbTrailViewModel =>
+            _breadcrumbTrailViewModel;
 
         public static ReadViewModel From(Document document, BreadcrumbTrailViewModel breadcrumbTrailViewModel) =>
-            new ReadViewModel {
+            new ReadViewModel(breadcrumbTrailViewModel) {
                 ID = document.ID,
                 IsRootDocument = !document.ParentID.HasValue,
                 Location = document.Location,
                 Username = document.Username,
                 Title = document.Title,
-                Body = !string.IsNullOrWhiteSpace(document.Body) 
+                Body = !string.IsNullOrWhiteSpace(document.Body)
                     ? Markdown.ToHtml(document.Body, MarkdownFeatures)
                     : default,
                 BodyRaw = document.Body,
@@ -53,8 +62,7 @@ namespace MicroWiki.Models
                 Children = document.Children.Select(c => new ChildDocumentViewModel {
                     Location = c.Location,
                     Title = c.Title
-                }),
-                BreadcrumbTrailViewModel = breadcrumbTrailViewModel
+                })
             };
     }
 }

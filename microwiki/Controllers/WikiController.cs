@@ -36,8 +36,7 @@ namespace MicroWiki.Controllers
         public async Task<IActionResult> BreadcrumbTrail(Guid id)
         {
             var model = new BreadcrumbTrailViewModel {
-                Segments = await _repository.GetBreadcrumbTrail(id),
-                CurrentUrl = _httpContextAccessor.HttpContext.Request.GetDisplayUrl()
+                Segments = await _repository.GetBreadcrumbTrail(id)
             };
 
             return PartialView(nameof(BreadcrumbTrail), model);
@@ -83,8 +82,7 @@ namespace MicroWiki.Controllers
             }
 
             var breadcrumbTrailViewModel = new BreadcrumbTrailViewModel {
-                Segments = await _repository.GetBreadcrumbTrail(document.ID),
-                CurrentUrl = _httpContextAccessor.HttpContext.Request.GetDisplayUrl()
+                Segments = await _repository.GetBreadcrumbTrail(document.ID)
             };
 
             return View(ReadViewModel.From(document, breadcrumbTrailViewModel));

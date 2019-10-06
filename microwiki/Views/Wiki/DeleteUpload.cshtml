@@ -4,8 +4,12 @@
     <title>Delete Upload - File In Use</title>
 }
 
+@{
+    await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailViewModel); 
+}
+
 <div class="row">
-    <div class="col-12">
+    <div class="col">
         <h1>File In Use</h1>
         <h2><strong>@Model.Location</strong></h2>
         <p>You cannot delete this upload, as it is currently linked to the following pages:</p>

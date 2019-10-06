@@ -2,11 +2,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MicroWiki.Domain;
+using static MicroWiki.Domain.Constants;
 using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Models
 {
-    public class CreateViewModel
+    public class CreateViewModel : ViewModelBase
     {
         [Required]
         public Guid? ParentID { get; set; }
@@ -23,6 +24,14 @@ namespace MicroWiki.Models
         public string Slug { get; set; }
 
         public bool IsTableOfContents { get; set; }
+
+        public override BreadcrumbTrailViewModel BreadcrumbTrailViewModel =>
+            new BreadcrumbTrailViewModel {
+                Segments = new[] {
+                    new BreadcrumbTrailSegment("Home", SiteRootUrl),
+                    new BreadcrumbTrailSegment("Create")
+                }
+            };
 
         public static CreateViewModel From(Document parentDocument) =>
             new CreateViewModel {

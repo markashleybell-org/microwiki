@@ -24,6 +24,13 @@ BEGIN
         JOIN 
             Tree ON dc.ParentID = Tree.ID
     )
+    SELECT
+        *
+    INTO
+        #DocumentsToDelete
+    FROM
+        Tree
+
 	INSERT INTO 
         DeletedDocuments (
             ID,
@@ -34,6 +41,7 @@ BEGIN
             Location,
             Username,
             TOC,
+            Tags,
             Created,
             Updated,
             Deleted
@@ -47,31 +55,24 @@ BEGIN
         Location,
         @Username,
         TOC,
+        Tags,
         Created,
         Updated,
         GETDATE()
     FROM
-        Tree
-    
-	;WITH Tree AS (
-        SELECT 
-            *
-        FROM 
-            Documents dp
-        WHERE 
-            dp.ID = @ID
-        UNION ALL
-        SELECT 
-            dc.*
-        FROM 
-            Documents dc
-        JOIN 
-            Tree ON dc.ParentID = Tree.ID
-    )
+        #DocumentsToDelete
+
     DELETE 
-        Documents
+        t
     FROM 
-        Tree
-    WHERE 
-        Documents.ID = Tree.ID
+        Tags_Documents t
+    INNER JOIN
+        #DocumentsToDelete del ON del.ID = t.DocumentID
+
+    DELETE 
+        d
+    FROM 
+        Documents d
+    INNER JOIN
+        #DocumentsToDelete del ON del.ID = d.ID
 END	

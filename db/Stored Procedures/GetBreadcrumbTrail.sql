@@ -26,8 +26,8 @@ BEGIN
 	SELECT 
 		ID,
         ParentID,
-        Title,
-        Location, 
+        CASE WHEN ParentID IS NULL THEN 'Home' ELSE Title END,
+        CASE WHEN ID = @ID THEN NULL ELSE Location END,
         0
 	FROM 
 		Documents 
@@ -59,8 +59,8 @@ BEGIN
 		SELECT 
 			ID,
             ParentID,
-            Title,
-            Location,
+            CASE WHEN ParentID IS NULL THEN 'Home' ELSE Title END,
+            CASE WHEN ID = @ID THEN NULL ELSE Location END,
             @Idx
 		FROM 
 			Documents 
