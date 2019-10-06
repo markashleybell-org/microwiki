@@ -6,6 +6,8 @@ namespace MicroWiki.Domain
     {
         public const string SiteRootUrl = "/";
 
+        public const string SiteRootLabel = "Home";
+
         public const string ButtonBaseClasses = "btn btn-sm btn-block";
 
         public const string ActionButtonClasses = ButtonBaseClasses + " btn-info";

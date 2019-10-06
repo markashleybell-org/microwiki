@@ -11,10 +11,12 @@ namespace MicroWiki.Models
     {
         private readonly BreadcrumbTrailViewModel _breadcrumbTrailViewModel;
 
-        public ReadViewModel() =>
+        public ReadViewModel()
+            : base(string.Empty) =>
             _breadcrumbTrailViewModel = new BreadcrumbTrailViewModel();
 
-        public ReadViewModel(BreadcrumbTrailViewModel breadcrumbTrailViewModel) =>
+        public ReadViewModel(BreadcrumbTrailViewModel breadcrumbTrailViewModel)
+            : base(string.Empty) =>
             _breadcrumbTrailViewModel = breadcrumbTrailViewModel;
 
         public Guid ID { get; set; }

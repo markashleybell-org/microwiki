@@ -9,6 +9,11 @@ namespace MicroWiki.Models
 {
     public class UpdateViewModel : ViewModelBase
     {
+        public UpdateViewModel()
+            : base("Edit")
+        {
+        }
+
         [Required]
         public Guid ID { get; set; }
 
@@ -26,14 +31,6 @@ namespace MicroWiki.Models
         public bool IsTableOfContents { get; set; }
 
         public bool IsRootDocument { get; set; }
-
-        public override BreadcrumbTrailViewModel BreadcrumbTrailViewModel =>
-            new BreadcrumbTrailViewModel {
-                Segments = new[] {
-                    new BreadcrumbTrailSegment("Home", SiteRootUrl),
-                    new BreadcrumbTrailSegment("Edit")
-                }
-            };
 
         public static UpdateViewModel From(Document document) =>
             new UpdateViewModel {

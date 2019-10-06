@@ -9,6 +9,11 @@ namespace MicroWiki.Models
 {
     public class CreateViewModel : ViewModelBase
     {
+        public CreateViewModel()
+            : base("Create")
+        {
+        }
+
         [Required]
         public Guid? ParentID { get; set; }
 
@@ -24,14 +29,6 @@ namespace MicroWiki.Models
         public string Slug { get; set; }
 
         public bool IsTableOfContents { get; set; }
-
-        public override BreadcrumbTrailViewModel BreadcrumbTrailViewModel =>
-            new BreadcrumbTrailViewModel {
-                Segments = new[] {
-                    new BreadcrumbTrailSegment("Home", SiteRootUrl),
-                    new BreadcrumbTrailSegment("Create")
-                }
-            };
 
         public static CreateViewModel From(Document parentDocument) =>
             new CreateViewModel {
