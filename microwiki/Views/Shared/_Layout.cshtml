@@ -1,4 +1,12 @@
 ﻿@using System.Security.Claims
+@using Microsoft.Extensions.Options
+@using MicroWiki.Support
+
+@inject IOptionsMonitor<Settings> _cfg
+
+@{ 
+    var configuration = _cfg.CurrentValue;
+}
 
 <!DOCTYPE html>
 <html>
@@ -17,7 +25,7 @@
 <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="~/">MicroWiki</a>
+            <a class="navbar-brand" href="~/">@configuration.ApplicationTitle</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
