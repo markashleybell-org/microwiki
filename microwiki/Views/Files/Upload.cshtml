@@ -12,7 +12,7 @@
     <div class="col">
         <h1>Upload File</h1>
 
-        <form asp-controller="Wiki" asp-action="Upload" method="post" enctype="multipart/form-data">
+        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 @Html.LabelFor(x => x.UploadedFile)
 

@@ -84,6 +84,12 @@ namespace MicroWiki
                 );
 
                 routes.MapRoute(
+                    name: "files",
+                    template: "files/{action}/{id?}",
+                    defaults: new { controller = "Files", action = "Index" }
+                );
+
+                routes.MapRoute(
                     name: "users",
                     template: "users/{action}/{id?}",
                     defaults: new { controller = "Users", action = "Index" }

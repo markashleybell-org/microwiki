@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MicroWiki.Abstract;
 using MicroWiki.Functions;
@@ -14,24 +12,12 @@ using static MicroWiki.Functions.Functions;
 namespace MicroWiki.Controllers
 {
     [Authorize]
-    public class WikiController : Controller
+    public class WikiController : ControllerBase
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRepository _repository;
-        private readonly IFileManager _fileManager;
 
-        public WikiController(
-            IHttpContextAccessor httpContextAccessor,
-            IRepository repository,
-            IFileManager fileManager)
-        {
-            _httpContextAccessor = httpContextAccessor;
+        public WikiController(IRepository repository) =>
             _repository = repository;
-            _fileManager = fileManager;
-        }
-
-        public override PartialViewResult PartialView(string name, object model) =>
-            base.PartialView($"_{name}", model);
 
         public async Task<IActionResult> BreadcrumbTrail(Guid id)
         {
@@ -147,48 +133,6 @@ namespace MicroWiki.Controllers
             };
 
             return PartialView(nameof(MoveDocumentModal), model);
-        }
-
-        public IActionResult Upload(string uploadedFileName)
-        {
-            var model = new UploadViewModel {
-                UploadedFileName = uploadedFileName,
-                Files = _fileManager.GetFiles()
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Upload(UploadViewModel model)
-        {
-            var file = model.UploadedFile;
-
-            if (file == null)
-            {
-                return RedirectToAction(nameof(Upload));
-            }
-
-            var uploadedFilePath = await _fileManager.UploadFile(file);
-
-            return RedirectToAction(nameof(Upload), new { UploadedFileName = uploadedFilePath });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DeleteUpload(DeleteUploadViewModel model)
-        {
-            var usedInLocations = await _repository.CheckFileUse(model.Location);
-
-            if (usedInLocations.Any())
-            {
-                model.InUseByDocuments = usedInLocations;
-
-                return View(model);
-            }
-
-            _fileManager.DeleteFile(model.Location);
-
-            return RedirectToAction(nameof(Upload));
         }
 
         private async Task<SiteMapDocumentViewModel> GetSiteMap()

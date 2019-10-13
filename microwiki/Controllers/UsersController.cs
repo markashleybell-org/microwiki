@@ -12,7 +12,7 @@ using static MicroWiki.Domain.Constants;
 
 namespace MicroWiki.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : ControllerBase
     {
         private readonly Settings _cfg;
         private readonly IHttpContextAccessor _httpContextAccessor;
