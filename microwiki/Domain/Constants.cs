@@ -8,11 +8,13 @@ namespace MicroWiki.Domain
 
         public const string SiteRootLabel = "Home";
 
-        public const string ButtonBaseClasses = "btn btn-sm btn-block";
+        public const string ButtonBaseClasses = "btn btn-block";
 
-        public const string ActionButtonClasses = ButtonBaseClasses + " btn-info";
+        public const string ActionButtonClasses = ButtonBaseClasses + " btn-sm btn-info";
 
-        public const string DeleteButtonClasses = ButtonBaseClasses + " btn-outline-danger";
+        public const string DeleteButtonClasses = ButtonBaseClasses + " btn-sm btn-outline-danger";
+
+        public const string StandardButtonClasses = ButtonBaseClasses + " btn-info";
 
         public const string SaveButtonClasses = "btn btn-lg btn-success";
 

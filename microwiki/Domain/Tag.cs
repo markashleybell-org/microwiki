@@ -11,6 +11,11 @@ namespace MicroWiki.Domain
         }
 
         public Tag(Guid? id, string label)
+            : this(id, label, default)
+        {
+        }
+
+        public Tag(Guid? id, string label, int? useCount)
         {
             if (label is null)
             {
@@ -24,10 +29,13 @@ namespace MicroWiki.Domain
 
             ID = id;
             Label = Regex.Replace(label.Trim(), @"\s+", "-").ToLowerInvariant();
+            UseCount = useCount ?? 0;
         }
 
         public Guid? ID { get; }
 
         public string Label { get; }
+
+        public int UseCount { get; }
     }
 }

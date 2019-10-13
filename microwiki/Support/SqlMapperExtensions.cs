@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
@@ -36,6 +37,24 @@ namespace MicroWiki.Support
                 var record = new MDSC.SqlDataRecord(definition);
 
                 record.SetString(0, tag.Label);
+
+                records.Add(record);
+            }
+
+            return records;
+        }
+
+        public static IEnumerable<IDataRecord> AsDataRecords(this IEnumerable<Guid> ids)
+        {
+            var records = new List<MDSC.SqlDataRecord>();
+
+            var definition = new MDSC.SqlMetaData("ID", SqlDbType.UniqueIdentifier);
+
+            foreach (var id in ids)
+            {
+                var record = new MDSC.SqlDataRecord(definition);
+
+                record.SetGuid(0, id);
 
                 records.Add(record);
             }

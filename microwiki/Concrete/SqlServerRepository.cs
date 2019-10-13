@@ -153,6 +153,24 @@ namespace MicroWiki.Concrete
                 );
             });
 
+        public async Task<IEnumerable<Tag>> GetTags() =>
+            await WithConnection(async conn => {
+                return await conn.QueryAsync<Tag>(
+                    sql: "SELECT ID, Label, (SELECT COUNT(*) FROM Tags_Documents td WHERE td.TagID = t.ID) AS UseCount FROM Tags t ORDER BY t.Label"
+                );
+            });
+
+        public async Task MergeTags(Guid id, IEnumerable<Guid> tagIdsToMerge) =>
+            await WithConnection(async conn => {
+                await conn.ExecuteSp(
+                    sql: "MergeTags",
+                    param: new {
+                        TagID = id,
+                        TagIdsToMerge = tagIdsToMerge.AsDataRecords().AsTableValuedParameter("dbo.GuidList")
+                    }
+                );
+            });
+
         private async Task WithConnection(Func<SqlConnection, Task> action)
         {
             using (var connection = new SqlConnection(_cfg.ConnectionString))

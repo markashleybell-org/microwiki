@@ -26,5 +26,9 @@ namespace MicroWiki.Abstract
         Task<IEnumerable<SiteMapDocument>> CheckFileUse(string location);
 
         Task<User> FindUserByEmail(string email);
+
+        Task<IEnumerable<Tag>> GetTags();
+
+        Task MergeTags(Guid id, IEnumerable<Guid> tagIdsToMerge);
     }
 }
