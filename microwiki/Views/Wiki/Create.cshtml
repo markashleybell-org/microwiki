@@ -9,7 +9,7 @@
 }
 
 <div class="row">
-    <div class="col-sm-9">
+    <div class="col-sm-10">
         <h1>Create Page</h1>
         <form asp-controller="Wiki" asp-action="Create" method="post">
             <p>Parent: @Model.ParentTitle</p>
@@ -51,7 +51,7 @@
             </div>
         </form>
     </div>
-    <div class="col-sm-3 col-actions">
+    <div class="col-sm-2 col-actions">
         <p><a asp-controller="Files" asp-action="Upload" target="_blank" class="@ActionButtonClasses">Upload File</a></p>
     </div>
 </div>

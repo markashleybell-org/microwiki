@@ -12,6 +12,7 @@ import javascript from 'highlight.js/lib/languages/javascript';
 import plaintext from 'highlight.js/lib/languages/plaintext';
 import powershell from 'highlight.js/lib/languages/powershell';
 import sql from 'highlight.js/lib/languages/sql';
+import typescript from 'highlight.js/lib/languages/typescript';
 import xml from 'highlight.js/lib/languages/xml';
 
 declare var _ALL_TAGS: string[];
@@ -70,6 +71,7 @@ hljs.registerLanguage('js', javascript);
 hljs.registerLanguage('plain', plaintext);
 hljs.registerLanguage('ps', powershell);
 hljs.registerLanguage('sql', sql);
+hljs.registerLanguage('ts', typescript);
 hljs.registerLanguage('xml', xml);
 
 const supportedLanguages: string[] = hljs.listLanguages();

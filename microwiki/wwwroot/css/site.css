@@ -115,3 +115,13 @@ button .fa {
 .upload-thumbnails td:last-child {
     padding-right: 0;
 }
+
+.toc {
+    list-style: none;
+    padding: 0;
+    font-size: 24px;
+}
+
+.toc li {
+    margin: 5px 0;
+}

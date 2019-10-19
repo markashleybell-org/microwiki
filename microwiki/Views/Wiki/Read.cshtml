@@ -9,7 +9,7 @@
 }
 
 <div class="row">
-    <div class="col-sm-9">
+    <div class="col-sm-10">
         <h1>@Model.Title</h1>
 
         <p>
@@ -32,7 +32,7 @@
         }
         <p class="document-meta-data">Created on @Model.Created.ToString("dd/MM/yyyy HH:mm") | Last update @Model.Updated.ToString("dd/MM/yyyy HH:mm") by @Model.Username</p>
     </div>
-    <div class="col-sm-3 col-actions">
+    <div class="col-sm-2 col-actions">
         <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = ActionButtonClasses })</p>
 
         @if (!Model.IsRootDocument)
@@ -42,7 +42,7 @@
             </p>
         }
 
-        <p>@Html.ActionLink("Add A New Child Page", "Create", new { parentID = Model.ID }, new { @class = ActionButtonClasses })</p>
+        <p>@Html.ActionLink("New Child Page", "Create", new { parentID = Model.ID }, new { @class = ActionButtonClasses })</p>
 
         @if (!Model.IsRootDocument)
         {

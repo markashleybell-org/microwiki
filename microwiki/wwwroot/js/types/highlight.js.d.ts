@@ -5,4 +5,5 @@ declare module 'highlight.js/lib/languages/javascript';
 declare module 'highlight.js/lib/languages/plaintext';
 declare module 'highlight.js/lib/languages/powershell';
 declare module 'highlight.js/lib/languages/sql';
+declare module 'highlight.js/lib/languages/typescript';
 declare module 'highlight.js/lib/languages/xml';
