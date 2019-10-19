@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MicroWiki.Domain;
@@ -32,7 +33,9 @@ namespace MicroWiki.Models
 
         public bool IsRootDocument { get; set; }
 
-        public static UpdateViewModel From(Document document) =>
+        public IEnumerable<Tag> AllTags { get; set; }
+
+        public static UpdateViewModel From(Document document, IEnumerable<Tag> allTags) =>
             new UpdateViewModel {
                 ID = document.ID,
                 ParentID = document.ParentID,
@@ -41,7 +44,8 @@ namespace MicroWiki.Models
                 Body = document.Body,
                 IsTableOfContents = document.TOC,
                 Tags = string.Join("|", document.Tags.Select(t => t.Label)),
-                Slug = document.Slug
+                Slug = document.Slug,
+                AllTags = allTags
             };
 
         public static Document ToDocument(UpdateViewModel model) =>

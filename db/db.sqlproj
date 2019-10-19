@@ -121,7 +121,6 @@
     <Folder Include="Stored Procedures\" />
     <Folder Include="Publish" />
     <Folder Include="Types" />
-    <Folder Include="Triggers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Documents.sql">
@@ -176,7 +175,6 @@
     <Build Include="Tables\Tags.sql" />
     <Build Include="Tables\Tags_Documents.sql" />
     <Build Include="Types\TagList.sql" />
-    <Build Include="Triggers\UpdateDisplayTags.sql" />
     <Build Include="Stored Procedures\UpdateTags.sql" />
     <Build Include="Stored Procedures\MergeTags.sql">
       <AnsiNulls>On</AnsiNulls>

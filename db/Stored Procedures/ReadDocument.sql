@@ -8,8 +8,24 @@ AS
 BEGIN 
 	SET NOCOUNT ON
 	
+    DECLARE @Document TABLE (
+        [ID]       UNIQUEIDENTIFIER  NOT NULL,
+        [ParentID] UNIQUEIDENTIFIER   NULL,
+        [Title]    NVARCHAR (128) NOT NULL,
+        [Body]     NVARCHAR (MAX) NULL,
+        [Slug]     NVARCHAR (256) NULL,
+        [Location] NVARCHAR (256) NULL,
+        [TOC]      BIT NOT NULL,
+        [Tags]     NVARCHAR(1024) NULL,
+        [Username] NVARCHAR (128) NOT NULL,
+        [Created]  DATETIME NOT NULL,
+        [Updated]  DATETIME NOT NULL
+    )
+
 	IF @ID IS NOT NULL
 	BEGIN
+        INSERT INTO
+            @Document
 	    SELECT 
             ID,
             ParentID,
@@ -18,7 +34,7 @@ BEGIN
             Slug,
             Location,
             TOC,
-            Tags,
+            NULL,
             Username,
             Created, 
             Updated
@@ -29,6 +45,8 @@ BEGIN
     END
     ELSE IF @Location IS NOT NULL
     BEGIN
+        INSERT INTO
+            @Document
 	    SELECT 
             ID,
             ParentID,
@@ -37,7 +55,7 @@ BEGIN
             Slug,
             Location,
             TOC,
-            Tags,
+            NULL,
             Username,
             Created, 
             Updated
@@ -46,4 +64,25 @@ BEGIN
         WHERE 
             Location = @Location
     END
+
+    UPDATE 
+        doc
+	SET 
+		Tags = (
+			SELECT STUFF((
+                SELECT 
+                    '|' + [Label]
+				FROM 
+                    Tags
+				INNER JOIN 
+                    Tags_Documents ON Tags_Documents.TagID = Tags.ID
+				WHERE 
+                    Tags_Documents.DocumentID = doc.ID
+				FOR XML PATH ('')
+            ), 1, 1, '') 
+		)
+    FROM
+		@Document doc
+
+    SELECT * FROM @Document
 END	

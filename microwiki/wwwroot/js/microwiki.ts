@@ -1,15 +1,21 @@
 import marked from 'marked';
+import { TagInput, ITag } from 'mab-bootstrap-taginput';
+
+import 'mab-bootstrap-taginput/css/standard.css';
 
 // TODO: Split out editor from main script
 import hljs from 'highlight.js/lib/highlight';
 
 import cs from 'highlight.js/lib/languages/cs';
-import css from  'highlight.js/lib/languages/css';
+import css from 'highlight.js/lib/languages/css';
 import javascript from 'highlight.js/lib/languages/javascript';
 import plaintext from 'highlight.js/lib/languages/plaintext';
 import powershell from 'highlight.js/lib/languages/powershell';
-import sql from  'highlight.js/lib/languages/sql';
-import xml from  'highlight.js/lib/languages/xml';
+import sql from 'highlight.js/lib/languages/sql';
+import xml from 'highlight.js/lib/languages/xml';
+
+declare var _ALL_TAGS: string[];
+declare var _ALL_TAGS_MERGE: ITag[];
 
 export const moveDocumentButton = $('#move-document-button');
 export const moveDocumentModal = $('#move-document-modal');
@@ -127,3 +133,27 @@ $('.custom-file-input').on('change', e => {
     const fileName = (input.val() as string).split('\\').pop();
     input.siblings('.custom-file-label').addClass('selected').html(fileName);
 });
+
+const tagInputElements = document.getElementsByClassName('tag-input');
+
+for (var i = 0; i < tagInputElements.length; i++) {
+    new TagInput<string>({
+        input: (tagInputElements[i] as HTMLElement),
+        data: _ALL_TAGS || [],
+        getId: item => item,
+        getLabel: item => item,
+        newItemFactory: label => Promise.resolve(label)
+    });
+}
+
+const tagMergeInputElements = document.getElementsByClassName('tag-input-merge');
+
+for (var i = 0; i < tagMergeInputElements.length; i++) {
+    new TagInput<ITag>({
+        input: (tagMergeInputElements[i] as HTMLElement),
+        data: _ALL_TAGS_MERGE || [],
+        getId: item => item.id,
+        getLabel: item => item.label,
+        allowNewTags: false
+    });
+}

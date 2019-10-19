@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label asp-for="Tags">Tags</label>
-                <input asp-for="Tags" class="form-control" />
+                <input asp-for="Tags" class="form-control tag-input" />
                 <span asp-validation-for="Tags"></span>
             </div>
 
@@ -55,3 +55,11 @@
         <p><a asp-controller="Files" asp-action="Upload" target="_blank" class="@ActionButtonClasses">Upload File</a></p>
     </div>
 </div>
+
+@section globals {
+
+    <script>
+        var _ALL_TAGS = @Html.Raw(JsonConvert.SerializeObject(Model.AllTags.Select(t => t.Label)));
+    </script>
+
+}

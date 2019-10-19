@@ -20,7 +20,7 @@
 
             <div class="form-group">
                 <label asp-for="Tags">Tags</label>
-                <input asp-for="Tags" class="form-control" />
+                <input asp-for="Tags" class="form-control tag-input" />
                 <span asp-validation-for="Tags"></span>
             </div>
 
@@ -86,5 +86,13 @@
             </div>
         </div>
     </div>
+
+}
+
+@section globals {
+
+    <script>
+        var _ALL_TAGS = @Html.Raw(JsonConvert.SerializeObject(Model.AllTags.Select(t => t.Label)));
+    </script>
 
 }

@@ -38,7 +38,9 @@ namespace MicroWiki.Controllers
                 return NotFound();
             }
 
-            var model = CreateViewModel.From(parentDocument);
+            var allTags = await _repository.GetTags();
+
+            var model = CreateViewModel.From(parentDocument, allTags);
 
             return View(model);
         }
@@ -79,8 +81,15 @@ namespace MicroWiki.Controllers
         {
             var document = await _repository.ReadDocument(id);
 
+            if (document == null)
+            {
+                return NotFound();
+            }
+
+            var allTags = await _repository.GetTags();
+
             return document != null
-                ? (IActionResult)View(UpdateViewModel.From(document))
+                ? (IActionResult)View(UpdateViewModel.From(document, allTags))
                 : NotFound();
         }
 

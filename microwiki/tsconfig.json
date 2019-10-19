@@ -7,7 +7,6 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "noEmitOnError": true,
-        "importHelpers": true,
         "module": "esnext",
         "moduleResolution": "node",
         "esModuleInterop": true,

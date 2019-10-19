@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MicroWiki.Domain;
@@ -30,10 +31,13 @@ namespace MicroWiki.Models
 
         public bool IsTableOfContents { get; set; }
 
-        public static CreateViewModel From(Document parentDocument) =>
+        public IEnumerable<Tag> AllTags { get; set; }
+
+        public static CreateViewModel From(Document parentDocument, IEnumerable<Tag> allTags) =>
             new CreateViewModel {
                 ParentID = parentDocument.ParentID,
-                ParentTitle = parentDocument.Title
+                ParentTitle = parentDocument.Title,
+                AllTags = allTags
             };
 
         public static Document ToDocument(CreateViewModel model) =>
