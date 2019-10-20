@@ -1,0 +1,39 @@
+﻿@model TagMergeViewModel
+
+@section title {
+    <title>Tag Management</title>
+}
+
+@{
+    await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailViewModel); 
+}
+
+<div class="row">
+    <div class="col">
+        <h1>Tag Manager</h1>
+
+        @foreach (var tag in Model.Tags)
+        {
+            <form asp-action="Merge" method="post">
+                <div class="form-group row">
+                    <label class="col-3 col-form-label" for="tag-@(tag.ID)-edit">@(tag.Label) (@(tag.UseCount))</label>
+                    <div class="col-7">
+                        <input type="text" name="MergeTagIDs" class="form-control tag-input-merge" id="tag-@(tag.ID)-edit" placeholder="Select tags..." />
+                        <input type="hidden" name="TagID" value="@(tag.ID)" />
+                    </div>
+                    <div class="col-2">
+                        <input type="submit" class="@StandardButtonClasses" value="Merge" />
+                    </div>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+
+@section globals {
+
+    <script>
+        var _ALL_TAGS_MERGE = @Html.Raw(JsonConvert.SerializeObject(Model.Tags.Select(t => new { id = t.ID, label = t.Label })));
+    </script>
+
+}

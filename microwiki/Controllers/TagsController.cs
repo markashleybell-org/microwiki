@@ -17,6 +17,15 @@ namespace MicroWiki.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var model = new TagIndexViewModel {
+                Tags = await _repository.GetTags()
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Manage()
+        {
             var model = new TagMergeViewModel {
                 Tags = await _repository.GetTags()
             };
@@ -28,7 +37,7 @@ namespace MicroWiki.Controllers
         {
             await _repository.MergeTags(model.TagID, model.TagIDsToMerge);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Manage));
         }
     }
 }

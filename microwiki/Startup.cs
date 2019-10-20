@@ -46,6 +46,7 @@ namespace MicroWiki
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDateTimeService, DateTimeService>();
+            services.AddScoped<ISearchService, SqlServerSearchService>();
 
             services.AddScoped<IRepository, SqlServerRepository>(sp => {
                 var ctxAccessor = sp.GetRequiredService<IHttpContextAccessor>();
@@ -80,6 +81,12 @@ namespace MicroWiki
                     name: "default",
                     template: "wiki/{action}/{id?}",
                     defaults: new { controller = "Wiki", action = "Index" }
+                );
+
+                routes.MapRoute(
+                    name: "search",
+                    template: "search/{action}/{id?}",
+                    defaults: new { controller = "Search", action = "Index" }
                 );
 
                 routes.MapRoute(

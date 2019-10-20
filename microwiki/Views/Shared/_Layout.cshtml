@@ -4,7 +4,7 @@
 
 @inject IOptionsMonitor<Settings> _cfg
 
-@{ 
+@{
     var configuration = _cfg.CurrentValue;
 }
 
@@ -30,6 +30,10 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="main-nav">
+                <form class="form-inline" method="get" asp-action="Index" asp-controller="Search">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
                 <ul class="navbar-nav">
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -38,8 +42,15 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Wiki" asp-action="Contents">Contents</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Tags" asp-action="Index">Tags</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="tags-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Tags
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="tags-dropdown">
+                                <a class="dropdown-item" asp-controller="Tags" asp-action="Index">All Tags</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-controller="Tags" asp-action="Manage">Manage Tags</a>
+                            </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Users" asp-action="Logout">Log Out</a>

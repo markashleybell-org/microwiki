@@ -8,15 +8,27 @@ BEGIN
 	SET NOCOUNT ON
 	
     SELECT 
-        ID,
-        ParentID,
-        Title,
-        Body,
-        Location
+        d.ID,
+        d.Title,
+        d.Body,
+        d.Location,
+        Tags = (
+			SELECT STUFF((
+                SELECT 
+                    '|' + [Label]
+				FROM 
+                    Tags
+				INNER JOIN 
+                    Tags_Documents ON Tags_Documents.TagID = Tags.ID
+				WHERE 
+                    Tags_Documents.DocumentID = d.ID
+				FOR XML PATH ('')
+            ), 1, 1, '') 
+		)
     FROM 
-        Documents 
+        Documents d
     WHERE 
-		Title LIKE '%' + @Query + '%'
+		d.Title LIKE '%' + @Query + '%'
     OR
-        Body LIKE '%' + @Query + '%'
+        d.Body LIKE '%' + @Query + '%'
 END	

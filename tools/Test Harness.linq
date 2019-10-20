@@ -1,5 +1,5 @@
 <Query Kind="Program">
-  <Reference Relative="..\microwiki\bin\Debug\netcoreapp2.2\microwiki.dll">C:\Src\microwiki\microwiki\bin\Debug\netcoreapp2.2\microwiki.dll</Reference>
+  <Reference Relative="..\..\..\..\tools\Test Harness.linq">C:\Src\microwiki\microwiki\bin\Debug\netcoreapp2.2\microwiki.dll</Reference>
   <NuGetReference>Dapper</NuGetReference>
   <Namespace>Dapper</Namespace>
   <Namespace>MicroWiki</Namespace>
@@ -17,9 +17,15 @@
 
 async Task Main()
 {
-    var repository = new SqlServerRepository(new TestOptionsMonitor(), "markb");
+    var searchService = new SqlServerSearchService(new TestOptionsMonitor());
     
-    //var documents = await repository.ReadAllDocuments();
+    var results = await searchService.Search("azure");
+    
+    results.Dump();
+    
+    // var repository = new SqlServerRepository(new TestOptionsMonitor(), "markb");
+    
+    // var documents = await repository.ReadAllDocuments();
 //    
 //    var root = documents.Single(d => !d.ParentID.HasValue);
 //    
@@ -39,7 +45,7 @@ async Task Main()
     //
     //trail.Dump();
     //
-    new PasswordHasher<User>().HashPassword(new User(new Guid("e5754cce-838b-4446-ada8-2d5a6e057555"), "me@markb.co.uk", "test123"), "test123").Dump();
+    // new PasswordHasher<User>().HashPassword(new User(new Guid("e5754cce-838b-4446-ada8-2d5a6e057555"), "me@markb.co.uk", "test123"), "test123").Dump();
 }
 
 public class TestOptionsMonitor : IOptionsMonitor<Settings> 
