@@ -89,6 +89,19 @@ function highlightElement(i: number, el: HTMLElement) {
     }
 }
 
+function debounce(callback: (...args: any[]) => void, time: number): () => void {
+    let interval: any;
+
+    return (...args: any[]) => {
+        clearTimeout(interval);
+
+        interval = setTimeout(() => {
+            interval = null;
+            callback(...args);
+        }, time);
+    };
+}
+
 function updatePreview() {
     const val = bodyEditor.val() as string;
     preview.html(marked(val));
@@ -99,10 +112,12 @@ const bodyInput = $('[name=Body]');
 const bodyEditor = $('.body-editor');
 const preview = $('.body-preview');
 
+const updateInterval = 500;
+
 if (bodyEditor.length) {
-    bodyEditor.on('change keyup keypress keydown', e => {
+    bodyEditor.on('change keyup keypress keydown', debounce(e => {
         updatePreview();
-    });
+    }, updateInterval));
 } else {
     $('pre code').each(highlightElement);
 }
