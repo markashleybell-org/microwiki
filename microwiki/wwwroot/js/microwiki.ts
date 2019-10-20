@@ -102,21 +102,26 @@ function debounce(callback: (...args: any[]) => void, time: number): () => void 
     };
 }
 
-function updatePreview() {
-    const val = bodyEditor.val() as string;
-    preview.html(marked(val));
-    preview.find('pre code').each(highlightElement);
-}
-
 const bodyInput = $('[name=Body]');
 const bodyEditor = $('.body-editor');
 const preview = $('.body-preview');
 
 const updateInterval = 500;
 
+function updatePreview(scrollPosition: number) {
+    const val = bodyEditor.val() as string;
+    preview.html(marked(val));
+    preview.find('pre code').each(highlightElement);
+
+    setTimeout(() => {
+        console.log(scrollPosition);
+        preview.get(0).scrollTo(0, scrollPosition);
+    }, 10);
+}
+
 if (bodyEditor.length) {
-    bodyEditor.on('change keyup keypress keydown', debounce(e => {
-        updatePreview();
+    bodyEditor.on('change keyup', debounce(e => {
+        updatePreview(preview.get(0).scrollTop);
     }, updateInterval));
 } else {
     $('pre code').each(highlightElement);
@@ -132,7 +137,7 @@ bodyEditorModal.on('click', '.btn-success', e => {
 $('.body-editor-open').on('click', e => {
     bodyEditorModal.modal('show');
     bodyEditor.val(bodyInput.val());
-    updatePreview();
+    updatePreview(0);
 });
 
 $('.delete-page').on('click', e => {
