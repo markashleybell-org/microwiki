@@ -19,9 +19,11 @@ async Task Main()
 {
     var searchService = new SqlServerSearchService(new TestOptionsMonitor());
     
-    var results = await searchService.Search("azure");
+    var results = await searchService.Search("azure [azure]");
     
     results.Dump();
+    
+    searchService.ParseSearchQuery(" azure   [azure] vpn hosting  ").Dump();
     
     // var repository = new SqlServerRepository(new TestOptionsMonitor(), "markb");
     
