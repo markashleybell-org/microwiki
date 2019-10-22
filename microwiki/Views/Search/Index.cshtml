@@ -1,5 +1,9 @@
 ﻿@model SearchResultsViewModel
 
+@{
+    ViewBag.SearchQuery = Model.Query;
+}
+
 @section title {
     <title>Search Results</title>
 }
@@ -10,7 +14,7 @@
 
 <div class="row">
     <div class="col">
-        <h1>Search results for '@Model.Query'</h1>
+        <h1>Search results for '@Model.QueryHtmlForDisplay'</h1>
 
         <hr />
 

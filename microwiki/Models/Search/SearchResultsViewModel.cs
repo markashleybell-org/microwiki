@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Html;
 using MicroWiki.Domain;
 
 namespace MicroWiki.Models
@@ -15,5 +16,8 @@ namespace MicroWiki.Models
         public string Query { get; set; }
 
         public IEnumerable<SearchResult> SearchResults { get; set; }
+
+        public HtmlString QueryHtmlForDisplay =>
+            new HtmlString(Query.Replace("[", "<span class=\"badge badge-primary\">").Replace("]", "</span>"));
     }
 }

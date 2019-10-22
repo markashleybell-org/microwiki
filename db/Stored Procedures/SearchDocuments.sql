@@ -13,7 +13,10 @@ BEGIN
 
     DECLARE @SearchResults [dbo].[GuidList]
 
-    IF @Query IS NOT NULL
+    DECLARE @QuerySpecified BIT = CASE WHEN @Query IS NOT NULL THEN 1 ELSE 0 END
+    DECLARE @TagsSpecified BIT = CASE WHEN (SELECT COUNT(*) FROM @Tags) > 0 THEN 1 ELSE 0 END
+
+    IF @QuerySpecified = 1
     BEGIN
         INSERT INTO
             @QueryResults
@@ -27,7 +30,7 @@ BEGIN
             d.Body LIKE '%' + @Query + '%'
     END
 
-    IF (SELECT COUNT(*) FROM @Tags) > 0
+    IF @TagsSpecified = 1
     BEGIN
         INSERT INTO
             @TagResults
@@ -41,13 +44,13 @@ BEGIN
             t.[Label] IN (SELECT [Label] FROM @Tags)
     END
 
-    IF (SELECT COUNT(*) FROM @TagResults) = 0
+    IF @TagsSpecified = 0
     BEGIN
         -- Straight LIKE query
         INSERT INTO @SearchResults
         SELECT ID FROM @QueryResults
     END
-    ELSE IF (SELECT COUNT(*) FROM @QueryResults) = 0
+    ELSE IF @QuerySpecified = 0
     BEGIN
         -- Tag-only query
         INSERT INTO @SearchResults

@@ -162,3 +162,7 @@ button .fa {
 .tag-links .badge {
     margin-right: 6px;
 }
+
+.navbar-nav input[type=search] {
+    width: 400px;
+}
