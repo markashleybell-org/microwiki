@@ -12,12 +12,7 @@
     <div class="col-sm-10">
         <h1>@Model.Title</h1>
 
-        <p>
-            @foreach (var tag in Model.Tags)
-            {
-                <span class="badge badge-primary">@tag.Label</span>
-            }
-        </p>
+        <tag-links tags="Model.Tags" />
 
         @Html.Raw(Model.Body)
 

@@ -18,15 +18,7 @@
         {
             <h2><a href="@result.Location">@result.Title</a></h2>
 
-            if (result.Tags.Any())
-            {
-                <p>
-                    @foreach (var tag in result.Tags)
-                    {
-                        <span class="badge badge-primary">@tag.Label</span>
-                    }
-                </p>
-            }
+            <tag-links tags="result.Tags" />
 
             <p>@Html.Raw(result.Summary ?? "<i>Page has no body text</i>")</p>
         }

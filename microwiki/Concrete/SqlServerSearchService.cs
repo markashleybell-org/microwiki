@@ -62,7 +62,7 @@ namespace MicroWiki.Concrete
                 {
                     var v = group.Value;
 
-                    var tagMatch = Regex.Match(v, @"\[([a-z0-9]+)\]", RegexOptions.IgnoreCase);
+                    var tagMatch = Regex.Match(v, @"\[([a-z0-9\-]+)\]", RegexOptions.IgnoreCase);
 
                     if (tagMatch.Success)
                     {

@@ -14,7 +14,7 @@
             
             @foreach (var tag in Model.Tags)
             {
-                <a href="#" class="badge badge-info badge-tag @Model.GetClass(tag)">@tag.Label <span class="badge badge-light">@tag.UseCount</span></a>
+                <a asp-action="Index" asp-controller="Search" asp-route-query="[@tag.Label]" class="badge badge-info badge-tag @Model.GetClass(tag)">@tag.Label <span class="badge badge-light">@tag.UseCount</span></a>
             }
 
         </div>
