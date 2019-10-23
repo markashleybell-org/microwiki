@@ -16,6 +16,12 @@ namespace MicroWiki.Support
 
         public IEnumerable<Tag> Tags { get; set; }
 
+        public string ContainerClasses { get; set; }
+            = "tag-links";
+
+        public string TagClasses { get; set; }
+            = "badge badge-primary";
+
         [HtmlAttributeNotBound]
         [ViewContext]
         public ViewContext ViewContext { get; set; }
@@ -23,7 +29,7 @@ namespace MicroWiki.Support
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "p";
-            output.Attributes.Add("class", "tag-links");
+            output.Attributes.Add("class", ContainerClasses);
 
             var links = Tags.Select(t => TagSearchActionLink(t.Label));
 
@@ -45,7 +51,7 @@ namespace MicroWiki.Support
                 hostname: null,
                 fragment: null,
                 routeValues: new { query = $"[{label}]" },
-                htmlAttributes: new { @class = "badge badge-primary" }
+                htmlAttributes: new { @class = TagClasses }
             );
     }
 }
