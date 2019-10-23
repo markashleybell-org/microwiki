@@ -1,5 +1,15 @@
-body {
-    color: #000;
+.toc {
+    list-style: none;
+    padding: 0;
+    font-size: 24px;
+}
+
+.toc li {
+    margin: 5px 0;
+}
+
+img {
+    max-width: 100%;
 }
 
 .input-validation-error {
@@ -10,14 +20,168 @@ body {
     color: #cc0000;
 }
 
-img {
-    max-width: 100%;
+button .fa {
+    margin-right: 6px;
 }
 
+textarea[name=Body] {
+    font-family: Courier New, Courier, monospace;
+}
+
+.navbar input[type=search] {
+    width: 400px;
+}
+
+/* BEGIN STANDARD STYLES (https://github.com/highlightjs/highlight.js/blob/master/src/styles/github.css) */
+.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    color: #333;
+    background: #f8f8f8;
+}
+
+.hljs-comment,
+.hljs-quote {
+    color: #998;
+    font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+    color: #333;
+    font-weight: bold;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+    color: #008080;
+}
+
+.hljs-string,
+.hljs-doctag {
+    color: #d14;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+    color: #900;
+    font-weight: bold;
+}
+
+.hljs-subst {
+    font-weight: normal;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+    color: #458;
+    font-weight: bold;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+    color: #000080;
+    font-weight: normal;
+}
+
+.hljs-regexp,
+.hljs-link {
+    color: #009926;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+    color: #990073;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+    color: #0086b3;
+}
+
+.hljs-meta {
+    color: #999;
+    font-weight: bold;
+}
+
+.hljs-deletion {
+    background: #fdd;
+}
+
+.hljs-addition {
+    background: #dfd;
+}
+
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-strong {
+    font-weight: bold;
+}
+
+/* END STANDARD STYLES (https://github.com/highlightjs/highlight.js/blob/master/src/styles/github.css) */
 .hljs {
     padding: 1em;
     border-radius: 3px;
     border: solid 1px #efefef;
+}
+
+.tag-cloud {
+    padding: 30px 0;
+    text-align: center;
+}
+
+.badge-tag {
+    margin: 3px 5px;
+}
+
+.badge-tag .badge {
+    margin-left: 10px;
+}
+
+.badge-tag-xs {
+    font-size: 0.9em;
+}
+
+.badge-tag-sm {
+    font-size: 2em;
+}
+
+.badge-tag-md {
+    font-size: 3em;
+}
+
+.badge-tag-lg {
+    font-size: 4em;
+}
+
+.badge-tag-xl {
+    font-size: 5em;
+}
+
+.tag-links .badge {
+    margin-right: 6px;
+}
+
+.upload-thumbnails img {
+    border: solid 1px #e0e0e0;
+    max-width: 150px;
+}
+
+.upload-thumbnails td:first-child {
+    padding-left: 0;
+}
+
+.upload-thumbnails td:last-child {
+    padding-right: 0;
 }
 
 .modal.fullscreen {
@@ -75,10 +239,6 @@ img {
     padding: 10px;
 }
 
-textarea[name=Body] {
-    font-family: Courier New, Courier, monospace;
-}
-
 .body-editor, .body-preview {
     width: 50%;
 }
@@ -106,72 +266,4 @@ textarea[name=Body] {
 .body-editor-open-container {
     margin-top: 10px;
     text-align: right;
-}
-
-button .fa {
-    margin-right: 6px;
-}
-
-.upload-thumbnails img {
-    border: solid 1px #e0e0e0;
-    max-width: 150px;
-}
-
-.upload-thumbnails td:first-child {
-    padding-left: 0;
-}
-
-.upload-thumbnails td:last-child {
-    padding-right: 0;
-}
-
-.toc {
-    list-style: none;
-    padding: 0;
-    font-size: 24px;
-}
-
-.toc li {
-    margin: 5px 0;
-}
-
-.tag-cloud {
-    padding: 30px 0;
-    text-align: center;
-}
-
-.badge-tag {
-    margin: 3px 5px;
-}
-
-.badge-tag .badge {
-    margin-left: 10px;
-}
-
-.badge-tag-xs {
-    font-size: 0.9em;
-}
-
-.badge-tag-sm {
-    font-size: 2em;
-}
-
-.badge-tag-md {
-    font-size: 3em;
-}
-
-.badge-tag-lg {
-    font-size: 4em;
-}
-
-.badge-tag-xl {
-    font-size: 5em;
-}
-
-.tag-links .badge {
-    margin-right: 6px;
-}
-
-.navbar input[type=search] {
-    width: 400px;
 }

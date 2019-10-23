@@ -1,5 +1,4 @@
 const ProvidePlugin = require('webpack').ProvidePlugin;
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
@@ -19,10 +18,7 @@ module.exports = {
         new ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery'
-        }),
-        new CopyWebpackPlugin([
-            { from: 'node_modules/highlight.js/styles/github.css', to: '../../css' }
-        ])
+        })
     ],
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json']

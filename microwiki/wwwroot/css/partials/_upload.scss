@@ -1,0 +1,14 @@
+.upload-thumbnails img {
+    border: solid 1px #e0e0e0;
+    max-width: 150px;
+}
+
+.upload-thumbnails {
+    td:first-child {
+        padding-left: 0;
+    }
+
+    td:last-child {
+        padding-right: 0;
+    }
+}
