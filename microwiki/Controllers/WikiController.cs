@@ -69,11 +69,11 @@ namespace MicroWiki.Controllers
                 return NotFound();
             }
 
-            var breadcrumbTrailViewModel = new BreadcrumbTrailViewModel {
+            var breadcrumbTrailData = new BreadcrumbTrailViewModel {
                 Segments = await _repository.GetBreadcrumbTrail(document.ID)
             };
 
-            return View(ReadViewModel.From(document, breadcrumbTrailViewModel));
+            return View(ReadViewModel.From(document, breadcrumbTrailData));
         }
 
         [HttpGet]

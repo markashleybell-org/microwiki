@@ -9,15 +9,15 @@ namespace MicroWiki.Models
 {
     public class ReadViewModel : ViewModelBase
     {
-        private readonly BreadcrumbTrailViewModel _breadcrumbTrailViewModel;
+        private readonly BreadcrumbTrailViewModel _breadcrumbTrailData;
 
         public ReadViewModel()
             : base(string.Empty) =>
-            _breadcrumbTrailViewModel = new BreadcrumbTrailViewModel();
+            _breadcrumbTrailData = new BreadcrumbTrailViewModel();
 
-        public ReadViewModel(BreadcrumbTrailViewModel breadcrumbTrailViewModel)
+        public ReadViewModel(BreadcrumbTrailViewModel breadcrumbTrailData)
             : base(string.Empty) =>
-            _breadcrumbTrailViewModel = breadcrumbTrailViewModel;
+            _breadcrumbTrailData = breadcrumbTrailData;
 
         public Guid ID { get; set; }
 
@@ -43,11 +43,11 @@ namespace MicroWiki.Models
 
         public IEnumerable<ChildDocumentViewModel> Children { get; set; }
 
-        public override BreadcrumbTrailViewModel BreadcrumbTrailViewModel =>
-            _breadcrumbTrailViewModel;
+        public override BreadcrumbTrailViewModel BreadcrumbTrailData =>
+            _breadcrumbTrailData;
 
-        public static ReadViewModel From(Document document, BreadcrumbTrailViewModel breadcrumbTrailViewModel) =>
-            new ReadViewModel(breadcrumbTrailViewModel) {
+        public static ReadViewModel From(Document document, BreadcrumbTrailViewModel breadcrumbTrailData) =>
+            new ReadViewModel(breadcrumbTrailData) {
                 ID = document.ID,
                 IsRootDocument = !document.ParentID.HasValue,
                 Location = document.Location,
