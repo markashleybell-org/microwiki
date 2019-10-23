@@ -251,10 +251,34 @@ textarea[name=Body] {
 
 .body-editor-editor {
     position: absolute;
-    top: 0;
+    top: 30px;
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.body-editor-controls {
+    /*position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;*/
+    display: flex;
+}
+
+.body-editor-button {
+    border: solid 1px #e0e0e0;
+    text-align: center;
+    font-weight: bold;
+    min-width: 24px;
+    text-decoration: none;
+    color: #000000;
+}
+
+.body-editor-button:hover {
+    color: #000000;
+    text-decoration: none;
+    background-color: #e0e0e0;
 }
 
 .body-preview {

@@ -134,6 +134,41 @@ bodyEditorModal.on('click', '.btn-success', e => {
     bodyEditorModal.modal('hide');
 });
 
+let selection: any = {
+    start: 0,
+    end: 0
+};
+
+$('.body-editor-editor').on('blur', e => {
+    const sel = window.getSelection();
+
+    if (sel) {
+        console.log(sel.rangeCount);
+
+        const r = sel.getRangeAt(0);
+
+        selection.start = r.startOffset;
+        selection.end = r.endOffset;
+
+        console.log(selection);
+    }
+}).on('focus', e => {
+    if (selection.start === selection.end) {
+        console.log(selection);
+        (e.target as HTMLInputElement).setSelectionRange(selection.start, selection.end);
+    }
+});
+
+$('.body-editor-button')
+    .on('focus', e => {
+        console.log('get selection here');
+    })
+    .on('click', e => {
+        e.preventDefault();
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setRangeText
+        alert($(e.target).data('action'));
+    });
+
 $('.body-editor-open').on('click', e => {
     bodyEditorModal.modal('show');
     bodyEditor.val(bodyInput.val());
