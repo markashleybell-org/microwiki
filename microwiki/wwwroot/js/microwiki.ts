@@ -103,7 +103,7 @@ function debounce(callback: (...args: any[]) => void, time: number): () => void 
 }
 
 const bodyInput = $('[name=Body]');
-const bodyEditor = $('.body-editor');
+const bodyEditor = $('.body-editor-editor');
 const preview = $('.body-preview');
 
 const updateInterval = 500;

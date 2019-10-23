@@ -33,6 +33,9 @@ namespace MicroWiki.Models
 
         public IEnumerable<Tag> AllTags { get; set; }
 
+        public MarkdownEditorViewModel MarkdownEditorData =>
+            new MarkdownEditorViewModel { IsNew = true };
+
         public static CreateViewModel From(Document parentDocument, IEnumerable<Tag> allTags) =>
             new CreateViewModel {
                 ParentID = parentDocument.ParentID,

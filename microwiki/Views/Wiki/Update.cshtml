@@ -66,26 +66,9 @@
 
 @section modals {
 
-    <div class="modal fullscreen fade body-editor-modal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">EDITING: @Model.Title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <textarea class="body-editor form-control" rows="10"></textarea>
-                    <div class="body-preview"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Abandon Changes</button>
-                    <button type="button" class="btn btn-success">Save Changes and Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @{
+        await Html.RenderPartialAsync("_MarkdownEditor", Model.MarkdownEditorData); 
+    }
 
 }
 

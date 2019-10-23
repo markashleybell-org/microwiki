@@ -86,6 +86,15 @@ textarea[name=Body] {
 .body-editor {
     margin-right: 10px;
     font-family: Courier New, Courier, monospace;
+    position: relative;
+}
+
+.body-editor-editor {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .body-preview {

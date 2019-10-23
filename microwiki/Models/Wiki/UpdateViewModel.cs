@@ -35,6 +35,9 @@ namespace MicroWiki.Models
 
         public IEnumerable<Tag> AllTags { get; set; }
 
+        public MarkdownEditorViewModel MarkdownEditorData =>
+            new MarkdownEditorViewModel { Title = Title };
+
         public static UpdateViewModel From(Document document, IEnumerable<Tag> allTags) =>
             new UpdateViewModel {
                 ID = document.ID,
