@@ -51,7 +51,7 @@ namespace MicroWiki.Models
                 model.Body,
                 CreateSlug(model.Title),
                 model.IsTableOfContents,
-                model.Tags
+                (model.Tags ?? string.Empty)
                     .Split('|', StringSplitOptions.RemoveEmptyEntries)
                     .Select(t => new Tag(t))
             );

@@ -15,6 +15,11 @@ import sql from 'highlight.js/lib/languages/sql';
 import typescript from 'highlight.js/lib/languages/typescript';
 import xml from 'highlight.js/lib/languages/xml';
 
+interface IEditorSelection {
+    start: number;
+    end: number;
+}
+
 declare var _ALL_TAGS: string[];
 declare var _ALL_TAGS_MERGE: ITag[];
 
@@ -114,7 +119,6 @@ function updatePreview(scrollPosition: number) {
     preview.find('pre code').each(highlightElement);
 
     setTimeout(() => {
-        console.log(scrollPosition);
         preview.get(0).scrollTo(0, scrollPosition);
     }, 10);
 }
@@ -134,39 +138,106 @@ bodyEditorModal.on('click', '.btn-success', e => {
     bodyEditorModal.modal('hide');
 });
 
-let selection: any = {
+let selection: IEditorSelection = {
     start: 0,
     end: 0
 };
 
-$('.body-editor-editor').on('blur', e => {
-    const sel = window.getSelection();
+const bodyEditorElement = $('.body-editor-editor').get(0) as HTMLTextAreaElement;
 
-    if (sel) {
-        console.log(sel.rangeCount);
+function getEditorSelection() {
+    selection.start = bodyEditorElement.selectionStart;
+    selection.end = bodyEditorElement.selectionEnd;
+    console.log('getEditorSelection', selection);
+}
 
-        const r = sel.getRangeAt(0);
+function selectionExists() {
+    return selection.start != null && selection.start > -1 && selection.end != null && selection.end > -1;
+}
 
-        selection.start = r.startOffset;
-        selection.end = r.endOffset;
-
-        console.log(selection);
+function setEditorSelection() {
+    console.log('setEditorSelection', selection);
+    // We have to use null checking rather than falsy, because 0 is falsy, 
+    // but the selection start/end positions could both quite legitimately be 0...
+    if (selectionExists()) {
+        bodyEditorElement.setSelectionRange(selection.start, selection.end);
     }
-}).on('focus', e => {
-    if (selection.start === selection.end) {
-        console.log(selection);
-        (e.target as HTMLInputElement).setSelectionRange(selection.start, selection.end);
+}
+
+function toggleFormatting(formatting: [string, string]) {
+    const [before, after] = formatting;
+
+    const start = bodyEditorElement.selectionStart;
+    const end = bodyEditorElement.selectionEnd;
+    const value = bodyEditorElement.value;
+
+    let contentBeforeSelection = value.slice(0, start);
+    const selectedText = value.slice(start, end);
+    let contentAfterSelection = value.slice(end, value.length);
+
+    let updatedContent: string;
+
+    const charsBeforeSelection = contentBeforeSelection.slice(contentBeforeSelection.length - before.length);
+    const charsAfterSelection = contentAfterSelection.slice(0, after.length);
+
+    // If this text is already surrounded by the same formatting chars, remove them
+    if (charsBeforeSelection === before && charsAfterSelection === after) {
+        updatedContent = contentBeforeSelection.slice(0, contentBeforeSelection.length - before.length)
+            + selectedText
+            + contentAfterSelection.slice(after.length, contentAfterSelection.length);
+
+        selection.start -= before.length;
+        selection.end -= before.length;
+    } else {
+        updatedContent = contentBeforeSelection
+            + before
+            + selectedText
+            + after
+            + contentAfterSelection;
+
+        selection.start += before.length;
+        selection.end += before.length;
     }
+
+    bodyEditorElement.value = updatedContent;
+
+    setEditorSelection();
+}
+
+$('.body-editor-editor').on('select', getEditorSelection).on('blur', e => {
+    if (e.relatedTarget) {
+        const elementBeingFocused = e.relatedTarget as HTMLElement;
+        const formattingButtonWasClicked = elementBeingFocused.classList.contains('body-editor-button');
+        if (!formattingButtonWasClicked) {
+            selection.start = null;
+            selection.end = null;
+        }
+    }
+    console.log('editor onBlur', selection);
 });
 
+function getFormatting(action: 'bold' | 'italic'): [string, string] {
+    switch (action) {
+        case 'bold':
+            return ['**', '**'];
+        case 'italic':
+            return ['*', '*'];
+    }
+}
+
 $('.body-editor-button')
-    .on('focus', e => {
-        console.log('get selection here');
-    })
     .on('click', e => {
         e.preventDefault();
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setRangeText
-        alert($(e.target).data('action'));
+        const action = $(e.target).data('action');
+        
+        if (selectionExists()) {
+            bodyEditor.focus();
+            setEditorSelection();
+            toggleFormatting(getFormatting(action));
+            console.log('editor button onClick', selection);
+            updatePreview(preview.get(0).scrollTop);
+        }
     });
 
 $('.body-editor-open').on('click', e => {
