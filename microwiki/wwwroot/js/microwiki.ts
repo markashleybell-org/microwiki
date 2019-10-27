@@ -164,8 +164,8 @@ function setEditorSelection() {
     }
 }
 
-function toggleFormatting(formatting: [string, string]) {
-    const [before, after] = formatting;
+function toggleFormatting(formatting: [string, string, boolean]) {
+    const [before, after, canBeToggled] = formatting;
 
     const start = bodyEditorElement.selectionStart;
     const end = bodyEditorElement.selectionEnd;
@@ -181,7 +181,7 @@ function toggleFormatting(formatting: [string, string]) {
     const charsAfterSelection = contentAfterSelection.slice(0, after.length);
 
     // If this text is already surrounded by the same formatting chars, remove them
-    if (charsBeforeSelection === before && charsAfterSelection === after) {
+    if (canBeToggled && charsBeforeSelection === before && charsAfterSelection === after) {
         updatedContent = contentBeforeSelection.slice(0, contentBeforeSelection.length - before.length)
             + selectedText
             + contentAfterSelection.slice(after.length, contentAfterSelection.length);
@@ -216,12 +216,14 @@ $('.body-editor-editor').on('select', getEditorSelection).on('blur', e => {
     console.log('editor onBlur', selection);
 });
 
-function getFormatting(action: 'bold' | 'italic'): [string, string] {
+function getFormatting(action: 'bold' | 'italic' | 'code-inline'): [string, string, boolean] {
     switch (action) {
         case 'bold':
-            return ['**', '**'];
+            return ['**', '**', true];
         case 'italic':
-            return ['*', '*'];
+            return ['*', '*', true];
+        case 'code-inline':
+            return ['`', '`', true];
     }
 }
 
@@ -234,7 +236,19 @@ $('.body-editor-button')
         if (selectionExists()) {
             bodyEditor.focus();
             setEditorSelection();
-            toggleFormatting(getFormatting(action));
+            if (action === 'code-block') {
+                // TODO: Try and detect the language
+                toggleFormatting(['```\n', '\n```', false]);
+            } else if (action === 'convert-code-block') {
+                const lines = bodyEditorElement.value
+                    .slice(selection.start, selection.end)
+                    .split('\n')
+                    .map(line => line.substring(4))
+                    .join('\n');
+                bodyEditorElement.setRangeText('```\n' + lines + '\n```');
+            } else {
+                toggleFormatting(getFormatting(action));
+            }
             console.log('editor button onClick', selection);
             updatePreview(preview.get(0).scrollTop);
         }
