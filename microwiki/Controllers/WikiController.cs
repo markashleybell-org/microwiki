@@ -125,6 +125,9 @@ namespace MicroWiki.Controllers
             return View(model);
         }
 
+        public IActionResult EditorTestHarness() =>
+            View();
+
         [HttpPost]
         public async Task<IActionResult> Move(Guid id, Guid newParentID)
         {

@@ -8,7 +8,8 @@ module.exports = {
         library: 'MicroWiki'
     },
     entry: {
-        'microwiki': './wwwroot/js/microwiki.ts'
+        'microwiki': './wwwroot/js/microwiki.ts',
+        'editor-test-harness': './wwwroot/js/editor-test-harness.ts'
     },
     devtool: 'source-map',
     plugins: [

@@ -3,18 +3,6 @@ import { TagInput, ITag } from 'mab-bootstrap-taginput';
 
 import 'mab-bootstrap-taginput/css/standard.css';
 
-import CodeMirror from 'codemirror';
-import 'codemirror/mode/gfm/gfm';
-
-const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
-
-const editor = CodeMirror.fromTextArea(editorElement, {
-    mode: "gfm",
-    theme: "monokai",
-    indentUnit: 4,
-    lineWrapping: true
-});
-
 // TODO: Split out editor from main script
 import hljs from 'highlight.js/lib/highlight';
 

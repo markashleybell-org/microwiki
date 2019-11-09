@@ -1,0 +1,139 @@
+/* Based on Sublime Text's Monokai theme */
+
+.cm-s-microwiki.CodeMirror {
+    background: #272822;
+    color: #f8f8f2;
+    font-size: 1.2em;
+    padding: 10px 15px;
+}
+
+.cm-s-microwiki div.CodeMirror-selected {
+    background: #49483E;
+}
+
+.cm-s-microwiki .CodeMirror-line::selection, .cm-s-microwiki .CodeMirror-line > span::selection, .cm-s-microwiki .CodeMirror-line > span > span::selection {
+    background: rgba(73, 72, 62, .99);
+}
+
+.cm-s-microwiki .CodeMirror-line::-moz-selection, .cm-s-microwiki .CodeMirror-line > span::-moz-selection, .cm-s-microwiki .CodeMirror-line > span > span::-moz-selection {
+    background: rgba(73, 72, 62, .99);
+}
+
+.cm-s-microwiki .CodeMirror-gutters {
+    background: #272822;
+    border-right: 0px;
+}
+
+.cm-s-microwiki .CodeMirror-guttermarker {
+    color: white;
+}
+
+.cm-s-microwiki .CodeMirror-guttermarker-subtle {
+    color: #d0d0d0;
+}
+
+.cm-s-microwiki .CodeMirror-linenumber {
+    color: #d0d0d0;
+}
+
+.cm-s-microwiki .CodeMirror-cursor {
+    border-left: 1px solid #f8f8f0;
+}
+
+.cm-s-microwiki span.cm-comment {
+    color: #b0c5ff;
+}
+
+.cm-s-microwiki span.cm-atom {
+    color: #ae81ff;
+}
+
+.cm-s-microwiki span.cm-number {
+    color: #ae81ff;
+}
+
+.cm-s-microwiki span.cm-comment.cm-attribute {
+    color: #97b757;
+}
+
+.cm-s-microwiki span.cm-comment.cm-def {
+    color: #bc9262;
+}
+
+.cm-s-microwiki span.cm-comment.cm-tag {
+    color: #bc6283;
+}
+
+.cm-s-microwiki span.cm-comment.cm-type {
+    color: #5998a6;
+}
+
+.cm-s-microwiki span.cm-property, .cm-s-microwiki span.cm-attribute {
+    color: #a6e22e;
+}
+
+.cm-s-microwiki span.cm-keyword {
+    color: #f92672;
+}
+
+.cm-s-microwiki span.cm-builtin {
+    color: #66d9ef;
+}
+
+.cm-s-microwiki span.cm-string {
+    color: #e6db74;
+}
+
+.cm-s-microwiki span.cm-variable {
+    color: #f8f8f2;
+}
+
+.cm-s-microwiki span.cm-variable-2 {
+    color: #9effff;
+}
+
+.cm-s-microwiki span.cm-variable-3, .cm-s-microwiki span.cm-type {
+    color: #66d9ef;
+}
+
+.cm-s-microwiki span.cm-def {
+    color: #fd971f;
+}
+
+.cm-s-microwiki span.cm-bracket {
+    color: #f8f8f2;
+}
+
+.cm-s-microwiki span.cm-tag {
+    color: #f92672;
+}
+
+.cm-s-microwiki span.cm-header {
+    color: #db9df5;
+}
+
+.cm-s-microwiki span.cm-link {
+    color: #ae81ff;
+}
+
+.cm-s-microwiki span.cm-error {
+    background: #f92672;
+    color: #f8f8f0;
+}
+
+.cm-s-microwiki .CodeMirror-activeline-background {
+    background: #373831;
+}
+
+.cm-s-microwiki .CodeMirror-matchingbracket {
+    text-decoration: underline;
+    color: white !important;
+}
+
+.cm-header-2 {
+    font-size: 1.5em;
+}
+
+.cm-header-3 {
+    font-size: 1.2em;
+}
