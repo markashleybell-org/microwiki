@@ -38,7 +38,7 @@
     },
     "scripts": {
         "build": "webpack --mode=production --display-modules",
-        "watch-ts": "webpack --watch --mode=production"
+        "watch-ts": "webpack --watch --mode=development"
     },
     "browserslist": [
         "defaults"
