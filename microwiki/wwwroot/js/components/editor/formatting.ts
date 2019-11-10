@@ -16,6 +16,7 @@ export interface IEditorFormats {
     h3: IEditorFormat;
     bold: IEditorFormat;
     italic: IEditorFormat;
+    code: IEditorFormat;
     ol: IEditorFormat;
     ul: IEditorFormat;
 }
@@ -27,6 +28,7 @@ export interface IEditorFormatTokens {
     h3: string;
     strong: string;
     em: string;
+    comment: string;
 }
 
 export const EditorFormats: IEditorFormats = {
@@ -35,6 +37,7 @@ export const EditorFormats: IEditorFormats = {
     h3: { type: 'block', token: 'header-3', before: '###', re: /^###\s+/, placeholder: 'Heading' },
     bold: { type: 'inline', token: 'strong', before: '**', after: '**', placeholder: 'bold text' },
     italic: { type: 'inline', token: 'em', before: '_', after: '_', placeholder: 'italic text' },
+    code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
 };
@@ -44,7 +47,8 @@ export const EditorFormatTokens: IEditorFormatTokens = {
     h2: "h2",
     h3: "h3",
     strong: "bold",
-    em: "italic"
+    em: "italic",
+    comment: "code"
 };
 
 export interface ICursorFormat {
@@ -57,6 +61,7 @@ export interface ICursorFormat {
     h3: boolean;
     bold: boolean;
     italic: boolean;
+    code: boolean;
     ol: boolean;
     ul: boolean;
 }
@@ -78,6 +83,7 @@ function createEmptyCursorState(): ICursorState {
             h3: false,
             bold: false,
             italic: false,
+            code: false,
             ol: false,
             ul: false
         }
@@ -204,8 +210,5 @@ const operations: IFormattingOperations = {
 export function applyFormat(cm: CodeMirror.Editor, key: string) {
     const cs = getCursorState(cm);
     const format = EditorFormats[key];
-
-    console.log(cs.format);
-
     operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format);
 }

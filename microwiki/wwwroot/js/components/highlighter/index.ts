@@ -1,0 +1,1 @@
+export { highlightElement } from './highlighting';
