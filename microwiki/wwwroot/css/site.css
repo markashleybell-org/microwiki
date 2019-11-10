@@ -8,6 +8,10 @@
     margin: 5px 0;
 }
 
+code {
+    font-size: 100%;
+}
+
 img {
     max-width: 100%;
 }

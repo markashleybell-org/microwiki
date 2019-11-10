@@ -36,7 +36,6 @@
             <div class="form-group">
                 <label asp-for="Body">Body Text</label>
                 <textarea asp-for="Body" class="form-control"></textarea>
-                <p class="body-editor-open-container"><button type="button" class="btn btn-info btn-sm body-editor-open">Open Fullscreen Editor</button></p>
             </div>
 
             <div class="checkbox">
@@ -56,14 +55,6 @@
         <p><a asp-controller="Files" asp-action="Upload" target="_blank" class="@ActionButtonClasses">Upload File</a></p>
     </div>
 </div>
-
-@section modals {
-
-    @{
-        await Html.RenderPartialAsync("_MarkdownEditor", Model.MarkdownEditorData); 
-    }
-
-}
 
 @section globals {
 
