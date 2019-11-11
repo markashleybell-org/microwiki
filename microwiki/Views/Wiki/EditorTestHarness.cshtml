@@ -1,4 +1,6 @@
-﻿@section title {
+﻿@model EditorTestHarnessViewModel
+
+@section title {
     <title>Editor Test Harness</title>
 }
 
@@ -10,80 +12,11 @@
 <div class="row">
     <div class="col">
         <h1>Editor Test Harness</h1>
-
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit" aria-selected="true">Edit</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="preview-tab" data-toggle="tab" href="#preview" role="tab" aria-controls="preview" aria-selected="false">Preview</a>
-            </li>
-        </ul>
-        <form asp-controller="Wiki" asp-action="EditorTestHarness" method="post">
-
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane show active" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-                
-                        <div class="body-editor-buttons">
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="bold" href="#">Bold</a>
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="italic" href="#">Italic</a>
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="code" href="#">Code</a>
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="h1" href="#">H1</a>
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="h2" href="#">H2</a>
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="h3" href="#">H3</a>
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="ul" href="#">List</a>
-                            <a class="btn btn-sm btn-info cm-format-button" data-format="ol" href="#">Numbered List</a>
-                        </div>
-
-                        <div class="form-group">
-                            <textarea name="Body" id="Body" class="form-control" rows="10">## Prerequisite: setting up a development site to deliver email locally
-
-When testing service emails (order confirmations, dispatch notifications, password reset emails etc.) locally, it's often much easier and more reliable to set the development site to send them to a local pickup directory (rather than actually sending them through our email server).
-
-Set the `system.net` section of your `Web.config` file up as follows:
-
-```xml
-<system.net>
-    <mailSettings>
-        <smtp deliveryMethod="SpecifiedPickupDirectory">
-            <network host="ignored" />
-            <specifiedPickupDirectory pickupDirectoryLocation="E:\Temp\Mail" />
-        </smtp>
-    </mailSettings>
-</system.net>
-```
-
-This should save any emails your local site/app would send as `.eml` files into the specified `pickupDirectoryLocation`.
-
-## EmlView
-
-You can set up [**EmlView**][1] on your development PC, which will monitor the pickup directory for changes and allow you to see HTML previews of all the service emails (including images etc).
-
-EmlView is just a simple web app, so you can [clone it][2] to your web root folder, set it up like any other site under IIS and point a local DNS name (e.g. `mailviewer.yourcomputer.com`) at it. 
-
-You'll also need to set up a virtual directory (right-click the site you've just set up and click **Add Virtual Directory...**) called `attachments`, pointing to the `pickupDirectoryLocation` you use on your local machine.
-
-Once you've done that, make a copy of the `Web.config.example` file and rename it to `Web.config`, then edit the `EmailPickupFolder` value to match your `pickupDirectoryLocation`. Build the `EmlView.sln` solution, then open the site in a web browser.
-
-EmlView will monitor your pickup folder for new `.eml` files and refresh every three seconds while it is open. Once you have triggered the sending of some emails and they appear in the list, click the subject line of an email to view an HTML preview.
-
-  [1]: http://git1.office.webselect.net:7990/projects/EML/repos/emlview/browse
-  [2]: http://git1.office.webselect.net:7990/projects/EML/repos/emlview/browse</textarea>
-                        </div>
-
-                   
-                </div>
-                <div class="tab-pane" id="preview" role="tabpanel" aria-labelledby="profile-tab">
-                    PREVIEW
-                </div>
-            </div>
-            <div class="form-group form-group-submit">
-                <button type="submit" class="@SaveButtonClasses"><i class="fa fa-floppy-o"></i> Save Page</button>
-            </div>
-        </form>
+        @{ await Html.RenderPartialAsync("_Editor", new EditorViewModel { Text = Model.TestContent }); }
     </div>
 </div>
 
 @section scripts {
-    <script src="~/js/dist/editor-test-harness.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.js" integrity="sha256-rP/7cD6sF9Rey5N+nwEgClCdovR+NIuUxWMkyqak9vU=" crossorigin="anonymous"></script>
+    <script src="~/js/dist/edit.js" asp-append-version="true"></script>
 }

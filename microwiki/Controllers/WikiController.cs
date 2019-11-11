@@ -125,8 +125,19 @@ namespace MicroWiki.Controllers
             return View(model);
         }
 
-        public IActionResult EditorTestHarness() =>
-            View();
+        public async Task<IActionResult> EditorTestHarness(Guid? id)
+        {
+            var model = new EditorTestHarnessViewModel();
+
+            if (id.HasValue)
+            {
+                var document = await _repository.ReadDocument(id.Value);
+
+                model.TestContent = document.Body;
+            }
+
+            return View(model);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Move(Guid id, Guid newParentID)

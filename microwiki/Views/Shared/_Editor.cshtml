@@ -1,0 +1,30 @@
+﻿@model EditorViewModel
+
+@{ Layout = null; }
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit" aria-selected="true">Edit</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="preview-tab" data-toggle="tab" href="#preview" role="tab" aria-controls="preview" aria-selected="false">Preview</a>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane show active" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+        <div class="body-editor-buttons">
+            <a class="btn btn-sm btn-info cm-format-button" data-format="bold" href="#">Bold</a>
+            <a class="btn btn-sm btn-info cm-format-button" data-format="italic" href="#">Italic</a>
+            <a class="btn btn-sm btn-info cm-format-button" data-format="code" href="#">Code</a>
+            <a class="btn btn-sm btn-info cm-format-button" data-format="h1" href="#">H1</a>
+            <a class="btn btn-sm btn-info cm-format-button" data-format="h2" href="#">H2</a>
+            <a class="btn btn-sm btn-info cm-format-button" data-format="h3" href="#">H3</a>
+            <a class="btn btn-sm btn-info cm-format-button" data-format="ul" href="#">List</a>
+            <a class="btn btn-sm btn-info cm-format-button" data-format="ol" href="#">Numbered List</a>
+        </div>
+        <textarea name="Body" id="Body" class="form-control" rows="10">@(Model.Text)</textarea>
+    </div>
+    <div class="tab-pane" id="preview" role="tabpanel" aria-labelledby="profile-tab">
+        DOCUMENT PREVIEW
+    </div>
+</div>

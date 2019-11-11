@@ -4,6 +4,11 @@
     <title>Create Document</title>
 }
 
+@section css {
+    <link rel="stylesheet" href="~/css/codemirror/codemirror.css" />
+    <link rel="stylesheet" href="~/css/codemirror/theme/microwiki.css" />
+}
+
 @{
     await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailData); 
 }
@@ -30,12 +35,14 @@
                 <label asp-for="Slug">Url Slug</label>
                 <input asp-for="Slug" class="form-control" />
                 <span asp-validation-for="Slug"></span>
-                <small class="form-text text-muted">If blank, this will be regenerated automatically from the title.</small>
+                <small class="form-text text-muted">If blank, this will be generated automatically from the title.</small>
             </div>
         
             <div class="form-group">
                 <label asp-for="Body">Body Text</label>
-                <textarea asp-for="Body" class="form-control"></textarea>
+                <!-- TODO: this should be a tag helper -->
+                @{ await Html.RenderPartialAsync("_Editor", new EditorViewModel { Text = Model.Body }); }
+                @*<textarea asp-for="Body" class="form-control" rows="5"></textarea>*@
             </div>
 
             <div class="checkbox">
@@ -62,4 +69,9 @@
         var _ALL_TAGS = @Html.Raw(JsonConvert.SerializeObject(Model.AllTags.Select(t => t.Label)));
     </script>
 
+}
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.js" integrity="sha256-rP/7cD6sF9Rey5N+nwEgClCdovR+NIuUxWMkyqak9vU=" crossorigin="anonymous"></script>
+    <script src="~/js/dist/edit.js" asp-append-version="true"></script>
 }
