@@ -29,25 +29,6 @@ namespace MicroWiki.Support
             output.TagName = "div";
             output.Attributes.Add("class", "editor");
 
-            /*
-<div class="tab-content">
-    <div class="tab-pane show active" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-        <div class="body-editor-buttons">
-            <a class="btn btn-sm btn-info cm-format-button" data-format="bold" href="#">Bold</a>
-            <a class="btn btn-sm btn-info cm-format-button" data-format="italic" href="#">Italic</a>
-            <a class="btn btn-sm btn-info cm-format-button" data-format="code" href="#">Code</a>
-            <a class="btn btn-sm btn-info cm-format-button" data-format="h2" href="#">H2</a>
-            <a class="btn btn-sm btn-info cm-format-button" data-format="h3" href="#">H3</a>
-            <a class="btn btn-sm btn-info cm-format-button" data-format="ul" href="#">List</a>
-            <a class="btn btn-sm btn-info cm-format-button" data-format="ol" href="#">Numbered List</a>
-        </div>
-        <textarea name = "Body" id= "Body" class="form-control" rows="10">@(Model.Text)</textarea>
-    </div>
-    <div class="tab-pane" id="preview" role="tabpanel" aria-labelledby="profile-tab">
-        DOCUMENT PREVIEW
-    </div>
-</div>
-*/
             var buttonData = new (string format, string label)[] {
                 ("bold", "Bold"),
                 ("italic", "Italic"),
@@ -55,7 +36,9 @@ namespace MicroWiki.Support
                 ("h2", "H2"),
                 ("h3", "H3"),
                 ("ul", "List"),
-                ("ol", "Numbered List")
+                ("ol", "Numbered List"),
+                ("link", "Link"),
+                ("image", "Image")
             };
 
             var buttons = CreateFormatButtons(buttonData);

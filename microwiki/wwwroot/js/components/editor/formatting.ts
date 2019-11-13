@@ -19,6 +19,8 @@ export interface IEditorFormats {
     code: IEditorFormat;
     ol: IEditorFormat;
     ul: IEditorFormat;
+    link: IEditorFormat;
+    image: IEditorFormat;
 }
 
 export interface IEditorFormatTokens {
@@ -40,6 +42,8 @@ export const EditorFormats: IEditorFormats = {
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
+    link: { type: 'inline', before: '[', after: ']()', re: /^[\*\-]\s+/, placeholder: 'link' },
+    image: { type: 'inline', before: '![', after: ']()', re: /^[\*\-]\s+/, placeholder: 'image' },
 };
 
 export const EditorFormatTokens: IEditorFormatTokens = {

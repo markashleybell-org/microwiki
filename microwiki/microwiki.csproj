@@ -12,6 +12,8 @@
 
     <ItemGroup>
         <Content Remove="package-lock.json" />
+        <Content Remove="wwwroot\usercontent\*.*" />
+        <Content Include="wwwroot\usercontent\.gitignore" />
     </ItemGroup>
 
     <ItemGroup>
