@@ -10,6 +10,10 @@
     background: #49483E;
 }
 
+.cm-s-microwiki div.CodeMirror-lines {
+    padding: 10px 16px;
+}
+
 .cm-s-microwiki .CodeMirror-line::selection, .cm-s-microwiki .CodeMirror-line > span::selection, .cm-s-microwiki .CodeMirror-line > span > span::selection {
     background: rgba(73, 72, 62, .99);
 }

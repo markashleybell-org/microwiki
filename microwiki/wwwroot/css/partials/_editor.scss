@@ -1,109 +1,11 @@
-$editor-modal-gutter: 10px;
+.body-editor-buttons {
+    padding: 10px 0;
 
-.modal.fullscreen {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: hidden;
-
-    .modal-dialog {
-        position: fixed;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        max-width: 100%;
-    }
-
-    .modal-content {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }
-
-    .modal-header {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        height: 50px;
-        padding: $editor-modal-gutter;
-        border: 0;
-    }
-
-    .modal-body {
-        position: absolute;
-        top: 50px;
-        bottom: 60px;
-        width: 100%;
-        overflow: auto;
-        padding: $editor-modal-gutter;
-        display: flex;
-    }
-
-    .modal-footer {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        height: 60px;
-        padding: $editor-modal-gutter;
+    a {
+        margin-right: 5px;
     }
 }
 
-.body-editor, .body-preview {
-    width: 50%;
-}
-
-.body-editor {
-    margin-right: $editor-modal-gutter;
-    font-family: Courier New, Courier, monospace;
-    position: relative;
-}
-
-.body-editor-editor {
-    position: absolute;
-    top: 30px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-
-.body-editor-controls {
-    /*position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;*/
-    display: flex;
-}
-
-.body-editor-button {
-    border: solid 1px #e0e0e0;
-    text-align: center;
-    font-weight: bold;
-    min-width: 24px;
-    text-decoration: none;
-    color: #000000;
-
-    &:hover {
-        color: #000000;
-        text-decoration: none;
-        background-color: #e0e0e0;
-    }
-}
-
-.body-preview {
-    margin-left: $editor-modal-gutter;
-    overflow-y: scroll;
-    padding-right: $editor-modal-gutter * 2;
-}
-
-.body-editor-open-container {
-    margin-top: 10px;
-    text-align: right;
+#preview {
+    padding-top: 20px;
 }

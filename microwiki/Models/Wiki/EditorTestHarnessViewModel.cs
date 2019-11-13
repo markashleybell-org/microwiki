@@ -2,6 +2,6 @@ namespace MicroWiki.Models
 {
     public class EditorTestHarnessViewModel
     {
-        public string TestContent { get; set; }
+        public string Body { get; set; }
     }
 }

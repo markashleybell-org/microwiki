@@ -133,7 +133,7 @@ namespace MicroWiki.Controllers
             {
                 var document = await _repository.ReadDocument(id.Value);
 
-                model.TestContent = document.Body;
+                model.Body = document.Body;
             }
 
             return View(model);

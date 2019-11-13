@@ -11,8 +11,8 @@
 
 <div class="row">
     <div class="col">
-        <h1>Editor Test Harness</h1>
-        @{ await Html.RenderPartialAsync("_Editor", new EditorViewModel { Text = Model.TestContent }); }
+        <br />
+        <editor asp-for="Body" />
     </div>
 </div>
 
