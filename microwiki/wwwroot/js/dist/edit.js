@@ -18229,9 +18229,13 @@ function format(key) {
             size: 'small',
             title: 'sdgasdgasdg',
             callback: function (r) {
-                console.log(r);
-                editor.focus();
-                Object(_components_editor__WEBPACK_IMPORTED_MODULE_2__["applyFormat"])(editor, key);
+                // console.log(r);
+                // editor.focus();
+                // applyFormat(editor, key);
+                if (editor.somethingSelected()) {
+                    var sel = editor.getSelection();
+                    editor.replaceSelection('[' + sel + '](' + r + ')');
+                }
             }
         });
     }

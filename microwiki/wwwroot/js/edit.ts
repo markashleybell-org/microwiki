@@ -28,9 +28,14 @@ export function format(key: string) {
             size: 'small',
             title: 'sdgasdgasdg',
             callback: r => {
-                console.log(r);
-                editor.focus();
-                applyFormat(editor, key);
+                // console.log(r);
+                // editor.focus();
+                // applyFormat(editor, key);
+
+                if (editor.somethingSelected()) {
+                    const sel = editor.getSelection();
+                    editor.replaceSelection('[' + sel + '](' + r + ')')
+                }
             }
         });
     } else {
