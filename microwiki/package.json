@@ -37,7 +37,7 @@
         "codemirror": "5.49.2"
     },
     "scripts": {
-        "build": "webpack --mode=production --display-modules",
+        "build": "webpack --mode=development --display-modules",
         "watch-ts": "webpack --watch --mode=development"
     },
     "browserslist": [

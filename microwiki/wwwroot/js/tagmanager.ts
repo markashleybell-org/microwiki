@@ -12,6 +12,7 @@ for (var i = 0; i < tagMergeInputElements.length; i++) {
         data: _ALL_TAGS_MERGE || [],
         getId: item => item.id,
         getLabel: item => item.label,
-        allowNewTags: false
+        allowNewTags: false,
+        minCharsBeforeShowingSuggestions: 1
     });
 }

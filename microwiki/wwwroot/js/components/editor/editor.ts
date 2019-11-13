@@ -11,5 +11,10 @@ export function createEditor(editorElement: HTMLTextAreaElement) {
 
     editor.setSize(null, 600);
 
+    editor.setOption("extraKeys", {
+        "Tab": "indentMore",
+        "Shift-Tab": "indentLess"
+    });
+
     return editor;
 }
