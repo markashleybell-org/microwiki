@@ -1,3 +1,4 @@
+import bootbox from 'bootbox';
 import { TagInput, ITag } from 'mab-bootstrap-taginput';
 import { applyFormat, createEditor, updatePreview } from './components/editor';
 
@@ -22,7 +23,19 @@ for (var i = 0; i < tagInputElements.length; i++) {
 }
 
 export function format(key: string) {
-    applyFormat(editor, key);
+    if (key == 'link') {
+        bootbox.prompt({
+            size: 'small',
+            title: 'sdgasdgasdg',
+            callback: r => {
+                console.log(r);
+                editor.focus();
+                applyFormat(editor, key);
+            }
+        });
+    } else {
+        applyFormat(editor, key);
+    }
 }
 
 $('.cm-format-button').on('click', e => {
