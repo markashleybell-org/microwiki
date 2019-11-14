@@ -40,7 +40,7 @@ export const EditorFormats: IEditorFormats = {
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
-    link: { type: 'link', before: '[', after: ']()', re: /^\[.*?\]\(.*?\)\s+/, placeholder: 'link' }
+    link: { type: 'link', before: '[', after: ']()', placeholder: 'link' }
 };
 
 export const EditorFormatTokens: IEditorFormatTokens = {
@@ -205,25 +205,28 @@ export function linkRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
 
     var startPos = startPoint.ch;
     while (startPos) {
-        if (line.substr(startPos, format.before.length) === format.before) {
+        startPos--;
+        if (line.charAt(startPos) === '[') {
             break;
         }
-        startPos--;
     }
 
     var endPos = endPoint.ch;
     while (endPos <= line.length) {
-        if (line.substr(endPos, format.after.length) === format.after) {
+        if (line.charAt(endPos) === ')') {
             break;
         }
         endPos++;
     }
 
     var start = line.slice(0, startPos);
-    var mid = line.slice(startPos + format.before.length, endPos);
-    var end = line.slice(endPos + format.after.length);
-    cm.replaceRange(start + mid + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + mid).length });
+    var mid = line.slice(startPos, endPos + 1);
+    var end = line.slice(endPos + 1);
+
+    var linkText = mid.replace(/\[(.*?)\]\(.*?\)/, '$1');
+
+    cm.replaceRange(start + linkText + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
+    cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + linkText).length });
     cm.focus();
 }
 
