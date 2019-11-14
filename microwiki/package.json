@@ -4,7 +4,6 @@
     "private": true,
     "devDependencies": {
         "@types/bootstrap": "4.3.1",
-        "@types/bootbox": "5.2.0",
         "@types/jquery": "3.3.31",
         "@types/jquery-validation-unobtrusive": "3.2.32",
         "@types/jquery.validation": "1.16.6",
@@ -35,8 +34,7 @@
         "mab-bootstrap-taginput": "0.0.5",
         "marked": "0.7.0",
         "tslib": "1.10.0",
-        "codemirror": "5.49.2",
-        "bootbox": "5.3.4"
+        "codemirror": "5.49.2"
     },
     "scripts": {
         "build": "webpack --mode=development --display-modules",

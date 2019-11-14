@@ -39,8 +39,7 @@ export const EditorFormats: IEditorFormats = {
     italic: { type: 'inline', token: 'em', before: '_', after: '_', placeholder: 'italic text' },
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
-    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
-    link: { type: 'link', before: '[', after: ']()', placeholder: 'link' }
+    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' }
 };
 
 export const EditorFormatTokens: IEditorFormatTokens = {
@@ -100,7 +99,7 @@ export function getCursorState(cm: CodeMirror.Editor) {
     }
     const tokens = token.type.split(' ');
     tokens.forEach(t => {
-        console.log(t);
+        // console.log(t);
         if (EditorFormatTokens[t]) {
             cs.format[EditorFormatTokens[t]] = true;
             return;
@@ -186,19 +185,14 @@ export function blockRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
     cm.focus();
 }
 
-export function linkApply(cm: CodeMirror.Editor, format: IEditorFormat) {
+export function linkApply(cm: CodeMirror.Editor, data: IHtmlLinkProperties) {
     var startPoint = cm.getCursor('start');
     var endPoint = cm.getCursor('end');
 
-    cm.replaceSelection(format.before + cm.getSelection() + format.after);
-
-    startPoint.ch += format.before.length;
-    endPoint.ch += format.before.length;
-    cm.setSelection(startPoint, endPoint);
-    cm.focus();
+    cm.replaceSelection('[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')');
 }
 
-export function linkRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
+export function linkRemove(cm: CodeMirror.Editor) {
     var startPoint = cm.getCursor('start');
     var endPoint = cm.getCursor('end');
     var line = cm.getLine(startPoint.line);
@@ -227,13 +221,12 @@ export function linkRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
 
     cm.replaceRange(start + linkText + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
     cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + linkText).length });
-    cm.focus();
 }
 
 interface IFormattingOperation {
-    [key: string]: (cm: CodeMirror.Editor, format: IEditorFormat) => void;
-    apply: (cm: CodeMirror.Editor, format: IEditorFormat) => void;
-    remove: (cm: CodeMirror.Editor, format: IEditorFormat) => void;
+    [key: string]: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
+    apply: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
+    remove: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
 }
 
 interface IFormattingOperations {
@@ -250,16 +243,80 @@ const operations: IFormattingOperations = {
     block: {
         apply: blockApply,
         remove: blockRemove
-    },
-    link: {
-        apply: linkApply,
-        remove: linkRemove
     }
 }
 
-export function applyFormat(cm: CodeMirror.Editor, key: string) {
+export function applyFormat(cm: CodeMirror.Editor, key: string, data?: any) {
     const cs = getCursorState(cm);
-    console.log(cs);
+    // console.log(cs);
     const format = EditorFormats[key];
-    operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format);
+    operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format, data);
+}
+
+export interface IHtmlLinkProperties {
+    linkText: string;
+    href: string;
+    linkTitle?: string;
+}
+
+export function getLinkData(cm: CodeMirror.Editor): IHtmlLinkProperties {
+    const pos = cm.getCursor('start');
+    const token = cm.getTokenAt(pos);
+
+    var data: IHtmlLinkProperties = null;
+
+    if (token.type && (token.type === 'link' || token.type.indexOf('url') > -1)) {
+        var startPoint = cm.getCursor('start');
+        var endPoint = cm.getCursor('end');
+        var line = cm.getLine(startPoint.line);
+
+        var startPos = startPoint.ch;
+        while (startPos) {
+            startPos--;
+            if (line.charAt(startPos) === '[') {
+                break;
+            }
+        }
+
+        var endPos = endPoint.ch;
+        while (endPos <= line.length) {
+            if (line.charAt(endPos) === ')') {
+                break;
+            }
+            endPos++;
+        }
+
+        var linkMarkdown = line.slice(startPos, endPos + 1);
+
+        var linkPattern = /\[(.*?)\]\(([^\s]*)(?:\s+"(.*?)")?\)/m;
+        var match = linkPattern.exec(linkMarkdown);
+
+        if (match) {
+            // matched text: match[0]
+            // match start: match.index
+            // capturing group n: match[n]
+
+            var data: IHtmlLinkProperties = {
+                linkText: match[1],
+                href: match[2]
+            };
+
+            if (match[3]) {
+                data.linkTitle = match[3];
+            }
+        }
+
+        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });    
+    }
+
+    return data;
+}
+
+export function createLink(cm: CodeMirror.Editor, properties: IHtmlLinkProperties) {
+    const cs = getCursorState(cm);
+    linkApply(cm, properties);
+}
+
+export function removeLink(cm: CodeMirror.Editor) {
+    linkRemove(cm);
 }

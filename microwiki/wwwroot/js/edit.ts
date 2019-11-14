@@ -1,8 +1,8 @@
-import bootbox from 'bootbox';
 import { TagInput, ITag } from 'mab-bootstrap-taginput';
-import { applyFormat, createEditor, updatePreview } from './components/editor';
+import { applyFormat, createEditor, createLink, getLinkData, removeLink, updatePreview } from './components/editor';
 
 import 'mab-bootstrap-taginput/css/standard.css';
+import { IHtmlLinkProperties } from './components/editor/formatting';
 
 declare var _ALL_TAGS: string[];
 
@@ -22,25 +22,55 @@ for (var i = 0; i < tagInputElements.length; i++) {
     });
 }
 
-export function format(key: string) {
-    //if (key == 'link') {
-    //    bootbox.prompt({
-    //        size: 'small',
-    //        title: 'sdgasdgasdg',
-    //        callback: r => {
-    //            // console.log(r);
-    //            // editor.focus();
-    //            // applyFormat(editor, key);
+const linkModal = $('#modal');
 
-    //            if (editor.somethingSelected()) {
-    //                const sel = editor.getSelection();
-    //                editor.replaceSelection('[' + sel + '](' + r + ')')
-    //            }
-    //        }
-    //    });
-    //} else {
+linkModal.modal({
+    show: false
+});
+
+linkModal.on("click", ".btn-primary", function () {
+    const text = linkModal.find('input[name="link-text"]').val() as string;
+    const url = linkModal.find('input[name="link-url"]').val() as string;
+    const title = linkModal.find('input[name="link-title"]').val() as string;
+
+    const data: IHtmlLinkProperties = { linkText: text, href: url };
+
+    if (title) {
+        data.linkTitle = title;
+    }
+
+    createLink(editor, data);
+
+    linkModal.modal('hide');
+});
+
+linkModal.on("click", ".btn-danger", function () {
+    // TODO: Confirm?
+    removeLink(editor);
+
+    linkModal.modal('hide');
+});
+
+linkModal.on('hidden.bs.modal', e => {
+    editor.focus();
+});
+
+export function format(key: string) {
+    if (key == 'link') {
+        const linkData = getLinkData(editor);
+
+        if (linkData) {
+            linkModal.find('input[name="link-text"]').val(linkData.linkText);
+            linkModal.find('input[name="link-url"]').val(linkData.href);
+            linkModal.find('input[name="link-title"]').val(linkData.linkTitle);
+        } else {
+            linkModal.find('input[name="link-text"]').val(editor.getSelection());
+        }
+
+        linkModal.modal('show');
+    } else {
         applyFormat(editor, key);
-    //}
+    }
 }
 
 $('.cm-format-button').on('click', e => {

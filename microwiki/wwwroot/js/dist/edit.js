@@ -16518,7 +16518,7 @@ function createEditor(editorElement) {
 /*!****************************************************!*\
   !*** ./wwwroot/js/components/editor/formatting.ts ***!
   \****************************************************/
-/*! exports provided: EditorFormats, EditorFormatTokens, getCursorState, inlineApply, inlineRemove, blockApply, blockRemove, linkApply, linkRemove, applyFormat */
+/*! exports provided: EditorFormats, EditorFormatTokens, getCursorState, inlineApply, inlineRemove, blockApply, blockRemove, linkApply, linkRemove, applyFormat, getLinkData, createLink, removeLink */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16533,6 +16533,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "linkApply", function() { return linkApply; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "linkRemove", function() { return linkRemove; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyFormat", function() { return applyFormat; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLinkData", function() { return getLinkData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createLink", function() { return createLink; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeLink", function() { return removeLink; });
 var EditorFormats = {
     h1: { type: 'block', token: 'header-1', before: '#', re: /^#\s+/, placeholder: 'Heading' },
     h2: { type: 'block', token: 'header-2', before: '##', re: /^##\s+/, placeholder: 'Heading' },
@@ -16541,8 +16544,7 @@ var EditorFormats = {
     italic: { type: 'inline', token: 'em', before: '_', after: '_', placeholder: 'italic text' },
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
-    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
-    link: { type: 'link', before: '[', after: ']()', placeholder: 'link' }
+    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' }
 };
 var EditorFormatTokens = {
     "header-1": "h1",
@@ -16579,7 +16581,7 @@ function getCursorState(cm) {
     }
     var tokens = token.type.split(' ');
     tokens.forEach(function (t) {
-        console.log(t);
+        // console.log(t);
         if (EditorFormatTokens[t]) {
             cs.format[EditorFormatTokens[t]] = true;
             return;
@@ -16656,16 +16658,12 @@ function blockRemove(cm, format) {
     cm.setSelection({ line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: text.length });
     cm.focus();
 }
-function linkApply(cm, format) {
+function linkApply(cm, data) {
     var startPoint = cm.getCursor('start');
     var endPoint = cm.getCursor('end');
-    cm.replaceSelection(format.before + cm.getSelection() + format.after);
-    startPoint.ch += format.before.length;
-    endPoint.ch += format.before.length;
-    cm.setSelection(startPoint, endPoint);
-    cm.focus();
+    cm.replaceSelection('[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')');
 }
-function linkRemove(cm, format) {
+function linkRemove(cm) {
     var startPoint = cm.getCursor('start');
     var endPoint = cm.getCursor('end');
     var line = cm.getLine(startPoint.line);
@@ -16689,7 +16687,6 @@ function linkRemove(cm, format) {
     var linkText = mid.replace(/\[(.*?)\]\(.*?\)/, '$1');
     cm.replaceRange(start + linkText + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
     cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + linkText).length });
-    cm.focus();
 }
 var operations = {
     inline: {
@@ -16699,17 +16696,61 @@ var operations = {
     block: {
         apply: blockApply,
         remove: blockRemove
-    },
-    link: {
-        apply: linkApply,
-        remove: linkRemove
     }
 };
-function applyFormat(cm, key) {
+function applyFormat(cm, key, data) {
     var cs = getCursorState(cm);
-    console.log(cs);
+    // console.log(cs);
     var format = EditorFormats[key];
-    operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format);
+    operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format, data);
+}
+function getLinkData(cm) {
+    var pos = cm.getCursor('start');
+    var token = cm.getTokenAt(pos);
+    var data = null;
+    if (token.type && (token.type === 'link' || token.type.indexOf('url') > -1)) {
+        var startPoint = cm.getCursor('start');
+        var endPoint = cm.getCursor('end');
+        var line = cm.getLine(startPoint.line);
+        var startPos = startPoint.ch;
+        while (startPos) {
+            startPos--;
+            if (line.charAt(startPos) === '[') {
+                break;
+            }
+        }
+        var endPos = endPoint.ch;
+        while (endPos <= line.length) {
+            if (line.charAt(endPos) === ')') {
+                break;
+            }
+            endPos++;
+        }
+        var linkMarkdown = line.slice(startPos, endPos + 1);
+        var linkPattern = /\[(.*?)\]\(([^\s]*)(?:\s+"(.*?)")?\)/m;
+        var match = linkPattern.exec(linkMarkdown);
+        if (match) {
+            // matched text: match[0]
+            // match start: match.index
+            // capturing group n: match[n]
+            var data = {
+                linkText: match[1],
+                href: match[2]
+            };
+            if (match[3]) {
+                data.linkTitle = match[3];
+            }
+        }
+        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });
+    }
+    return data;
+}
+function createLink(cm, properties) {
+    var cs = getCursorState(cm);
+    linkApply(cm, properties);
+}
+function removeLink(cm) {
+    linkRemove(cm);
 }
 
 
@@ -16719,7 +16760,7 @@ function applyFormat(cm, key) {
 /*!***********************************************!*\
   !*** ./wwwroot/js/components/editor/index.ts ***!
   \***********************************************/
-/*! exports provided: createEditor, EditorFormats, applyFormat, updatePreview */
+/*! exports provided: createEditor, EditorFormats, applyFormat, createLink, getLinkData, removeLink, updatePreview */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16731,6 +16772,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EditorFormats", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["EditorFormats"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "applyFormat", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["applyFormat"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "createLink", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["createLink"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getLinkData", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["getLinkData"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "removeLink", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["removeLink"]; });
 
 /* harmony import */ var _previewer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./previewer */ "./wwwroot/js/components/editor/previewer.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "updatePreview", function() { return _previewer__WEBPACK_IMPORTED_MODULE_2__["updatePreview"]; });
@@ -16874,24 +16921,45 @@ for (var i = 0; i < tagInputElements.length; i++) {
         newItemFactory: function (label) { return Promise.resolve(label); }
     });
 }
+var linkModal = $('#modal');
+linkModal.modal({
+    show: false
+});
+linkModal.on("click", ".btn-primary", function () {
+    var text = linkModal.find('input[name="link-text"]').val();
+    var url = linkModal.find('input[name="link-url"]').val();
+    var title = linkModal.find('input[name="link-title"]').val();
+    var data = { linkText: text, href: url };
+    if (title) {
+        data.linkTitle = title;
+    }
+    Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["createLink"])(editor, data);
+    linkModal.modal('hide');
+});
+linkModal.on("click", ".btn-danger", function () {
+    // TODO: Confirm?
+    Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["removeLink"])(editor);
+    linkModal.modal('hide');
+});
+linkModal.on('hidden.bs.modal', function (e) {
+    editor.focus();
+});
 function format(key) {
-    //if (key == 'link') {
-    //    bootbox.prompt({
-    //        size: 'small',
-    //        title: 'sdgasdgasdg',
-    //        callback: r => {
-    //            // console.log(r);
-    //            // editor.focus();
-    //            // applyFormat(editor, key);
-    //            if (editor.somethingSelected()) {
-    //                const sel = editor.getSelection();
-    //                editor.replaceSelection('[' + sel + '](' + r + ')')
-    //            }
-    //        }
-    //    });
-    //} else {
-    Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["applyFormat"])(editor, key);
-    //}
+    if (key == 'link') {
+        var linkData = Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["getLinkData"])(editor);
+        if (linkData) {
+            linkModal.find('input[name="link-text"]').val(linkData.linkText);
+            linkModal.find('input[name="link-url"]').val(linkData.href);
+            linkModal.find('input[name="link-title"]').val(linkData.linkTitle);
+        }
+        else {
+            linkModal.find('input[name="link-text"]').val(editor.getSelection());
+        }
+        linkModal.modal('show');
+    }
+    else {
+        Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["applyFormat"])(editor, key);
+    }
 }
 $('.cm-format-button').on('click', function (e) {
     e.preventDefault();
