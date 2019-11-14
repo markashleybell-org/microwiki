@@ -19,15 +19,13 @@ export interface IEditorFormats {
     code: IEditorFormat;
     ol: IEditorFormat;
     ul: IEditorFormat;
-    link: IEditorFormat;
-    image: IEditorFormat;
 }
 
 export interface IEditorFormatTokens {
     [key: string]: string;
-    h1: string;
-    h2: string;
-    h3: string;
+    "header-1": string;
+    "header-2": string;
+    "header-3": string;
     strong: string;
     em: string;
     comment: string;
@@ -42,14 +40,13 @@ export const EditorFormats: IEditorFormats = {
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
-    link: { type: 'inline', before: '[', after: ']()', re: /^[\*\-]\s+/, placeholder: 'link' },
-    image: { type: 'inline', before: '![', after: ']()', re: /^[\*\-]\s+/, placeholder: 'image' },
+    link: { type: 'link', before: '[', after: ']()', re: /^\[.*?\]\(.*?\)\s+/, placeholder: 'link' }
 };
 
 export const EditorFormatTokens: IEditorFormatTokens = {
-    h1: "h1",
-    h2: "h2",
-    h3: "h3",
+    "header-1": "h1",
+    "header-2": "h2",
+    "header-3": "h3",
     strong: "bold",
     em: "italic",
     comment: "code"
@@ -103,6 +100,7 @@ export function getCursorState(cm: CodeMirror.Editor) {
     }
     const tokens = token.type.split(' ');
     tokens.forEach(t => {
+        console.log(t);
         if (EditorFormatTokens[t]) {
             cs.format[EditorFormatTokens[t]] = true;
             return;
@@ -188,6 +186,47 @@ export function blockRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
     cm.focus();
 }
 
+export function linkApply(cm: CodeMirror.Editor, format: IEditorFormat) {
+    var startPoint = cm.getCursor('start');
+    var endPoint = cm.getCursor('end');
+
+    cm.replaceSelection(format.before + cm.getSelection() + format.after);
+
+    startPoint.ch += format.before.length;
+    endPoint.ch += format.before.length;
+    cm.setSelection(startPoint, endPoint);
+    cm.focus();
+}
+
+export function linkRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
+    var startPoint = cm.getCursor('start');
+    var endPoint = cm.getCursor('end');
+    var line = cm.getLine(startPoint.line);
+
+    var startPos = startPoint.ch;
+    while (startPos) {
+        if (line.substr(startPos, format.before.length) === format.before) {
+            break;
+        }
+        startPos--;
+    }
+
+    var endPos = endPoint.ch;
+    while (endPos <= line.length) {
+        if (line.substr(endPos, format.after.length) === format.after) {
+            break;
+        }
+        endPos++;
+    }
+
+    var start = line.slice(0, startPos);
+    var mid = line.slice(startPos + format.before.length, endPos);
+    var end = line.slice(endPos + format.after.length);
+    cm.replaceRange(start + mid + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
+    cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + mid).length });
+    cm.focus();
+}
+
 interface IFormattingOperation {
     [key: string]: (cm: CodeMirror.Editor, format: IEditorFormat) => void;
     apply: (cm: CodeMirror.Editor, format: IEditorFormat) => void;
@@ -208,11 +247,16 @@ const operations: IFormattingOperations = {
     block: {
         apply: blockApply,
         remove: blockRemove
+    },
+    link: {
+        apply: linkApply,
+        remove: linkRemove
     }
 }
 
 export function applyFormat(cm: CodeMirror.Editor, key: string) {
     const cs = getCursorState(cm);
+    console.log(cs);
     const format = EditorFormats[key];
     operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format);
 }

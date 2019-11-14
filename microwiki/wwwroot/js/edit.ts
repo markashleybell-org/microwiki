@@ -23,24 +23,24 @@ for (var i = 0; i < tagInputElements.length; i++) {
 }
 
 export function format(key: string) {
-    if (key == 'link') {
-        bootbox.prompt({
-            size: 'small',
-            title: 'sdgasdgasdg',
-            callback: r => {
-                // console.log(r);
-                // editor.focus();
-                // applyFormat(editor, key);
+    //if (key == 'link') {
+    //    bootbox.prompt({
+    //        size: 'small',
+    //        title: 'sdgasdgasdg',
+    //        callback: r => {
+    //            // console.log(r);
+    //            // editor.focus();
+    //            // applyFormat(editor, key);
 
-                if (editor.somethingSelected()) {
-                    const sel = editor.getSelection();
-                    editor.replaceSelection('[' + sel + '](' + r + ')')
-                }
-            }
-        });
-    } else {
+    //            if (editor.somethingSelected()) {
+    //                const sel = editor.getSelection();
+    //                editor.replaceSelection('[' + sel + '](' + r + ')')
+    //            }
+    //        }
+    //    });
+    //} else {
         applyFormat(editor, key);
-    }
+    //}
 }
 
 $('.cm-format-button').on('click', e => {
