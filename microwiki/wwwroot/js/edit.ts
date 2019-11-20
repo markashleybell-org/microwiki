@@ -1,10 +1,10 @@
-import { TagInput, ITag } from 'mab-bootstrap-taginput';
+import { TagInput } from 'mab-bootstrap-taginput';
 import { applyFormat, createEditor, createLink, getLinkData, removeLink, updatePreview } from './components/editor';
 
 import 'mab-bootstrap-taginput/css/standard.css';
 import { IHtmlLinkProperties } from './components/editor/formatting';
 
-declare var _ALL_TAGS: string[];
+declare const _ALL_TAGS: string[];
 
 const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
 
@@ -12,9 +12,9 @@ const editor = createEditor(editorElement);
 
 const tagInputElements = document.getElementsByClassName('tag-input');
 
-for (var i = 0; i < tagInputElements.length; i++) {
+for (const tagInputElement of tagInputElements) {
     new TagInput<string>({
-        input: (tagInputElements[i] as HTMLElement),
+        input: (tagInputElement as HTMLElement),
         data: _ALL_TAGS || [],
         getId: item => item,
         getLabel: item => item,
@@ -28,7 +28,7 @@ linkModal.modal({
     show: false
 });
 
-linkModal.on("click", ".btn-primary", function () {
+linkModal.on('click', '.btn-primary', () => {
     const text = linkModal.find('input[name="link-text"]').val() as string;
     const url = linkModal.find('input[name="link-url"]').val() as string;
     const title = linkModal.find('input[name="link-title"]').val() as string;
@@ -44,7 +44,7 @@ linkModal.on("click", ".btn-primary", function () {
     linkModal.modal('hide');
 });
 
-linkModal.on("click", ".btn-danger", function () {
+linkModal.on('click', '.btn-danger', () => {
     // TODO: Confirm?
     removeLink(editor);
 
@@ -56,7 +56,7 @@ linkModal.on('hidden.bs.modal', e => {
 });
 
 export function format(key: string) {
-    if (key == 'link') {
+    if (key === 'link') {
         const linkData = getLinkData(editor);
 
         if (linkData) {
@@ -81,8 +81,8 @@ $('.cm-format-button').on('click', e => {
     format(formatName);
 });
 
-$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-    if (e.target.id == 'preview-tab') {
+$('a[data-toggle="tab"]').on('show.bs.tab', e => {
+    if (e.target.id === 'preview-tab') {
         const tab = $(e.target);
 
         const tabContent = $(tab.attr('href'));
@@ -91,5 +91,4 @@ $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
 
         updatePreview(val, tabContent);
     }
-})
-
+});

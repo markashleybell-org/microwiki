@@ -962,18 +962,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var mab_bootstrap_taginput__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(mab_bootstrap_taginput__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var mab_bootstrap_taginput_css_standard_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! mab-bootstrap-taginput/css/standard.css */ "./node_modules/mab-bootstrap-taginput/css/standard.css");
 /* harmony import */ var mab_bootstrap_taginput_css_standard_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(mab_bootstrap_taginput_css_standard_css__WEBPACK_IMPORTED_MODULE_1__);
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var e_1, _a;
 
 
 var tagMergeInputElements = document.getElementsByClassName('tag-input-merge');
-for (var i = 0; i < tagMergeInputElements.length; i++) {
-    new mab_bootstrap_taginput__WEBPACK_IMPORTED_MODULE_0__["TagInput"]({
-        input: tagMergeInputElements[i],
-        data: _ALL_TAGS_MERGE || [],
-        getId: function (item) { return item.id; },
-        getLabel: function (item) { return item.label; },
-        allowNewTags: false,
-        minCharsBeforeShowingSuggestions: 1
-    });
+try {
+    for (var tagMergeInputElements_1 = __values(tagMergeInputElements), tagMergeInputElements_1_1 = tagMergeInputElements_1.next(); !tagMergeInputElements_1_1.done; tagMergeInputElements_1_1 = tagMergeInputElements_1.next()) {
+        var tagInputElement = tagMergeInputElements_1_1.value;
+        new mab_bootstrap_taginput__WEBPACK_IMPORTED_MODULE_0__["TagInput"]({
+            input: tagInputElement,
+            data: _ALL_TAGS_MERGE || [],
+            getId: function (item) { return item.id; },
+            getLabel: function (item) { return item.label; },
+            allowNewTags: false,
+            minCharsBeforeShowingSuggestions: 1
+        });
+    }
+}
+catch (e_1_1) { e_1 = { error: e_1_1 }; }
+finally {
+    try {
+        if (tagMergeInputElements_1_1 && !tagMergeInputElements_1_1.done && (_a = tagMergeInputElements_1.return)) _a.call(tagMergeInputElements_1);
+    }
+    finally { if (e_1) throw e_1.error; }
 }
 
 

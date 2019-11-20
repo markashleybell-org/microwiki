@@ -15,7 +15,7 @@ moveDocumentButton.on('click', e => {
     const data: any = {
         currentDocumentId: a.data('id'),
         currentDocumentTitle: a.data('title')
-    }
+    };
 
     $.ajax({
         url: '/wiki/movedocumentmodal',
@@ -33,9 +33,9 @@ moveDocumentButton.on('click', e => {
 moveDocumentModal.on('click', 'a.document', e => {
     e.preventDefault();
 
-    var a = $(e.currentTarget);
+    const a = $(e.currentTarget);
 
-    var data: any = {
+    const data: any = {
         id: moveDocumentButton.data('id'),
         newParentID: a.data('id')
     };
@@ -45,17 +45,23 @@ moveDocumentModal.on('click', 'a.document', e => {
         data: data,
         dataType: 'json',
         type: 'POST',
-        success: data => { window.location.href = data.newLocation; }
+        success: response => { window.location.href = response.newLocation; }
     });
 });
 
 $('.delete-page').on('click', e => {
-    const result = prompt('Are you sure you want to delete this page and all of its ancestors?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+    const message = 'Are you sure you want to delete this page and all of its ancestors?\n\n'
+        + 'Like, REALLY, TOTALLY, COMPLETELY SURE ?\n\n'
+        + 'Type YES into the box below and click OK to confirm.\n';
+    const result = prompt(message, 'NO');
     return result === 'YES';
 });
 
 $('.delete-upload').on('click', e => {
-    const result = prompt('Are you sure you want to delete this file?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+    const message = 'Are you sure you want to delete this file?\n\n'
+        + 'Like, REALLY, TOTALLY, COMPLETELY SURE ?\n\n'
+        + 'Type YES into the box below and click OK to confirm.\n';
+    const result = prompt(message, 'NO');
     return result === 'YES';
 });
 

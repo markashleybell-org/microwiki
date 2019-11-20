@@ -2431,15 +2431,21 @@ moveDocumentModal.on('click', 'a.document', function (e) {
         data: data,
         dataType: 'json',
         type: 'POST',
-        success: function (data) { window.location.href = data.newLocation; }
+        success: function (response) { window.location.href = response.newLocation; }
     });
 });
 $('.delete-page').on('click', function (e) {
-    var result = prompt('Are you sure you want to delete this page and all of its ancestors?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+    var message = 'Are you sure you want to delete this page and all of its ancestors?\n\n'
+        + 'Like, REALLY, TOTALLY, COMPLETELY SURE ?\n\n'
+        + 'Type YES into the box below and click OK to confirm.\n';
+    var result = prompt(message, 'NO');
     return result === 'YES';
 });
 $('.delete-upload').on('click', function (e) {
-    var result = prompt('Are you sure you want to delete this file?\n\nLike, REALLY, TOTALLY, COMPLETELY SURE?\n\nType YES into the box below and click OK to confirm.\n', 'NO');
+    var message = 'Are you sure you want to delete this file?\n\n'
+        + 'Like, REALLY, TOTALLY, COMPLETELY SURE ?\n\n'
+        + 'Type YES into the box below and click OK to confirm.\n';
+    var result = prompt(message, 'NO');
     return result === 'YES';
 });
 $('.custom-file-input').on('change', function (e) {

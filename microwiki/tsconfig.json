@@ -14,10 +14,9 @@
         "downlevelIteration": true,
         "lib": [
             "dom",
+            "dom.iterable",
             "es5",
-            "es2015",
-            "es2015.iterable",
-            "es2015.promise"
+            "scripthost"
         ]
     },
     "compileOnSave": false

@@ -16498,15 +16498,15 @@ __webpack_require__.r(__webpack_exports__);
 
 function createEditor(editorElement) {
     var editor = codemirror__WEBPACK_IMPORTED_MODULE_0___default.a.fromTextArea(editorElement, {
-        mode: "gfm",
-        theme: "microwiki",
+        mode: 'gfm',
+        theme: 'microwiki',
         indentUnit: 4,
         lineWrapping: true
     });
     editor.setSize(null, 600);
-    editor.setOption("extraKeys", {
-        "Tab": "indentMore",
-        "Shift-Tab": "indentLess"
+    editor.setOption('extraKeys', {
+        'Tab': 'indentMore',
+        'Shift-Tab': 'indentLess'
     });
     return editor;
 }
@@ -16547,12 +16547,12 @@ var EditorFormats = {
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' }
 };
 var EditorFormatTokens = {
-    "header-1": "h1",
-    "header-2": "h2",
-    "header-3": "h3",
-    strong: "bold",
-    em: "italic",
-    comment: "code"
+    'header-1': 'h1',
+    'header-2': 'h2',
+    'header-3': 'h3',
+    'strong': 'bold',
+    'em': 'italic',
+    'comment': 'code'
 };
 function createEmptyCursorState() {
     return {
@@ -16659,8 +16659,6 @@ function blockRemove(cm, format) {
     cm.focus();
 }
 function linkApply(cm, data) {
-    var startPoint = cm.getCursor('start');
-    var endPoint = cm.getCursor('end');
     cm.replaceSelection('[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')');
 }
 function linkRemove(cm) {
@@ -16733,7 +16731,7 @@ function getLinkData(cm) {
             // matched text: match[0]
             // match start: match.index
             // capturing group n: match[n]
-            var data = {
+            data = {
                 linkText: match[1],
                 href: match[2]
             };
@@ -16746,7 +16744,6 @@ function getLinkData(cm) {
     return data;
 }
 function createLink(cm, properties) {
-    var cs = getCursorState(cm);
     linkApply(cm, properties);
 }
 function removeLink(cm) {
@@ -16906,26 +16903,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/editor */ "./wwwroot/js/components/editor/index.ts");
 /* harmony import */ var mab_bootstrap_taginput_css_standard_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! mab-bootstrap-taginput/css/standard.css */ "./node_modules/mab-bootstrap-taginput/css/standard.css");
 /* harmony import */ var mab_bootstrap_taginput_css_standard_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(mab_bootstrap_taginput_css_standard_css__WEBPACK_IMPORTED_MODULE_2__);
+var __values = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var e_1, _a;
 
 
 
 var editorElement = document.getElementById('Body');
 var editor = Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["createEditor"])(editorElement);
 var tagInputElements = document.getElementsByClassName('tag-input');
-for (var i = 0; i < tagInputElements.length; i++) {
-    new mab_bootstrap_taginput__WEBPACK_IMPORTED_MODULE_0__["TagInput"]({
-        input: tagInputElements[i],
-        data: _ALL_TAGS || [],
-        getId: function (item) { return item; },
-        getLabel: function (item) { return item; },
-        newItemFactory: function (label) { return Promise.resolve(label); }
-    });
+try {
+    for (var tagInputElements_1 = __values(tagInputElements), tagInputElements_1_1 = tagInputElements_1.next(); !tagInputElements_1_1.done; tagInputElements_1_1 = tagInputElements_1.next()) {
+        var tagInputElement = tagInputElements_1_1.value;
+        new mab_bootstrap_taginput__WEBPACK_IMPORTED_MODULE_0__["TagInput"]({
+            input: tagInputElement,
+            data: _ALL_TAGS || [],
+            getId: function (item) { return item; },
+            getLabel: function (item) { return item; },
+            newItemFactory: function (label) { return Promise.resolve(label); }
+        });
+    }
+}
+catch (e_1_1) { e_1 = { error: e_1_1 }; }
+finally {
+    try {
+        if (tagInputElements_1_1 && !tagInputElements_1_1.done && (_a = tagInputElements_1.return)) _a.call(tagInputElements_1);
+    }
+    finally { if (e_1) throw e_1.error; }
 }
 var linkModal = $('#modal');
 linkModal.modal({
     show: false
 });
-linkModal.on("click", ".btn-primary", function () {
+linkModal.on('click', '.btn-primary', function () {
     var text = linkModal.find('input[name="link-text"]').val();
     var url = linkModal.find('input[name="link-url"]').val();
     var title = linkModal.find('input[name="link-title"]').val();
@@ -16936,7 +16955,7 @@ linkModal.on("click", ".btn-primary", function () {
     Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["createLink"])(editor, data);
     linkModal.modal('hide');
 });
-linkModal.on("click", ".btn-danger", function () {
+linkModal.on('click', '.btn-danger', function () {
     // TODO: Confirm?
     Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["removeLink"])(editor);
     linkModal.modal('hide');
@@ -16945,7 +16964,7 @@ linkModal.on('hidden.bs.modal', function (e) {
     editor.focus();
 });
 function format(key) {
-    if (key == 'link') {
+    if (key === 'link') {
         var linkData = Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["getLinkData"])(editor);
         if (linkData) {
             linkModal.find('input[name="link-text"]').val(linkData.linkText);
@@ -16967,7 +16986,7 @@ $('.cm-format-button').on('click', function (e) {
     format(formatName);
 });
 $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-    if (e.target.id == 'preview-tab') {
+    if (e.target.id === 'preview-tab') {
         var tab = $(e.target);
         var tabContent = $(tab.attr('href'));
         var val = editor.getValue();
