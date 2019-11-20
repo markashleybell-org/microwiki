@@ -19,6 +19,7 @@ export interface IEditorFormats {
     code: IEditorFormat;
     ol: IEditorFormat;
     ul: IEditorFormat;
+    link: IEditorFormat;
 }
 
 export interface IEditorFormatTokens {
@@ -39,7 +40,8 @@ export const EditorFormats: IEditorFormats = {
     italic: { type: 'inline', token: 'em', before: '_', after: '_', placeholder: 'italic text' },
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
-    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' }
+    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
+    link: { type: 'inline', before: '[', after: ')', placeholder: 'List' },
 };
 
 export const EditorFormatTokens: IEditorFormatTokens = {
@@ -71,6 +73,14 @@ export interface ICursorState {
     format: ICursorFormat;
 }
 
+interface ICodeMirrorSelection {
+    line: number;
+    lineText: string;
+    start: CodeMirror.Position;
+    end: CodeMirror.Position;
+    selectedText: string;
+}
+
 function createEmptyCursorState(): ICursorState {
     return {
         token: null,
@@ -90,7 +100,63 @@ function createEmptyCursorState(): ICursorState {
     };
 }
 
-export function getCursorState(cm: CodeMirror.Editor) {
+function getCmSelection(cm: CodeMirror.Editor): ICodeMirrorSelection {
+    const start = cm.getCursor('start');
+    const line = start.line;
+    return {
+        line: line,
+        lineText: cm.getLine(line),
+        start: start,
+        end: cm.getCursor('end'),
+        selectedText: cm.getSelection()
+    };
+}
+
+function moveCmSelection(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, moveStartBy: number, moveEndBy: number): void {
+    setCmSelection(cm, selection, selection.start.ch + moveStartBy, selection.end.ch + moveEndBy);
+}
+
+function setCmSelection(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, start: number, end: number): void {
+    const newStart = {
+        line: selection.line,
+        ch: start
+    };
+
+    const newEnd = {
+        line: selection.line,
+        ch: end
+    };
+
+    cm.setSelection(newStart, newEnd);
+}
+
+function replaceCmLine(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, replacement: string): void {
+    cm.replaceRange(replacement, { line: selection.line, ch: 0 }, { line: selection.line, ch: selection.lineText.length + 1 });
+}
+
+function findFormattingRange(selection: ICodeMirrorSelection, format: IEditorFormat): [number, number] {
+    let startPos = selection.start.ch;
+
+    while (startPos) {
+        if (selection.lineText.substr(startPos, format.before.length) === format.before) {
+            break;
+        }
+        startPos--;
+    }
+
+    let endPos = selection.end.ch;
+
+    while (endPos <= selection.lineText.length) {
+        if (selection.lineText.substr(endPos, format.after.length) === format.after) {
+            break;
+        }
+        endPos++;
+    }
+
+    return [startPos, endPos];
+}
+
+function getCursorState(cm: CodeMirror.Editor) {
     const pos = cm.getCursor('start');
     const cs = createEmptyCursorState();
     const token = cs.token = cm.getTokenAt(pos);
@@ -127,97 +193,78 @@ export function getCursorState(cm: CodeMirror.Editor) {
 }
 
 export function inlineApply(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const startPoint = cm.getCursor('start');
-    const endPoint = cm.getCursor('end');
+    const sel = getCmSelection(cm);
 
-    cm.replaceSelection(format.before + cm.getSelection() + format.after);
+    cm.replaceSelection(format.before + sel.selectedText + format.after);
 
-    startPoint.ch += format.before.length;
-    endPoint.ch += format.after.length;
-    cm.setSelection(startPoint, endPoint);
+    moveCmSelection(cm, sel, format.before.length, format.after.length);
+
     cm.focus();
 }
 
 export function inlineRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const startPoint = cm.getCursor('start');
-    const endPoint = cm.getCursor('end');
-    const line = cm.getLine(startPoint.line);
+    const sel = getCmSelection(cm);
 
-    let startPos = startPoint.ch;
-    while (startPos) {
-        if (line.substr(startPos, format.before.length) === format.before) {
-            break;
-        }
-        startPos--;
-    }
+    const [startPos, endPos] = findFormattingRange(sel, format);
 
-    let endPos = endPoint.ch;
-    while (endPos <= line.length) {
-        if (line.substr(endPos, format.after.length) === format.after) {
-            break;
-        }
-        endPos++;
-    }
+    const start = sel.lineText.slice(0, startPos);
+    const mid = sel.lineText.slice(startPos + format.before.length, endPos);
+    const end = sel.lineText.slice(endPos + format.after.length);
 
-    const start = line.slice(0, startPos);
-    const mid = line.slice(startPos + format.before.length, endPos);
-    const end = line.slice(endPos + format.after.length);
-    cm.replaceRange(start + mid + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + mid).length });
+    replaceCmLine(cm, sel, start + mid + end);
+
+    setCmSelection(cm, sel, start.length, (start + mid).length);
+
     cm.focus();
 }
 
 export function blockApply(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const startPoint = cm.getCursor('start');
-    const line = cm.getLine(startPoint.line);
-    const text = format.before + ' ' + (line.length ? line : format.placeholder);
-    cm.replaceRange(text, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: format.before.length + 1 }, { line: startPoint.line, ch: text.length });
+    const sel = getCmSelection(cm);
+
+    const text = `${format.before} ${(sel.lineText.length ? sel.lineText : format.placeholder)}`;
+
+    replaceCmLine(cm, sel, text);
+
+    setCmSelection(cm, sel, format.before.length + 1, text.length);
+
     cm.focus();
 }
 
 export function blockRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const startPoint = cm.getCursor('start');
-    const line = cm.getLine(startPoint.line);
-    const text = line.replace(format.re, '');
-    cm.replaceRange(text, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: text.length });
+    const sel = getCmSelection(cm);
+
+    // TODO: Why do this with regex only in this case?
+    const text = sel.lineText.replace(format.re, '');
+
+    cm.replaceRange(text, { line: sel.line, ch: 0 }, { line: sel.line, ch: sel.lineText.length + 1 });
+
+    setCmSelection(cm, sel, 0, text.length);
+
     cm.focus();
 }
 
 export function linkApply(cm: CodeMirror.Editor, data: IHtmlLinkProperties) {
     cm.replaceSelection('[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')');
+
+    cm.focus();
 }
 
 export function linkRemove(cm: CodeMirror.Editor) {
-    const startPoint = cm.getCursor('start');
-    const endPoint = cm.getCursor('end');
-    const line = cm.getLine(startPoint.line);
+    const sel = getCmSelection(cm);
 
-    let startPos = startPoint.ch;
-    while (startPos) {
-        startPos--;
-        if (line.charAt(startPos) === '[') {
-            break;
-        }
-    }
+    const [startPos, endPos] = findFormattingRange(sel, EditorFormats.link);
 
-    let endPos = endPoint.ch;
-    while (endPos <= line.length) {
-        if (line.charAt(endPos) === ')') {
-            break;
-        }
-        endPos++;
-    }
-
-    const start = line.slice(0, startPos);
-    const mid = line.slice(startPos, endPos + 1);
-    const end = line.slice(endPos + 1);
+    const start = sel.lineText.slice(0, startPos);
+    const mid = sel.lineText.slice(startPos, endPos + 1);
+    const end = sel.lineText.slice(endPos + 1);
 
     const linkText = mid.replace(/\[(.*?)\]\(.*?\)/, '$1');
 
-    cm.replaceRange(start + linkText + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + linkText).length });
+    replaceCmLine(cm, sel, start + linkText + end);
+
+    cm.setCursor({ line: sel.line, ch: start.length });
+
+    cm.focus();
 }
 
 interface IFormattingOperation {

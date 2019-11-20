@@ -16518,14 +16518,13 @@ function createEditor(editorElement) {
 /*!****************************************************!*\
   !*** ./wwwroot/js/components/editor/formatting.ts ***!
   \****************************************************/
-/*! exports provided: EditorFormats, EditorFormatTokens, getCursorState, inlineApply, inlineRemove, blockApply, blockRemove, linkApply, linkRemove, applyFormat, getLinkData, createLink, removeLink */
+/*! exports provided: EditorFormats, EditorFormatTokens, inlineApply, inlineRemove, blockApply, blockRemove, linkApply, linkRemove, applyFormat, getLinkData, createLink, removeLink */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EditorFormats", function() { return EditorFormats; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EditorFormatTokens", function() { return EditorFormatTokens; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCursorState", function() { return getCursorState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "inlineApply", function() { return inlineApply; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "inlineRemove", function() { return inlineRemove; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "blockApply", function() { return blockApply; });
@@ -16536,6 +16535,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLinkData", function() { return getLinkData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createLink", function() { return createLink; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeLink", function() { return removeLink; });
+var __read = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var EditorFormats = {
     h1: { type: 'block', token: 'header-1', before: '#', re: /^#\s+/, placeholder: 'Heading' },
     h2: { type: 'block', token: 'header-2', before: '##', re: /^##\s+/, placeholder: 'Heading' },
@@ -16544,7 +16559,8 @@ var EditorFormats = {
     italic: { type: 'inline', token: 'em', before: '_', after: '_', placeholder: 'italic text' },
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
-    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' }
+    ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
+    link: { type: 'inline', before: '[', after: ')', placeholder: 'List' },
 };
 var EditorFormatTokens = {
     'header-1': 'h1',
@@ -16571,6 +16587,51 @@ function createEmptyCursorState() {
             ul: false
         }
     };
+}
+function getCmSelection(cm) {
+    var start = cm.getCursor('start');
+    var line = start.line;
+    return {
+        line: line,
+        lineText: cm.getLine(line),
+        start: start,
+        end: cm.getCursor('end'),
+        selectedText: cm.getSelection()
+    };
+}
+function moveCmSelection(cm, selection, moveStartBy, moveEndBy) {
+    setCmSelection(cm, selection, selection.start.ch + moveStartBy, selection.end.ch + moveEndBy);
+}
+function setCmSelection(cm, selection, start, end) {
+    var newStart = {
+        line: selection.line,
+        ch: start
+    };
+    var newEnd = {
+        line: selection.line,
+        ch: end
+    };
+    cm.setSelection(newStart, newEnd);
+}
+function replaceCmLine(cm, selection, replacement) {
+    cm.replaceRange(replacement, { line: selection.line, ch: 0 }, { line: selection.line, ch: selection.lineText.length + 1 });
+}
+function findFormattingRange(selection, format) {
+    var startPos = selection.start.ch;
+    while (startPos) {
+        if (selection.lineText.substr(startPos, format.before.length) === format.before) {
+            break;
+        }
+        startPos--;
+    }
+    var endPos = selection.end.ch;
+    while (endPos <= selection.lineText.length) {
+        if (selection.lineText.substr(endPos, format.after.length) === format.after) {
+            break;
+        }
+        endPos++;
+    }
+    return [startPos, endPos];
 }
 function getCursorState(cm) {
     var pos = cm.getCursor('start');
@@ -16609,82 +16670,50 @@ function getCursorState(cm) {
     return cs;
 }
 function inlineApply(cm, format) {
-    var startPoint = cm.getCursor('start');
-    var endPoint = cm.getCursor('end');
-    cm.replaceSelection(format.before + cm.getSelection() + format.after);
-    startPoint.ch += format.before.length;
-    endPoint.ch += format.after.length;
-    cm.setSelection(startPoint, endPoint);
+    var sel = getCmSelection(cm);
+    cm.replaceSelection(format.before + sel.selectedText + format.after);
+    moveCmSelection(cm, sel, format.before.length, format.after.length);
     cm.focus();
 }
 function inlineRemove(cm, format) {
-    var startPoint = cm.getCursor('start');
-    var endPoint = cm.getCursor('end');
-    var line = cm.getLine(startPoint.line);
-    var startPos = startPoint.ch;
-    while (startPos) {
-        if (line.substr(startPos, format.before.length) === format.before) {
-            break;
-        }
-        startPos--;
-    }
-    var endPos = endPoint.ch;
-    while (endPos <= line.length) {
-        if (line.substr(endPos, format.after.length) === format.after) {
-            break;
-        }
-        endPos++;
-    }
-    var start = line.slice(0, startPos);
-    var mid = line.slice(startPos + format.before.length, endPos);
-    var end = line.slice(endPos + format.after.length);
-    cm.replaceRange(start + mid + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + mid).length });
+    var sel = getCmSelection(cm);
+    var _a = __read(findFormattingRange(sel, format), 2), startPos = _a[0], endPos = _a[1];
+    var start = sel.lineText.slice(0, startPos);
+    var mid = sel.lineText.slice(startPos + format.before.length, endPos);
+    var end = sel.lineText.slice(endPos + format.after.length);
+    replaceCmLine(cm, sel, start + mid + end);
+    setCmSelection(cm, sel, start.length, (start + mid).length);
     cm.focus();
 }
 function blockApply(cm, format) {
-    var startPoint = cm.getCursor('start');
-    var line = cm.getLine(startPoint.line);
-    var text = format.before + ' ' + (line.length ? line : format.placeholder);
-    cm.replaceRange(text, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: format.before.length + 1 }, { line: startPoint.line, ch: text.length });
+    var sel = getCmSelection(cm);
+    var text = format.before + " " + (sel.lineText.length ? sel.lineText : format.placeholder);
+    replaceCmLine(cm, sel, text);
+    setCmSelection(cm, sel, format.before.length + 1, text.length);
     cm.focus();
 }
 function blockRemove(cm, format) {
-    var startPoint = cm.getCursor('start');
-    var line = cm.getLine(startPoint.line);
-    var text = line.replace(format.re, '');
-    cm.replaceRange(text, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: text.length });
+    var sel = getCmSelection(cm);
+    // TODO: Why do this with regex only in this case?
+    var text = sel.lineText.replace(format.re, '');
+    cm.replaceRange(text, { line: sel.line, ch: 0 }, { line: sel.line, ch: sel.lineText.length + 1 });
+    setCmSelection(cm, sel, 0, text.length);
     cm.focus();
 }
 function linkApply(cm, data) {
     cm.replaceSelection('[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')');
+    cm.focus();
 }
 function linkRemove(cm) {
-    var startPoint = cm.getCursor('start');
-    var endPoint = cm.getCursor('end');
-    var line = cm.getLine(startPoint.line);
-    var startPos = startPoint.ch;
-    while (startPos) {
-        startPos--;
-        if (line.charAt(startPos) === '[') {
-            break;
-        }
-    }
-    var endPos = endPoint.ch;
-    while (endPos <= line.length) {
-        if (line.charAt(endPos) === ')') {
-            break;
-        }
-        endPos++;
-    }
-    var start = line.slice(0, startPos);
-    var mid = line.slice(startPos, endPos + 1);
-    var end = line.slice(endPos + 1);
+    var sel = getCmSelection(cm);
+    var _a = __read(findFormattingRange(sel, EditorFormats.link), 2), startPos = _a[0], endPos = _a[1];
+    var start = sel.lineText.slice(0, startPos);
+    var mid = sel.lineText.slice(startPos, endPos + 1);
+    var end = sel.lineText.slice(endPos + 1);
     var linkText = mid.replace(/\[(.*?)\]\(.*?\)/, '$1');
-    cm.replaceRange(start + linkText + end, { line: startPoint.line, ch: 0 }, { line: startPoint.line, ch: line.length + 1 });
-    cm.setSelection({ line: startPoint.line, ch: start.length }, { line: startPoint.line, ch: (start + linkText).length });
+    replaceCmLine(cm, sel, start + linkText + end);
+    cm.setCursor({ line: sel.line, ch: start.length });
+    cm.focus();
 }
 var operations = {
     inline: {
