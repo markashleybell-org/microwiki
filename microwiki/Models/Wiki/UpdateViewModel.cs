@@ -38,6 +38,9 @@ namespace MicroWiki.Models
         public MarkdownEditorViewModel MarkdownEditorData =>
             new MarkdownEditorViewModel { Title = Title };
 
+        public string TagDataJson =>
+            AllTags.AsTagJson(t => t.Label);
+
         public static UpdateViewModel From(Document document, IEnumerable<Tag> allTags) =>
             new UpdateViewModel {
                 ID = document.ID,

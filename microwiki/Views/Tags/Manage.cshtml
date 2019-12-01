@@ -33,7 +33,7 @@
 @section globals {
 
     <script>
-        var _ALL_TAGS_MERGE = @Html.Raw(JsonConvert.SerializeObject(Model.Tags.Select(t => new { id = t.ID, label = t.Label })));
+        var _ALL_TAGS_MERGE = @Html.Raw(Model.TagDataJson);
     </script>
 
 }

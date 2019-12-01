@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MicroWiki.Domain;
+using MicroWiki.Functions;
 
 namespace MicroWiki.Models
 {
@@ -22,5 +23,8 @@ namespace MicroWiki.Models
             !string.IsNullOrWhiteSpace(MergeTagIDs)
                 ? MergeTagIDs.Split('|', StringSplitOptions.RemoveEmptyEntries).Select(id => Guid.Parse(id))
                 : Enumerable.Empty<Guid>();
+
+        public string TagDataJson =>
+            Tags.AsTagJson(t => new { id = t.ID, label = t.Label });
     }
 }

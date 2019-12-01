@@ -20,7 +20,7 @@ namespace MicroWiki.Concrete
         private readonly string _imageLibraryRelativePath;
 
         public LocalFileManager(
-            IHostingEnvironment hostingEnvironment,
+            IWebHostEnvironment hostingEnvironment,
             IOptionsMonitor<Settings> optionsMonitor)
         {
             _cfg = optionsMonitor.CurrentValue;

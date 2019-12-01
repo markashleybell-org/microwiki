@@ -10,7 +10,8 @@ module.exports = {
     entry: {
         'edit': './wwwroot/js/edit.ts',
         'read': './wwwroot/js/read.ts',
-        'tagmanager': './wwwroot/js/tagmanager.ts'
+        'tagmanager': './wwwroot/js/tagmanager.ts',
+        'upload': './wwwroot/js/upload.ts'
     },
     devtool: 'source-map',
     plugins: [

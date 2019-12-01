@@ -63,7 +63,7 @@
 @section globals {
 
     <script>
-        var _ALL_TAGS = @Html.Raw(JsonConvert.SerializeObject(Model.AllTags.Select(t => t.Label)));
+        var _ALL_TAGS = @Html.Raw(Model.TagDataJson);
     </script>
 
 }

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
 using MicroWiki.Concrete;
@@ -57,10 +57,10 @@ namespace MicroWiki
 
             services.AddScoped<IFileManager, LocalFileManager>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllersWithViews();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
 
@@ -72,44 +72,47 @@ namespace MicroWiki
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseRouting();
+
             app.UseCookiePolicy();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routes => {
-                routes.MapRoute(
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "wiki/{action}/{id?}",
+                    pattern: "wiki/{action}/{id?}",
                     defaults: new { controller = "Wiki", action = "Index" }
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "search",
-                    template: "search/{action}/{id?}",
+                    pattern: "search/{action}/{id?}",
                     defaults: new { controller = "Search", action = "Index" }
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "files",
-                    template: "files/{action}/{id?}",
+                    pattern: "files/{action}/{id?}",
                     defaults: new { controller = "Files", action = "Index" }
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "tags",
-                    template: "tags/{action}/{id?}",
+                    pattern: "tags/{action}/{id?}",
                     defaults: new { controller = "Tags", action = "Index" }
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "users",
-                    template: "users/{action}/{id?}",
+                    pattern: "users/{action}/{id?}",
                     defaults: new { controller = "Users", action = "Index" }
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "read",
-                    template: "{*location}",
+                    pattern: "{*location}",
                     defaults: new { controller = "Wiki", action = "Read" }
                 );
             });
