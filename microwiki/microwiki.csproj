@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
         <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
@@ -18,9 +18,9 @@
 
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.30" />
-        <PackageReference Include="Markdig" Version="0.17.1" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="1.0.19269.1" />
-        <PackageReference Include="Microsoft.DocAsCode.MarkdownLite" Version="2.45.1" />
+        <PackageReference Include="Markdig" Version="0.18.0" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.0" />
+        <PackageReference Include="Microsoft.DocAsCode.MarkdownLite" Version="2.47.0" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
