@@ -188,5 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Publish\db.publish.xml" />
+    <None Include="Scripts\security.sql" />
   </ItemGroup>
 </Project>
