@@ -2,39 +2,64 @@
 
 IF EXISTS (SELECT * FROM sys.database_principals WHERE name = @User)
 BEGIN
+    -- Grant execute/select on stored procedures, functions and UDTs
 
-    DECLARE @RoutineName sysname
+    DECLARE @ObjectName SYSNAME
+	DECLARE @ObjectType NVARCHAR(40)
 
-    DECLARE Routines CURSOR FOR
-    SELECT ROUTINE_NAME
+    DECLARE UserDefinedObjects CURSOR FOR
+    SELECT 
+        ROUTINE_NAME AS ObjectName,
+		ROUTINE_TYPE AS ObjectType
     FROM 
         INFORMATION_SCHEMA.ROUTINES
     WHERE 
-        ROUTINE_NAME NOT LIKE '%diagram%'
-    ORDER BY 
-        ROUTINE_TYPE, 
-        ROUTINE_NAME
+        ROUTINE_TYPE = 'PROCEDURE'
+	OR
+		ROUTINE_TYPE = 'FUNCTION'
+    UNION ALL
+    SELECT 
+		name AS ObjectName,
+		'USER_DEFINED_TABLE_TYPE' AS ObjectType
+	FROM 
+		sys.types 
+	WHERE 
+		is_user_defined = 1
+	AND
+		is_table_type = 1
+    ORDER BY
+		ObjectType,
+        ObjectName
 
-    OPEN Routines
+    OPEN UserDefinedObjects
 
-    FETCH NEXT FROM Routines INTO @RoutineName
+    FETCH NEXT FROM UserDefinedObjects INTO @ObjectName, @ObjectType
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        BEGIN TRY
-            EXEC('GRANT EXECUTE ON ' + @RoutineName + ' TO [' + @User + ']')
-            PRINT 'Granting EXECUTE for ' + @RoutineName
-        END TRY
-        BEGIN CATCH
-            EXEC('GRANT SELECT ON ' + @RoutineName + ' TO [' + @User + ']')
-            PRINT 'Granting SELECT for ' + @RoutineName
-        END CATCH
+		IF (@ObjectType = 'USER_DEFINED_TABLE_TYPE')
+		BEGIN
+			EXEC('GRANT EXECUTE ON TYPE::' + @ObjectName + ' TO [' + @User + ']')
+			PRINT 'EXECUTE granted for ' + @User + ' on ' + @ObjectName
+		END
+		ELSE
+		BEGIN
+			-- We need to do this slightly odd dance because some SQL function
+			-- types require SELECT permissions, while others require EXECUTE
+			BEGIN TRY
+				EXEC('GRANT EXECUTE ON ' + @ObjectName + ' TO [' + @User + ']')
+				PRINT 'EXECUTE granted for ' + @User + ' on ' + @ObjectName
+			END TRY
+			BEGIN CATCH
+				EXEC('GRANT SELECT ON ' + @ObjectName + ' TO [' + @User + ']')
+				PRINT 'SELECT granted for ' + @User + ' on ' + @ObjectName
+			END CATCH
+		END
 
-        FETCH NEXT FROM Routines INTO @RoutineName
+        FETCH NEXT FROM UserDefinedObjects INTO @ObjectName, @ObjectType
     END
 
-    CLOSE Routines
-    DEALLOCATE Routines
-    
+    CLOSE UserDefinedObjects
+    DEALLOCATE UserDefinedObjects
 END
 GO
