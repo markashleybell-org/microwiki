@@ -1,7 +1,9 @@
 <Query Kind="Program">
-  <Reference Relative="..\..\..\..\tools\Test Harness.linq">C:\Src\microwiki\microwiki\bin\Debug\netcoreapp2.2\microwiki.dll</Reference>
+  <Reference Relative="..\microwiki\bin\Debug\netcoreapp3.1\microwiki.dll">C:\Src\microwiki\microwiki\bin\Debug\netcoreapp3.1\microwiki.dll</Reference>
   <NuGetReference>Dapper</NuGetReference>
   <Namespace>Dapper</Namespace>
+  <Namespace>Microsoft.AspNetCore.Identity</Namespace>
+  <Namespace>Microsoft.Extensions.Options</Namespace>
   <Namespace>MicroWiki</Namespace>
   <Namespace>MicroWiki.Abstract</Namespace>
   <Namespace>MicroWiki.Concrete</Namespace>
@@ -11,8 +13,7 @@
   <Namespace>MicroWiki.Models</Namespace>
   <Namespace>MicroWiki.Support</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
-  <Namespace>Microsoft.Extensions.Options</Namespace>
-  <Namespace>Microsoft.AspNetCore.Identity</Namespace>
+  <IncludeAspNet>true</IncludeAspNet>
 </Query>
 
 async Task Main()
