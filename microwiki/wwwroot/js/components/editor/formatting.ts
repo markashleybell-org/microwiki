@@ -21,6 +21,7 @@ export interface IEditorFormats {
     ul: IEditorFormat;
     link: IEditorFormat;
     codeBlock: IEditorFormat;
+    image: IEditorFormat;
 }
 
 export interface IEditorFormatTokens {
@@ -42,8 +43,9 @@ export const EditorFormats: IEditorFormats = {
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
-    link: { type: 'inline', before: '[', after: ')', placeholder: 'List' },
+    link: { type: 'inline', before: '[', after: ')', placeholder: 'link text' },
     codeBlock: { type: 'inline', before: '```{LANG}\n', after: '\n```', placeholder: 'code' },
+    image: { type: 'inline', before: '![', after: ')', placeholder: 'image' },
 };
 
 export const EditorFormatTokens: IEditorFormatTokens = {
@@ -277,6 +279,12 @@ export function codeBlockApply(cm: CodeMirror.Editor, data: ICodeBlockProperties
     inlineApply(cm, format);
 }
 
+export function imageApply(cm: CodeMirror.Editor, data: IHtmlImageProperties) {
+    cm.replaceSelection('![' + data.alt + '](' + data.url + ')');
+
+    cm.focus();
+}
+
 interface IFormattingOperation {
     [key: string]: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
     apply: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
@@ -311,6 +319,11 @@ export interface IHtmlLinkProperties {
     linkText: string;
     href: string;
     linkTitle?: string;
+}
+
+export interface IHtmlImageProperties {
+    alt: string;
+    url: string;
 }
 
 export interface ICodeBlockProperties {
@@ -380,4 +393,57 @@ export function removeLink(cm: CodeMirror.Editor) {
 
 export function createCodeBlock(cm: CodeMirror.Editor, properties: ICodeBlockProperties) {
     codeBlockApply(cm, properties);
+}
+
+export function getImageData(cm: CodeMirror.Editor): IHtmlImageProperties {
+    const pos = cm.getCursor('start');
+    const token = cm.getTokenAt(pos);
+
+    let data: IHtmlImageProperties = null;
+
+    if (token.type && (token.type === 'link' || token.type.indexOf('url') > -1)) {
+        const startPoint = cm.getCursor('start');
+        const endPoint = cm.getCursor('end');
+        const line = cm.getLine(startPoint.line);
+
+        let startPos = startPoint.ch;
+        while (startPos) {
+            startPos--;
+            if (line.charAt(startPos) === '!') {
+                break;
+            }
+        }
+
+        let endPos = endPoint.ch;
+        while (endPos <= line.length) {
+            if (line.charAt(endPos) === ')') {
+                break;
+            }
+            endPos++;
+        }
+
+        const imageMarkdown = line.slice(startPos, endPos + 1);
+
+        const imagePattern = /!\[([^\s]*)\]\(([^\)]+)\)/m;
+        const match = imagePattern.exec(imageMarkdown);
+
+        if (match) {
+            // matched text: match[0]
+            // match start: match.index
+            // capturing group n: match[n]
+
+            data = {
+                alt: match[1],
+                url: match[2]
+            };
+        }
+
+        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });
+    }
+
+    return data;
+}
+
+export function createImage(cm: CodeMirror.Editor, properties: IHtmlImageProperties) {
+    imageApply(cm, properties);
 }

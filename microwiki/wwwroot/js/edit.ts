@@ -1,8 +1,7 @@
 import { TagInput } from 'mab-bootstrap-taginput';
-import { applyFormat, createCodeBlock, createEditor, createLink, getLinkData, removeLink, updatePreview } from './components/editor';
+import { applyFormat, createCodeBlock, createEditor, createImage, createLink, getImageData, getLinkData, ICodeBlockProperties, IHtmlLinkProperties, IHtmlImageProperties, removeLink, updatePreview } from './components/editor';
 
 import 'mab-bootstrap-taginput/css/standard.css';
-import { ICodeBlockProperties, IHtmlLinkProperties } from './components/editor/formatting';
 
 declare const _ALL_TAGS: string[];
 
@@ -76,8 +75,42 @@ codeBlockModal.on('hidden.bs.modal', e => {
     editor.focus();
 });
 
+const imageModal = $('#editor-image-modal');
+
+imageModal.modal({
+    show: false
+});
+
+imageModal.on('click', '.btn-success', () => {
+    const alt = imageModal.find('input[name="image-alt"]').val() as string;
+    const url = imageModal.find('input[name="image-url"]').val() as string;
+
+    const data: IHtmlImageProperties = { alt: alt, url: url };
+
+    createImage(editor, data);
+
+    imageModal.modal('hide');
+});
+
+imageModal.on('hidden.bs.modal', e => {
+    editor.focus();
+});
+
+function resetLinkModalFields() {
+    linkModal.find('input[name="link-text"]').val(null);
+    linkModal.find('input[name="link-url"]').val(null);
+    linkModal.find('input[name="link-title"]').val(null);
+}
+
+function resetImageModalFields() {
+    imageModal.find('input[name="image-alt"]').val(null);
+    imageModal.find('input[name="image-url"]').val(null);
+}
+
 export function format(key: string) {
     if (key === 'link') {
+        resetLinkModalFields();
+
         const linkData = getLinkData(editor);
 
         if (linkData) {
@@ -89,6 +122,19 @@ export function format(key: string) {
         }
 
         linkModal.modal('show');
+    } else if (key === 'image') {
+        resetImageModalFields();
+
+        const imageData = getImageData(editor);
+
+        if (imageData) {
+            imageModal.find('input[name="image-alt"]').val(imageData.alt);
+            imageModal.find('input[name="image-url"]').val(imageData.url);
+        } else {
+            imageModal.find('input[name="image-alt"]').val(editor.getSelection());
+        }
+
+        imageModal.modal('show');
     } else if (key === 'codeBlock') {
         codeBlockModal.modal('show');
     } else {

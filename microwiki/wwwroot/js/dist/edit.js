@@ -16657,7 +16657,7 @@ function createEditor(editorElement) {
 /*!****************************************************!*\
   !*** ./wwwroot/js/components/editor/formatting.ts ***!
   \****************************************************/
-/*! exports provided: EditorFormats, EditorFormatTokens, inlineApply, inlineRemove, blockApply, blockRemove, linkApply, linkRemove, codeBlockApply, applyFormat, getLinkData, createLink, removeLink, createCodeBlock */
+/*! exports provided: EditorFormats, EditorFormatTokens, inlineApply, inlineRemove, blockApply, blockRemove, linkApply, linkRemove, codeBlockApply, imageApply, applyFormat, getLinkData, createLink, removeLink, createCodeBlock, getImageData, createImage */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16671,11 +16671,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "linkApply", function() { return linkApply; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "linkRemove", function() { return linkRemove; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "codeBlockApply", function() { return codeBlockApply; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "imageApply", function() { return imageApply; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyFormat", function() { return applyFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLinkData", function() { return getLinkData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createLink", function() { return createLink; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeLink", function() { return removeLink; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createCodeBlock", function() { return createCodeBlock; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getImageData", function() { return getImageData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createImage", function() { return createImage; });
 var __read = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -16701,8 +16704,9 @@ var EditorFormats = {
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
-    link: { type: 'inline', before: '[', after: ')', placeholder: 'List' },
+    link: { type: 'inline', before: '[', after: ')', placeholder: 'link text' },
     codeBlock: { type: 'inline', before: '```{LANG}\n', after: '\n```', placeholder: 'code' },
+    image: { type: 'inline', before: '![', after: ')', placeholder: 'image' },
 };
 var EditorFormatTokens = {
     'header-1': 'h1',
@@ -16862,6 +16866,10 @@ function codeBlockApply(cm, data) {
     format.before = format.before.replace(/\{LANG\}/gi, data.language);
     inlineApply(cm, format);
 }
+function imageApply(cm, data) {
+    cm.replaceSelection('![' + data.alt + '](' + data.url + ')');
+    cm.focus();
+}
 var operations = {
     inline: {
         apply: inlineApply,
@@ -16928,6 +16936,47 @@ function removeLink(cm) {
 function createCodeBlock(cm, properties) {
     codeBlockApply(cm, properties);
 }
+function getImageData(cm) {
+    var pos = cm.getCursor('start');
+    var token = cm.getTokenAt(pos);
+    var data = null;
+    if (token.type && (token.type === 'link' || token.type.indexOf('url') > -1)) {
+        var startPoint = cm.getCursor('start');
+        var endPoint = cm.getCursor('end');
+        var line = cm.getLine(startPoint.line);
+        var startPos = startPoint.ch;
+        while (startPos) {
+            startPos--;
+            if (line.charAt(startPos) === '!') {
+                break;
+            }
+        }
+        var endPos = endPoint.ch;
+        while (endPos <= line.length) {
+            if (line.charAt(endPos) === ')') {
+                break;
+            }
+            endPos++;
+        }
+        var imageMarkdown = line.slice(startPos, endPos + 1);
+        var imagePattern = /!\[([^\s]*)\]\(([^\)]+)\)/m;
+        var match = imagePattern.exec(imageMarkdown);
+        if (match) {
+            // matched text: match[0]
+            // match start: match.index
+            // capturing group n: match[n]
+            data = {
+                alt: match[1],
+                url: match[2]
+            };
+        }
+        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });
+    }
+    return data;
+}
+function createImage(cm, properties) {
+    imageApply(cm, properties);
+}
 
 
 /***/ }),
@@ -16936,7 +16985,7 @@ function createCodeBlock(cm, properties) {
 /*!***********************************************!*\
   !*** ./wwwroot/js/components/editor/index.ts ***!
   \***********************************************/
-/*! exports provided: createEditor, EditorFormats, applyFormat, createCodeBlock, createLink, getLinkData, removeLink, updatePreview */
+/*! exports provided: createEditor, EditorFormats, applyFormat, createCodeBlock, createImage, createLink, getImageData, getLinkData, removeLink, updatePreview */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16951,7 +17000,11 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "createCodeBlock", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["createCodeBlock"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "createImage", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["createImage"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "createLink", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["createLink"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getImageData", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["getImageData"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getLinkData", function() { return _formatting__WEBPACK_IMPORTED_MODULE_1__["getLinkData"]; });
 
@@ -17158,8 +17211,32 @@ codeBlockModal.on('click', '.btn-success', function () {
 codeBlockModal.on('hidden.bs.modal', function (e) {
     editor.focus();
 });
+var imageModal = $('#editor-image-modal');
+imageModal.modal({
+    show: false
+});
+imageModal.on('click', '.btn-success', function () {
+    var alt = imageModal.find('input[name="image-alt"]').val();
+    var url = imageModal.find('input[name="image-url"]').val();
+    var data = { alt: alt, url: url };
+    Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["createImage"])(editor, data);
+    imageModal.modal('hide');
+});
+imageModal.on('hidden.bs.modal', function (e) {
+    editor.focus();
+});
+function resetLinkModalFields() {
+    linkModal.find('input[name="link-text"]').val(null);
+    linkModal.find('input[name="link-url"]').val(null);
+    linkModal.find('input[name="link-title"]').val(null);
+}
+function resetImageModalFields() {
+    imageModal.find('input[name="image-alt"]').val(null);
+    imageModal.find('input[name="image-url"]').val(null);
+}
 function format(key) {
     if (key === 'link') {
+        resetLinkModalFields();
         var linkData = Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["getLinkData"])(editor);
         if (linkData) {
             linkModal.find('input[name="link-text"]').val(linkData.linkText);
@@ -17170,6 +17247,18 @@ function format(key) {
             linkModal.find('input[name="link-text"]').val(editor.getSelection());
         }
         linkModal.modal('show');
+    }
+    else if (key === 'image') {
+        resetImageModalFields();
+        var imageData = Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["getImageData"])(editor);
+        if (imageData) {
+            imageModal.find('input[name="image-alt"]').val(imageData.alt);
+            imageModal.find('input[name="image-url"]').val(imageData.url);
+        }
+        else {
+            imageModal.find('input[name="image-alt"]').val(editor.getSelection());
+        }
+        imageModal.modal('show');
     }
     else if (key === 'codeBlock') {
         codeBlockModal.modal('show');
