@@ -187,7 +187,12 @@
     <None Include="Scripts\migrate.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Publish\db.publish.xml" />
+    <None Include="Publish\db.publish.xml">
+      <CopyToOutputDirectory>DoNotCopy</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\security.sql" />
+    <None Include="Publish\live.publish.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
