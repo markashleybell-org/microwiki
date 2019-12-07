@@ -55,7 +55,7 @@
                                 <strong>@file</strong>
                             </td>
                             <td>
-                                <form asp-controller="Wiki" asp-action="DeleteUpload" method="post">
+                                <form asp-controller="Files" asp-action="DeleteUpload" method="post">
                                     <input type="hidden" name="Location" value="@file" />
                                     <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" />
                                 </form>
