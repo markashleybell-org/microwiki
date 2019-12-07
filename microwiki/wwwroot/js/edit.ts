@@ -22,7 +22,7 @@ for (const tagInputElement of tagInputElements) {
     });
 }
 
-const linkModal = $('#modal');
+const linkModal = $('#editor-link-modal');
 
 linkModal.modal({
     show: false

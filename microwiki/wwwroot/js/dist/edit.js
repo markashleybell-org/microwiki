@@ -17108,7 +17108,7 @@ finally {
     }
     finally { if (e_1) throw e_1.error; }
 }
-var linkModal = $('#modal');
+var linkModal = $('#editor-link-modal');
 linkModal.modal({
     show: false
 });

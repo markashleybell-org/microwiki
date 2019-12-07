@@ -9,9 +9,7 @@
     <link rel="stylesheet" href="~/css/codemirror/theme/microwiki.css" />
 }
 
-@{
-    await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailData); 
-}
+@{ await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailData); }
 
 <div class="row">
     <div class="col-sm-10">
@@ -68,11 +66,13 @@
 </div>
 
 @section globals {
-
     <script>
         var _ALL_TAGS = @Html.Raw(Model.TagDataJson);
     </script>
+}
 
+@section modals {
+    @{ await Html.RenderPartialAsync("_EditorLinkDialog"); }
 }
 
 @section scripts {

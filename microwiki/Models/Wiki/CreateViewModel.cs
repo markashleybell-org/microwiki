@@ -37,7 +37,7 @@ namespace MicroWiki.Models
             new MarkdownEditorViewModel { IsNew = true };
 
         public string TagDataJson =>
-            AllTags.AsTagJson(t => t.Label);
+            AllTags?.AsTagJson(t => t.Label);
 
         public static CreateViewModel From(Document parentDocument, IEnumerable<Tag> allTags) =>
             new CreateViewModel {
