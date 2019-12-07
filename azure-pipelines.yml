@@ -13,7 +13,16 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDK'
+  inputs:
+    packageType: sdk
+    version: 3.1.100
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
 - task: MSBuild@1
+  displayName: 'Database Build'
   inputs:
     solution: '**/db.sqlproj'
     configuration: '$(buildConfiguration)'
@@ -21,14 +30,14 @@ steps:
     msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
-  displayName: Build
+  displayName: 'Application Build'
   inputs:
     command: build
     projects: '**/microwiki.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: Publish
+  displayName: 'Publish'
   inputs:
     command: publish
     publishWebProjects: True
@@ -36,7 +45,7 @@ steps:
     zipAfterPublish: True
 
 - task: PublishPipelineArtifact@0
-  displayName: Push Artifact
+  displayName: 'Push Artifact'
   inputs:
     artifactName: 'microwiki-publish-output'
     targetPath: '$(Build.ArtifactStagingDirectory)'
