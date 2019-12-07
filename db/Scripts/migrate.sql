@@ -1,4 +1,12 @@
+-- The changes will be: table HTML, images, and code blocks
+
+-- Find code blocks with our custom syntax
+-- select * from Documents where Body LIKE '%<!-- lang%'
+
 BEGIN TRAN
+
+IF OBJECT_ID(N'tempdb..#Tags') IS NOT NULL
+    DROP TABLE #Tags
 
 SELECT
     ID AS OldID,
@@ -26,9 +34,8 @@ INSERT INTO [microwiki].[dbo].[Documents] (
     Body,
     Slug,
     Location,
-    Username,
     TOC,
-    Tags,
+    Username,
     Created,
     Updated
 )
@@ -39,9 +46,8 @@ SELECT
     Body,
     Slug,
     Location,
-    Username,
     TOC,
-    NULL,
+    Username,
     Created,
     Updated
 FROM
@@ -61,23 +67,6 @@ INNER JOIN
 
 DROP TABLE #Tags
 
-UPDATE 
-    [microwiki].[dbo].[Documents] 
-SET 
-    Tags = (
-        SELECT STUFF((
-            SELECT 
-                '|' + Label
-            FROM 
-                [microwiki].[dbo].Tags
-            INNER JOIN 
-                [microwiki].[dbo].Tags_Documents ON [microwiki].[dbo].Tags_Documents.TagID = [microwiki].[dbo].Tags.ID
-            WHERE 
-                [microwiki].[dbo].Tags_Documents.DocumentID = [microwiki].[dbo].[Documents].ID
-            FOR XML PATH ('')
-        ), 1, 1, '') 
-    ) 
-
 UPDATE [microwiki].[dbo].[Documents] SET ParentID = NULL WHERE ID = '3c93fc3c-832c-40b7-9a2c-6ff89f1f406a'
 
 UPDATE [microwiki].[dbo].[Documents] SET Body = REPLACE(Body, '/UserContent/', '/usercontent/')
@@ -87,4 +76,4 @@ INSERT INTO [microwiki].[dbo].[Users] (ID, Email, [Password])
 VALUES ('e5754cce-838b-4446-ada8-2d5a6e057555', 'me@markb.co.uk', 'AQAAAAEAACcQAAAAEBLK+6fu54twYNDSevf5lzx8y0AsLgIABI9cfdPh/lV8W/k2hHvRCxh0p2TTcrKiPA==')
 
 -- ROLLBACK TRAN; DROP TABLE #Tags
--- COMMIT TRAN
+COMMIT TRAN

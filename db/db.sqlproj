@@ -121,6 +121,7 @@
     <Folder Include="Stored Procedures\" />
     <Folder Include="Publish" />
     <Folder Include="Types" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Documents.sql">
@@ -181,6 +182,9 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="Types\GuidList.sql" />
+    <None Include="Scripts\kill.sql" />
+    <None Include="Scripts\seed.sql" />
+    <None Include="Scripts\migrate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Publish\db.publish.xml" />
