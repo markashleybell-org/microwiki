@@ -1,8 +1,8 @@
 import { TagInput } from 'mab-bootstrap-taginput';
-import { applyFormat, createEditor, createLink, getLinkData, removeLink, updatePreview } from './components/editor';
+import { applyFormat, createCodeBlock, createEditor, createLink, getLinkData, removeLink, updatePreview } from './components/editor';
 
 import 'mab-bootstrap-taginput/css/standard.css';
-import { IHtmlLinkProperties } from './components/editor/formatting';
+import { ICodeBlockProperties, IHtmlLinkProperties } from './components/editor/formatting';
 
 declare const _ALL_TAGS: string[];
 
@@ -22,13 +22,14 @@ for (const tagInputElement of tagInputElements) {
     });
 }
 
+// TODO: Refactor modal code
 const linkModal = $('#editor-link-modal');
 
 linkModal.modal({
     show: false
 });
 
-linkModal.on('click', '.btn-primary', () => {
+linkModal.on('click', '.btn-success', () => {
     const text = linkModal.find('input[name="link-text"]').val() as string;
     const url = linkModal.find('input[name="link-url"]').val() as string;
     const title = linkModal.find('input[name="link-title"]').val() as string;
@@ -55,6 +56,26 @@ linkModal.on('hidden.bs.modal', e => {
     editor.focus();
 });
 
+const codeBlockModal = $('#editor-code-block-modal');
+
+codeBlockModal.modal({
+    show: false
+});
+
+codeBlockModal.on('click', '.btn-success', () => {
+    const language = codeBlockModal.find('select[name="code-block-language"]').val() as string;
+
+    const data: ICodeBlockProperties = { language: language };
+
+    createCodeBlock(editor, data);
+
+    codeBlockModal.modal('hide');
+});
+
+codeBlockModal.on('hidden.bs.modal', e => {
+    editor.focus();
+});
+
 export function format(key: string) {
     if (key === 'link') {
         const linkData = getLinkData(editor);
@@ -68,6 +89,8 @@ export function format(key: string) {
         }
 
         linkModal.modal('show');
+    } else if (key === 'codeBlock') {
+        codeBlockModal.modal('show');
     } else {
         applyFormat(editor, key);
     }

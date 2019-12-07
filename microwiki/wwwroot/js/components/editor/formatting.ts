@@ -20,6 +20,7 @@ export interface IEditorFormats {
     ol: IEditorFormat;
     ul: IEditorFormat;
     link: IEditorFormat;
+    codeBlock: IEditorFormat;
 }
 
 export interface IEditorFormatTokens {
@@ -42,6 +43,7 @@ export const EditorFormats: IEditorFormats = {
     ol: { type: 'block', before: '1. ', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '* ', re: /^[\*\-]\s+/, placeholder: 'List' },
     link: { type: 'inline', before: '[', after: ')', placeholder: 'List' },
+    codeBlock: { type: 'inline', before: '```{LANG}\n', after: '\n```', placeholder: 'code' },
 };
 
 export const EditorFormatTokens: IEditorFormatTokens = {
@@ -267,6 +269,14 @@ export function linkRemove(cm: CodeMirror.Editor) {
     cm.focus();
 }
 
+export function codeBlockApply(cm: CodeMirror.Editor, data: ICodeBlockProperties) {
+    const format: IEditorFormat = Object.assign({}, EditorFormats.codeBlock);
+
+    format.before = format.before.replace(/\{LANG\}/gi, data.language);
+
+    inlineApply(cm, format);
+}
+
 interface IFormattingOperation {
     [key: string]: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
     apply: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
@@ -301,6 +311,10 @@ export interface IHtmlLinkProperties {
     linkText: string;
     href: string;
     linkTitle?: string;
+}
+
+export interface ICodeBlockProperties {
+    language: string;
 }
 
 export function getLinkData(cm: CodeMirror.Editor): IHtmlLinkProperties {
@@ -362,4 +376,8 @@ export function createLink(cm: CodeMirror.Editor, properties: IHtmlLinkPropertie
 
 export function removeLink(cm: CodeMirror.Editor) {
     linkRemove(cm);
+}
+
+export function createCodeBlock(cm: CodeMirror.Editor, properties: ICodeBlockProperties) {
+    codeBlockApply(cm, properties);
 }
