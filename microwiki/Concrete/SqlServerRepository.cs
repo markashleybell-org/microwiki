@@ -146,7 +146,7 @@ namespace MicroWiki.Concrete
 
         public async Task<User> FindUserByEmail(string email) =>
             await WithConnection(async conn => {
-                return await conn.QuerySingle<User>(
+                return await conn.QuerySingleOrDefaultAsync<User>(
                     sql: "SELECT * FROM Users WHERE Email = @Email",
                     param: new { Email = email }
                 );
