@@ -50,6 +50,8 @@ namespace MicroWiki.Controllers
         {
             if (!ModelState.IsValid)
             {
+                model.AllTags = await _repository.GetTags();
+
                 return View(model);
             }
 
@@ -98,6 +100,8 @@ namespace MicroWiki.Controllers
         {
             if (!ModelState.IsValid)
             {
+                model.AllTags = await _repository.GetTags();
+
                 return View(model);
             }
 
