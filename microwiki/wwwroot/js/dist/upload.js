@@ -272,11 +272,30 @@ var MicroWiki =
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var bs_custom_file_input__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bs-custom-file-input */ "./node_modules/bs-custom-file-input/dist/bs-custom-file-input.js");
+/* WEBPACK VAR INJECTION */(function($) {/* harmony import */ var bs_custom_file_input__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bs-custom-file-input */ "./node_modules/bs-custom-file-input/dist/bs-custom-file-input.js");
 /* harmony import */ var bs_custom_file_input__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bs_custom_file_input__WEBPACK_IMPORTED_MODULE_0__);
 
 bs_custom_file_input__WEBPACK_IMPORTED_MODULE_0___default.a.init();
+$('.delete-upload').on('click', function (e) {
+    var message = 'Are you sure you want to delete this file?\n\n'
+        + 'Like, REALLY, TOTALLY, COMPLETELY SURE ?\n\n'
+        + 'Type YES into the box below and click OK to confirm.\n';
+    var result = prompt(message, 'NO');
+    return result === 'YES';
+});
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "jquery")))
+
+/***/ }),
+
+/***/ "jquery":
+/*!*************************!*\
+  !*** external "jQuery" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = jQuery;
 
 /***/ })
 
