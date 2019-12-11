@@ -51,6 +51,16 @@ linkModal.on('click', '.btn-danger', () => {
     linkModal.modal('hide');
 });
 
+linkModal.on('shown.bs.modal', e => {
+    const textInput = linkModal.find('input[name="link-text"]');
+
+    if ((textInput.val() as string).trim() !== '') {
+        linkModal.find('input[name="link-url"]').focus();
+    } else {
+        textInput.focus();
+    }
+});
+
 linkModal.on('hidden.bs.modal', e => {
     editor.focus();
 });
@@ -82,8 +92,8 @@ imageModal.modal({
 });
 
 imageModal.on('click', '.btn-success', () => {
-    const alt = imageModal.find('input[name="image-alt"]').val() as string;
     const url = imageModal.find('input[name="image-url"]').val() as string;
+    const alt = imageModal.find('input[name="image-alt"]').val() as string;
 
     const data: IHtmlImageProperties = { alt: alt, url: url };
 
@@ -91,6 +101,11 @@ imageModal.on('click', '.btn-success', () => {
 
     imageModal.modal('hide');
 });
+
+imageModal.on('shown.bs.modal', e => {
+    imageModal.find('input[name="image-url"]').focus();
+});
+
 
 imageModal.on('hidden.bs.modal', e => {
     editor.focus();

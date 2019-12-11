@@ -17195,6 +17195,15 @@ linkModal.on('click', '.btn-danger', function () {
     Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["removeLink"])(editor);
     linkModal.modal('hide');
 });
+linkModal.on('shown.bs.modal', function (e) {
+    var textInput = linkModal.find('input[name="link-text"]');
+    if (textInput.val().trim() !== '') {
+        linkModal.find('input[name="link-url"]').focus();
+    }
+    else {
+        textInput.focus();
+    }
+});
 linkModal.on('hidden.bs.modal', function (e) {
     editor.focus();
 });
@@ -17216,11 +17225,14 @@ imageModal.modal({
     show: false
 });
 imageModal.on('click', '.btn-success', function () {
-    var alt = imageModal.find('input[name="image-alt"]').val();
     var url = imageModal.find('input[name="image-url"]').val();
+    var alt = imageModal.find('input[name="image-alt"]').val();
     var data = { alt: alt, url: url };
     Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["createImage"])(editor, data);
     imageModal.modal('hide');
+});
+imageModal.on('shown.bs.modal', function (e) {
+    imageModal.find('input[name="image-url"]').focus();
 });
 imageModal.on('hidden.bs.modal', function (e) {
     editor.focus();
