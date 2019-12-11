@@ -23,6 +23,17 @@ blockquote {
     color: #9d9d9d;
 }
 
+.col-actions {
+    text-align: right;
+}
+
+.col-actions .child-pages {
+    list-style: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
+}
+
 img {
     max-width: 100%;
 }
@@ -45,6 +56,10 @@ textarea[name=Body] {
 
 .navbar input[type=search] {
     width: 400px;
+}
+
+.col-actions .btn {
+    width: 138px;
 }
 
 /* BEGIN STANDARD STYLES (https://github.com/highlightjs/highlight.js/blob/master/src/styles/github.css) */

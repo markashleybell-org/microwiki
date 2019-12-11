@@ -8,15 +8,21 @@ namespace MicroWiki.Domain
 
         public const string SiteRootLabel = "Home";
 
-        public const string ButtonBaseClasses = "btn btn-block";
+        public const string InlineButtonBaseClasses = "btn";
 
-        public const string ActionButtonClasses = ButtonBaseClasses + " btn-sm btn-info";
+        public const string BlockButtonBaseClasses = "btn btn-block";
 
-        public const string DeleteButtonClasses = ButtonBaseClasses + " btn-sm btn-outline-danger";
+        public const string ActionButtonClasses = InlineButtonBaseClasses + " btn-sm btn-info";
 
-        public const string StandardButtonClasses = ButtonBaseClasses + " btn-info";
+        public const string DeleteButtonClasses = InlineButtonBaseClasses + " btn-sm btn-outline-danger";
+
+        public const string StandardButtonClasses = BlockButtonBaseClasses + " btn-info";
 
         public const string SaveButtonClasses = "btn btn-lg btn-success";
+
+        public const string ContentColumnClasses = "col-sm-9";
+
+        public const string ActionColumnClasses = "col-sm-3 col-actions";
 
         public static readonly MarkdownPipeline MarkdownFeatures =
             new MarkdownPipelineBuilder()
