@@ -38,12 +38,10 @@
                 <ul class="navbar-nav ml-sm-3">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        var id = User.Claims.Single(c => c.Type == ClaimTypes.Sid).Value;
-
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Wiki" asp-action="Contents">Contents</a>
                         </li>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown mr-md-4">
                             <a class="nav-link dropdown-toggle" href="#" id="tags-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Tags
                             </a>
@@ -52,6 +50,9 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" asp-controller="Tags" asp-action="Manage">Manage Tags</a>
                             </div>
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-link active">@User.Identity.Name</span>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Users" asp-action="Logout">Log Out</a>
