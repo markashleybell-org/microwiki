@@ -12,6 +12,12 @@ code {
     font-size: 100%;
 }
 
+blockquote {
+    background-color: #e0e0e0;
+    padding: 1rem 1rem 0.01rem 1rem;
+    font-style: italic;
+}
+
 img {
     max-width: 100%;
 }
