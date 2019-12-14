@@ -117,10 +117,6 @@ textarea[name=Body] {
     width: 400px;
 }
 
-.col-actions .btn {
-    width: 138px;
-}
-
 /* BEGIN STANDARD STYLES (https://github.com/highlightjs/highlight.js/blob/master/src/styles/github.css) */
 .hljs {
     display: block;

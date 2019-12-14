@@ -12,9 +12,9 @@ namespace MicroWiki.Domain
 
         public const string BlockButtonBaseClasses = "btn btn-block";
 
-        public const string ActionButtonClasses = InlineButtonBaseClasses + " btn-sm btn-info";
+        public const string ActionButtonClasses = BlockButtonBaseClasses + " btn-sm btn-info";
 
-        public const string DeleteButtonClasses = InlineButtonBaseClasses + " btn-sm btn-outline-danger";
+        public const string DeleteButtonClasses = BlockButtonBaseClasses + " btn-sm btn-outline-danger";
 
         public const string StandardButtonClasses = BlockButtonBaseClasses + " btn-info";
 
@@ -22,7 +22,7 @@ namespace MicroWiki.Domain
 
         public const string ContentColumnClasses = "col-sm-9";
 
-        public const string ActionColumnClasses = "col-sm-3 col-actions";
+        public const string ActionColumnClasses = "col-sm-2 offset-sm-1 col-actions";
 
         public static readonly MarkdownPipeline MarkdownFeatures =
             new MarkdownPipelineBuilder()
