@@ -17154,6 +17154,12 @@ var e_1, _a;
 
 var editorElement = document.getElementById('Body');
 var editor = Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["createEditor"])(editorElement);
+editor.setOption('extraKeys', {
+    'Tab': 'indentMore',
+    'Shift-Tab': 'indentLess',
+    'Ctrl-B': function () { return Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["applyFormat"])(editor, 'bold'); },
+    'Ctrl-I': function () { return Object(_components_editor__WEBPACK_IMPORTED_MODULE_1__["applyFormat"])(editor, 'italic'); }
+});
 var tagInputElements = document.getElementsByClassName('tag-input');
 try {
     for (var tagInputElements_1 = __values(tagInputElements), tagInputElements_1_1 = tagInputElements_1.next(); !tagInputElements_1_1.done; tagInputElements_1_1 = tagInputElements_1.next()) {

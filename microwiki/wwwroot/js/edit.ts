@@ -9,6 +9,13 @@ const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
 
 const editor = createEditor(editorElement);
 
+editor.setOption('extraKeys', {
+    'Tab': 'indentMore',
+    'Shift-Tab': 'indentLess',
+    'Ctrl-B': () => applyFormat(editor, 'bold'),
+    'Ctrl-I': () => applyFormat(editor, 'italic')
+});
+
 const tagInputElements = document.getElementsByClassName('tag-input');
 
 for (const tagInputElement of tagInputElements) {
