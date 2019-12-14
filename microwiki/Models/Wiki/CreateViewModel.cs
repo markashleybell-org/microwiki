@@ -29,8 +29,6 @@ namespace MicroWiki.Models
 
         public string Slug { get; set; }
 
-        public bool IsTableOfContents { get; set; }
-
         public IEnumerable<Tag> AllTags { get; set; }
 
         public MarkdownEditorViewModel MarkdownEditorData =>
@@ -53,7 +51,6 @@ namespace MicroWiki.Models
                 model.Title,
                 model.Body,
                 CreateSlug(model.Title),
-                model.IsTableOfContents,
                 (model.Tags ?? string.Empty)
                     .Split('|', StringSplitOptions.RemoveEmptyEntries)
                     .Select(t => new Tag(t))

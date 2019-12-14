@@ -7,7 +7,6 @@ CREATE PROCEDURE [dbo].[UpdateDocument]
     @Body NVARCHAR(max),
     @Slug NVARCHAR(256),
     @Username NVARCHAR(128),
-    @TOC BIT,
     @Tags [dbo].[TagList] READONLY
 )
 AS
@@ -30,7 +29,6 @@ BEGIN
 	    Body = @Body, 
 	    Slug = @Slug, 
 	    Username = @Username,
-	    TOC = @TOC,
 	    Updated = GETDATE()
     WHERE 
         ID = @ID

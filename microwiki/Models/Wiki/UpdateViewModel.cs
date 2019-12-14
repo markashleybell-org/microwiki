@@ -29,8 +29,6 @@ namespace MicroWiki.Models
 
         public string Slug { get; set; }
 
-        public bool IsTableOfContents { get; set; }
-
         public bool IsRootDocument { get; set; }
 
         public IEnumerable<Tag> AllTags { get; set; }
@@ -48,7 +46,6 @@ namespace MicroWiki.Models
                 IsRootDocument = !document.ParentID.HasValue,
                 Title = document.Title,
                 Body = document.Body,
-                IsTableOfContents = document.TOC,
                 Tags = string.Join("|", document.Tags.Select(t => t.Label)),
                 Slug = document.Slug,
                 AllTags = allTags
@@ -61,7 +58,6 @@ namespace MicroWiki.Models
                 model.Title,
                 model.Body,
                 CreateSlug(model.Slug),
-                model.IsTableOfContents,
                 (model.Tags ?? string.Empty)
                     .Split('|', StringSplitOptions.RemoveEmptyEntries)
                     .Select(t => new Tag(t))

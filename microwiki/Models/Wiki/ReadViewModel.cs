@@ -31,8 +31,6 @@ namespace MicroWiki.Models
 
         public bool IsRootDocument { get; set; }
 
-        public bool IsTableOfContents { get; set; }
-
         public IEnumerable<Tag> Tags { get; set; }
 
         public string Username { get; set; }
@@ -57,7 +55,6 @@ namespace MicroWiki.Models
                     ? Markdown.ToHtml(document.Body, MarkdownFeatures)
                     : default,
                 BodyRaw = document.Body,
-                IsTableOfContents = document.TOC,
                 Tags = document.Tags,
                 Created = document.Created,
                 Updated = document.Updated,

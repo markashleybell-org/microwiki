@@ -5,7 +5,6 @@
     [Body]     NVARCHAR (MAX) NULL,
     [Slug]     NVARCHAR (256) NULL,
     [Location] NVARCHAR (256) NULL,
-    [TOC]      BIT            CONSTRAINT [DF_Documents_TOC] DEFAULT ((0)) NOT NULL,
     [Username] NVARCHAR (128) NOT NULL,
     [Created]  DATETIME       CONSTRAINT [DF_Documents_Created] DEFAULT (getdate()) NOT NULL,
     [Updated]  DATETIME       CONSTRAINT [DF_Documents_Updated] DEFAULT (getdate()) NOT NULL,

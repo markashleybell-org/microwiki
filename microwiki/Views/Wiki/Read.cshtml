@@ -21,7 +21,7 @@
     <div class="@ContentColumnClasses">
         @Html.Raw(Model.Body)
 
-        @if (Model.IsTableOfContents && Model.Children.Count() > 0)
+        @if (Model.Children.Any())
         {
             <ul class="toc">
                 @foreach (var child in Model.Children)
@@ -33,16 +33,6 @@
         <p class="document-meta-data">Created on @Model.Created.ToString("dd/MM/yyyy HH:mm") | Last update @Model.Updated.ToString("dd/MM/yyyy HH:mm") by @Model.Username</p>
     </div>
     <div class="@ActionColumnClasses">
-        @if (!Model.IsTableOfContents && Model.Children.Count() > 0)
-        {
-            <ul class="child-pages">
-                @foreach (var child in Model.Children)
-                {
-                    <li><a href="@child.Location">@child.Title</a></li>
-                }
-            </ul>
-        }
-
         <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = ActionButtonClasses })</p>
 
         <p>@Html.ActionLink("New Child Page", "Create", new { parentID = Model.ID }, new { @class = ActionButtonClasses })</p>

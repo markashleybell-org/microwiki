@@ -39,7 +39,6 @@ namespace MicroWiki.Concrete
                     document.Title,
                     document.Body,
                     document.Slug,
-                    document.TOC,
                     Tags = document.Tags.AsDataRecords().AsTableValuedParameter("dbo.TagList"),
                     Username = _username
                 };
@@ -98,7 +97,6 @@ namespace MicroWiki.Concrete
                     document.Title,
                     document.Body,
                     document.Slug,
-                    document.TOC,
                     Tags = document.Tags.AsDataRecords().AsTableValuedParameter("dbo.TagList"),
                     Username = _username
                 };

@@ -34,7 +34,6 @@ INSERT INTO [microwiki].[dbo].[Documents] (
     Body,
     Slug,
     Location,
-    TOC,
     Username,
     Created,
     Updated
@@ -46,7 +45,6 @@ SELECT
     Body,
     Slug,
     Location,
-    TOC,
     Username,
     Created,
     Updated

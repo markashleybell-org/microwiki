@@ -13,7 +13,6 @@ namespace MicroWiki.Domain
             string title,
             string body,
             string slug,
-            bool toc,
             IEnumerable<Tag> tags)
             : this(
                   id,
@@ -22,7 +21,6 @@ namespace MicroWiki.Domain
                   body,
                   slug,
                   default,
-                  toc,
                   tags,
                   default,
                   default,
@@ -37,7 +35,6 @@ namespace MicroWiki.Domain
             string body,
             string slug,
             string location,
-            bool toc,
             string tags,
             string username,
             DateTime created,
@@ -49,7 +46,6 @@ namespace MicroWiki.Domain
                   body,
                   slug,
                   location,
-                  toc,
                   TagList(tags),
                   username,
                   created,
@@ -65,7 +61,6 @@ namespace MicroWiki.Domain
             string body,
             string slug,
             string location,
-            bool toc,
             IEnumerable<Tag> tags,
             string username,
             DateTime created,
@@ -77,7 +72,6 @@ namespace MicroWiki.Domain
                   body,
                   slug,
                   location,
-                  toc,
                   tags,
                   username,
                   created,
@@ -93,7 +87,6 @@ namespace MicroWiki.Domain
             string body,
             string slug,
             string location,
-            bool toc,
             IEnumerable<Tag> tags,
             string username,
             DateTime created,
@@ -106,7 +99,6 @@ namespace MicroWiki.Domain
             Body = body;
             Slug = slug;
             Location = location;
-            TOC = toc;
             Tags = tags ?? Enumerable.Empty<Tag>();
             Username = username;
             Created = created;
@@ -126,8 +118,6 @@ namespace MicroWiki.Domain
 
         public string Location { get; }
 
-        public bool TOC { get; }
-
         public IEnumerable<Tag> Tags { get; }
 
         public string Username { get; }
@@ -146,7 +136,6 @@ namespace MicroWiki.Domain
                 Body,
                 Slug,
                 Location,
-                TOC,
                 Tags,
                 Username,
                 Created,
