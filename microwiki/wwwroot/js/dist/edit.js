@@ -11661,7 +11661,9 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
+// Imports
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+exports = module.exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
 exports.push([module.i, ".mab-bootstrap-taginput {\r\n    display: flex;\r\n    cursor: text;\r\n}\r\n\r\n.mab-bootstrap-taginput.form-control {\r\n    line-height: normal;\r\n}\r\n\r\n.mab-bootstrap-taginput-tag {\r\n    color: #fff;\r\n    background-color: #007bff;\r\n    display: inline-flex;\r\n    align-items: center;\r\n    padding: .25em .4em;\r\n    font-size: 90%;\r\n    font-weight: 700;\r\n    white-space: nowrap;\r\n    border-radius: .25rem;\r\n    margin-right: 5px;\r\n    transition: background-color 1600ms ease-in;\r\n}\r\n\r\n.mab-bootstrap-taginput-tag .fa {\r\n    margin-left: 5px;\r\n    font-size: 80%;\r\n    cursor: pointer;\r\n}\r\n\r\n.mab-bootstrap-taginput-tag-warning {\r\n    background-color:#cc0000;\r\n    transition: none;\r\n}\r\n\r\n.mab-bootstrap-taginput-input {\r\n    border: solid 1px transparent;\r\n    outline: none;\r\n    width: 100px;\r\n}\r\n\r\n.mab-bootstrap-taginput-input.mab-bootstrap-taginput-input-narrowed {\r\n    width: 1px;\r\n}\r\n\r\n.mab-bootstrap-taginput-input-container {\r\n    position: relative;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestions {\r\n    position: absolute;\r\n    top: 30px;\r\n    left: 0;\r\n    min-width: 200px;\r\n    min-height: 30px;\r\n    background-color: #fff;\r\n    border: solid 1px #e0e0e0;\r\n    border-radius: 3px;\r\n    padding: 3px 0;\r\n    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);\r\n    z-index: 10000;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestions-hidden {\r\n    display: none;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestion {\r\n    padding: 5px 10px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestion-selected,\r\n.mab-bootstrap-taginput-suggestion:hover {\r\n    background-color: #007bff;\r\n    color: #fff;\r\n}\r\n", ""]);
 
@@ -11692,7 +11694,7 @@ module.exports = function (useSourceMap) {
       var content = cssWithMappingToString(item, useSourceMap);
 
       if (item[2]) {
-        return "@media ".concat(item[2], "{").concat(content, "}");
+        return "@media ".concat(item[2], " {").concat(content, "}");
       }
 
       return content;
@@ -11707,32 +11709,18 @@ module.exports = function (useSourceMap) {
       modules = [[null, modules, '']];
     }
 
-    var alreadyImportedModules = {};
+    for (var i = 0; i < modules.length; i++) {
+      var item = [].concat(modules[i]);
 
-    for (var i = 0; i < this.length; i++) {
-      // eslint-disable-next-line prefer-destructuring
-      var id = this[i][0];
-
-      if (id != null) {
-        alreadyImportedModules[id] = true;
-      }
-    }
-
-    for (var _i = 0; _i < modules.length; _i++) {
-      var item = modules[_i]; // skip already imported module
-      // this implementation is not 100% perfect for weird media query combinations
-      // when a module is imported multiple times with different media queries.
-      // I hope this will never occur (Hey this way we have smaller bundles)
-
-      if (item[0] == null || !alreadyImportedModules[item[0]]) {
-        if (mediaQuery && !item[2]) {
+      if (mediaQuery) {
+        if (!item[2]) {
           item[2] = mediaQuery;
-        } else if (mediaQuery) {
-          item[2] = "(".concat(item[2], ") and (").concat(mediaQuery, ")");
+        } else {
+          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
         }
-
-        list.push(item);
       }
+
+      list.push(item);
     }
   };
 
@@ -11815,6 +11803,10 @@ https://highlightjs.org/
   var languages = {},
       aliases   = {};
 
+  // safe/production mode - swallows more errors, tries to keep running
+  // even if a single syntax or parse hits a fatal error
+  var SAFE_MODE = true;
+
   // Regular expressions used throughout the highlight.js library.
   var noHighlightRe    = /^(no-?highlight|plain|text)$/i,
       languagePrefixRe = /\blang(?:uage)?-([\w-]+)\b/i,
@@ -11825,6 +11817,7 @@ https://highlightjs.org/
   var API_REPLACES;
 
   var spanEndTag = '</span>';
+  var LANGUAGE_NOT_FOUND = "Could not find the language '{}', did you forget to load/include a language module?";
 
   // Global options used when within external APIs. This is modified when
   // calling the `hljs.configure` function.
@@ -11836,7 +11829,7 @@ https://highlightjs.org/
   };
 
   // keywords that should have no default relevance value
-  var COMMON_KEYWORDS = 'of and for in not or if then'.split(' ')
+  var COMMON_KEYWORDS = 'of and for in not or if then'.split(' ');
 
 
   /* Utility functions */
@@ -11867,7 +11860,12 @@ https://highlightjs.org/
     // language-* takes precedence over non-prefixed class names.
     match = languagePrefixRe.exec(classes);
     if (match) {
-      return getLanguage(match[1]) ? match[1] : 'no-highlight';
+      var language = getLanguage(match[1]);
+      if (!language) {
+        console.warn(LANGUAGE_NOT_FOUND.replace("{}", match[1]));
+        console.warn("Falling back to no-highlight mode for this block.", block);
+      }
+      return language ? match[1] : 'no-highlight';
     }
 
     classes = classes.split(/\s+/);
@@ -11881,6 +11879,12 @@ https://highlightjs.org/
     }
   }
 
+  /**
+   * performs a shallow merge of multiple objects into one
+   *
+   * @arguments list of objects with properties to merge
+   * @returns a single new object
+   */
   function inherit(parent) {  // inherit(parent, override_obj, override_obj, ...)
     var key;
     var result = {};
@@ -11959,7 +11963,9 @@ https://highlightjs.org/
     }
 
     function open(node) {
-      function attr_str(a) {return ' ' + a.nodeName + '="' + escape(a.value).replace('"', '&quot;') + '"';}
+      function attr_str(a) {
+        return ' ' + a.nodeName + '="' + escape(a.value).replace(/"/g, '&quot;') + '"';
+      }
       result += '<' + tag(node) + ArrayProto.map.call(node.attributes, attr_str).join('') + '>';
     }
 
@@ -12005,7 +12011,7 @@ https://highlightjs.org/
   function dependencyOnParent(mode) {
     if (!mode) return false;
 
-    return mode.endsWithParent || dependencyOnParent(mode.starts)
+    return mode.endsWithParent || dependencyOnParent(mode.starts);
   }
 
   function expand_or_clone_mode(mode) {
@@ -12016,7 +12022,7 @@ https://highlightjs.org/
     }
 
     // EXPAND
-    // if we have variants then essentually "replace" the mode with the variants
+    // if we have variants then essentially "replace" the mode with the variants
     // this happens in compileMode, where this function is called from
     if (mode.cached_variants)
       return mode.cached_variants;
@@ -12026,17 +12032,23 @@ https://highlightjs.org/
     // instance of ourselves, so we can be reused with many
     // different parents without issue
     if (dependencyOnParent(mode))
-      return [inherit(mode, { starts: mode.starts ? inherit(mode.starts) : null })]
+      return [inherit(mode, { starts: mode.starts ? inherit(mode.starts) : null })];
+
+    if (Object.isFrozen(mode))
+      return [inherit(mode)];
 
     // no special dependency issues, just return ourselves
-    return [mode]
+    return [mode];
   }
 
   function restoreLanguageApi(obj) {
     if(API_REPLACES && !obj.langApiRestored) {
       obj.langApiRestored = true;
-      for(var key in API_REPLACES)
-        obj[key] && (obj[API_REPLACES[key]] = obj[key]);
+      for(var key in API_REPLACES) {
+        if (obj[key]) {
+          obj[API_REPLACES[key]] = obj[key];
+        }
+      }
       (obj.contains || []).concat(obj.variants || []).forEach(restoreLanguageApi);
     }
   }
@@ -12063,20 +12075,20 @@ https://highlightjs.org/
         var pair = keyword.split('|');
         compiled_keywords[pair[0]] = [className, scoreForKeyword(pair[0], pair[1])];
       });
-    };
+    }
   }
 
   function scoreForKeyword(keyword, providedScore) {
     // manual scores always win over common keywords
     // so you can force a score of 1 if you really insist
     if (providedScore)
-      return Number(providedScore)
+      return Number(providedScore);
 
     return commonKeyword(keyword) ? 0 : 1;
   }
 
   function commonKeyword(word) {
-    return COMMON_KEYWORDS.indexOf(word.toLowerCase()) != -1
+    return COMMON_KEYWORDS.indexOf(word.toLowerCase()) != -1;
   }
 
   function compileLanguage(language) {
@@ -12173,7 +12185,7 @@ https://highlightjs.org/
       if (mode.illegal)
         addRule("illegal", mode.illegal);
 
-      var terminators = regexes.map(function(el) { return el[1] });
+      var terminators = regexes.map(function(el) { return el[1]; });
       matcherRe = langRe(joinRe(terminators, '|'), true);
 
       matcher.lastIndex = 0;
@@ -12202,7 +12214,7 @@ https://highlightjs.org/
           match.rule = rule;
         }
         return match;
-      }
+      };
 
       return matcher;
     }
@@ -12214,7 +12226,7 @@ https://highlightjs.org/
 
       mode.keywords = mode.keywords || mode.beginKeywords;
       if (mode.keywords)
-        mode.keywords = compileKeywords(mode.keywords, language.case_insensitive)
+        mode.keywords = compileKeywords(mode.keywords, language.case_insensitive);
 
       mode.lexemesRe = langRe(mode.lexemes || /\w+/, true);
 
@@ -12254,6 +12266,17 @@ https://highlightjs.org/
       mode.terminators = buildModeRegex(mode);
     }
 
+    // self is not valid at the top-level
+    if (language.contains && language.contains.indexOf('self') != -1) {
+      if (!SAFE_MODE) {
+        throw new Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.")
+      } else {
+        // silently remove the broken rule (effectively ignoring it), this has historically
+        // been the behavior in the past, so this removal preserves compatibility with broken
+        // grammars when running in Safe Mode
+        language.contains = language.contains.filter(function(mode) { return mode != 'self'; });
+      }
+    }
     compileMode(language);
   }
 
@@ -12289,15 +12312,15 @@ https://highlightjs.org/
       return mode.keywords.hasOwnProperty(match_str) && mode.keywords[match_str];
     }
 
-    function buildSpan(classname, insideSpan, leaveOpen, noPrefix) {
+    function buildSpan(className, insideSpan, leaveOpen, noPrefix) {
       if (!leaveOpen && insideSpan === '') return '';
-      if (!classname) return insideSpan;
+      if (!className) return insideSpan;
 
       var classPrefix = noPrefix ? '' : options.classPrefix,
           openSpan    = '<span class="' + classPrefix,
           closeSpan   = leaveOpen ? '' : spanEndTag;
 
-      openSpan += classname + '">';
+      openSpan += className + '">';
 
       return openSpan + insideSpan + closeSpan;
     }
@@ -12339,7 +12362,7 @@ https://highlightjs.org/
                    highlightAuto(mode_buffer, top.subLanguage.length ? top.subLanguage : undefined);
 
       // Counting embedded language score towards the host language may be disabled
-      // with zeroing the containing mode relevance. Usecase in point is Markdown that
+      // with zeroing the containing mode relevance. Use case in point is Markdown that
       // allows XML everywhere and makes every XML snippet to have a much larger Markdown
       // score.
       if (top.relevance > 0) {
@@ -12381,13 +12404,14 @@ https://highlightjs.org/
           mode_buffer = lexeme;
         }
       }
-      startNewMode(new_mode, lexeme);
+      startNewMode(new_mode);
       return new_mode.returnBegin ? 0 : lexeme.length;
     }
 
     function doEndMatch(match) {
       var lexeme = match[0];
-      var end_mode = endOfMode(top, lexeme);
+      var matchPlusRemainder = value.substr(match.index);
+      var end_mode = endOfMode(top, matchPlusRemainder);
       if (!end_mode) { return; }
 
       var origin = top;
@@ -12415,7 +12439,7 @@ https://highlightjs.org/
         if (end_mode.endSameAsBegin) {
           end_mode.starts.endRe = end_mode.endRe;
         }
-        startNewMode(end_mode.starts, '');
+        startNewMode(end_mode.starts);
       }
       return origin.returnEnd ? 0 : lexeme.length;
     }
@@ -12439,7 +12463,7 @@ https://highlightjs.org/
       // Ref: https://github.com/highlightjs/highlight.js/issues/2140
       if (lastMatch.type=="begin" && match.type=="end" && lastMatch.index == match.index && lexeme === "") {
         // spit the "skipped" character that our regex choked on back into the output sequence
-        mode_buffer += value.slice(match.index, match.index + 1)
+        mode_buffer += value.slice(match.index, match.index + 1);
         return 1;
       }
       lastMatch = match;
@@ -12473,6 +12497,7 @@ https://highlightjs.org/
 
     var language = getLanguage(name);
     if (!language) {
+      console.error(LANGUAGE_NOT_FOUND.replace("{}", name));
       throw new Error('Unknown language: "' + name + '"');
     }
 
@@ -12510,15 +12535,23 @@ https://highlightjs.org/
         language: name,
         top: top
       };
-    } catch (e) {
-      if (e.message && e.message.indexOf('Illegal') !== -1) {
+    } catch (err) {
+      if (err.message && err.message.indexOf('Illegal') !== -1) {
         return {
           illegal: true,
           relevance: 0,
           value: escape(value)
         };
+      } else if (SAFE_MODE) {
+        return {
+          relevance: 0,
+          value: escape(value),
+          language: name,
+          top: top,
+          errorRaised: err
+        };
       } else {
-        throw e;
+        throw err;
       }
     }
   }
@@ -12566,16 +12599,18 @@ https://highlightjs.org/
 
   */
   function fixMarkup(value) {
-    return !(options.tabReplace || options.useBR)
-      ? value
-      : value.replace(fixMarkupRe, function(match, p1) {
-          if (options.useBR && match === '\n') {
-            return '<br>';
-          } else if (options.tabReplace) {
-            return p1.replace(/\t/g, options.tabReplace);
-          }
-          return '';
-      });
+    if (!(options.tabReplace || options.useBR)) {
+      return value;
+    }
+
+    return value.replace(fixMarkupRe, function(match, p1) {
+        if (options.useBR && match === '\n') {
+          return '<br>';
+        } else if (options.tabReplace) {
+          return p1.replace(/\t/g, options.tabReplace);
+        }
+        return '';
+    });
   }
 
   function buildClassName(prevClassName, currentLang, resultLang) {
@@ -12605,7 +12640,7 @@ https://highlightjs.org/
         return;
 
     if (options.useBR) {
-      node = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      node = document.createElement('div');
       node.innerHTML = block.innerHTML.replace(/\n/g, '').replace(/<br[ \/]*>/g, '\n');
     } else {
       node = block;
@@ -12615,7 +12650,7 @@ https://highlightjs.org/
 
     originalStream = nodeStream(node);
     if (originalStream.length) {
-      resultNode = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+      resultNode = document.createElement('div');
       resultNode.innerHTML = result.value;
       result.value = mergeStreams(originalStream, nodeStream(resultNode), text);
     }
@@ -12658,12 +12693,26 @@ https://highlightjs.org/
   Attaches highlighting to the page load event.
   */
   function initHighlightingOnLoad() {
-    addEventListener('DOMContentLoaded', initHighlighting, false);
-    addEventListener('load', initHighlighting, false);
+    window.addEventListener('DOMContentLoaded', initHighlighting, false);
+    window.addEventListener('load', initHighlighting, false);
   }
 
+  var PLAINTEXT_LANGUAGE = { disableAutodetect: true };
+
   function registerLanguage(name, language) {
-    var lang = languages[name] = language(hljs);
+    var lang;
+    try { lang = language(hljs); }
+    catch (error) {
+      console.error("Language definition for '{}' could not be registered.".replace("{}", name));
+      // hard or soft error
+      if (!SAFE_MODE) { throw error; } else { console.error(error); }
+      // languages that have serious errors are replaced with essentially a
+      // "plaintext" stand-in so that the code blocks will still get normal
+      // css classes applied to them - and one bad language won't break the
+      // entire highlighter
+      lang = PLAINTEXT_LANGUAGE;
+    }
+    languages[name] = lang;
     restoreLanguageApi(lang);
     lang.rawDefinition = language.bind(null,hljs);
 
@@ -12674,6 +12723,20 @@ https://highlightjs.org/
 
   function listLanguages() {
     return objectKeys(languages);
+  }
+
+  /*
+    intended usage: When one language truly requires another
+
+    Unlike `getLanguage`, this will throw when the requested language
+    is not available.
+  */
+  function requireLanguage(name) {
+    var lang = getLanguage(name);
+    if (lang) { return lang; }
+
+    var err = new Error('The \'{}\' language is required, but not loaded.'.replace('{}',name));
+    throw err;
   }
 
   function getLanguage(name) {
@@ -12698,8 +12761,10 @@ https://highlightjs.org/
   hljs.registerLanguage = registerLanguage;
   hljs.listLanguages = listLanguages;
   hljs.getLanguage = getLanguage;
+  hljs.requireLanguage = requireLanguage;
   hljs.autoDetection = autoDetection;
   hljs.inherit = inherit;
+  hljs.debugMode = function() { SAFE_MODE = false; }
 
   // Common regexps
   hljs.IDENT_RE = '[a-zA-Z]\\w*';
@@ -12804,6 +12869,48 @@ https://highlightjs.org/
     begin: '\\.\\s*' + hljs.UNDERSCORE_IDENT_RE,
     relevance: 0
   };
+
+  var constants = [
+    hljs.BACKSLASH_ESCAPE,
+    hljs.APOS_STRING_MODE,
+    hljs.QUOTE_STRING_MODE,
+    hljs.PHRASAL_WORDS_MODE,
+    hljs.COMMENT,
+    hljs.C_LINE_COMMENT_MODE,
+    hljs.C_BLOCK_COMMENT_MODE,
+    hljs.HASH_COMMENT_MODE,
+    hljs.NUMBER_MODE,
+    hljs.C_NUMBER_MODE,
+    hljs.BINARY_NUMBER_MODE,
+    hljs.CSS_NUMBER_MODE,
+    hljs.REGEXP_MODE,
+    hljs.TITLE_MODE,
+    hljs.UNDERSCORE_TITLE_MODE,
+    hljs.METHOD_GUARD
+  ]
+  constants.forEach(function(obj) { deepFreeze(obj); });
+
+  // https://github.com/substack/deep-freeze/blob/master/index.js
+  function deepFreeze (o) {
+    Object.freeze(o);
+
+    var objIsFunction = typeof o === 'function';
+
+    Object.getOwnPropertyNames(o).forEach(function (prop) {
+      if (o.hasOwnProperty(prop)
+      && o[prop] !== null
+      && (typeof o[prop] === "object" || typeof o[prop] === "function")
+      // IE11 fix: https://github.com/highlightjs/highlight.js/issues/2318
+      // TODO: remove in the future
+      && (objIsFunction ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments' : true)
+      && !Object.isFrozen(o[prop])) {
+        deepFreeze(o[prop]);
+      }
+    });
+
+    return o;
+  };
+
 
   return hljs;
 }));
@@ -13013,45 +13120,52 @@ module.exports = function(hljs) {
 /***/ (function(module, exports) {
 
 module.exports = function(hljs) {
+  var FUNCTION_LIKE = {
+    begin: /[\w-]+\(/, returnBegin: true,
+    contains: [
+      {
+        className: 'built_in',
+        begin: /[\w-]+/
+      },
+      {
+        begin: /\(/, end: /\)/,
+        contains: [
+          hljs.APOS_STRING_MODE,
+          hljs.QUOTE_STRING_MODE,
+          hljs.CSS_NUMBER_MODE,
+        ]
+      }
+    ]
+  }
+  var ATTRIBUTE = {
+    className: 'attribute',
+    begin: /\S/, end: ':', excludeEnd: true,
+    starts: {
+      endsWithParent: true, excludeEnd: true,
+      contains: [
+        FUNCTION_LIKE,
+        hljs.CSS_NUMBER_MODE,
+        hljs.QUOTE_STRING_MODE,
+        hljs.APOS_STRING_MODE,
+        hljs.C_BLOCK_COMMENT_MODE,
+        {
+          className: 'number', begin: '#[0-9A-Fa-f]+'
+        },
+        {
+          className: 'meta', begin: '!important'
+        }
+      ]
+    }
+  }
+  var AT_IDENTIFIER = '@[a-z-]+' // @font-face
+  var AT_MODIFIERS = "and or not only"
+  var MEDIA_TYPES = "all print screen speech"
+  var AT_PROPERTY_RE = /@\-?\w[\w]*(\-\w+)*/ // @-webkit-keyframes
   var IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   var RULE = {
     begin: /(?:[A-Z\_\.\-]+|--[a-zA-Z0-9_-]+)\s*:/, returnBegin: true, end: ';', endsWithParent: true,
     contains: [
-      {
-        className: 'attribute',
-        begin: /\S/, end: ':', excludeEnd: true,
-        starts: {
-          endsWithParent: true, excludeEnd: true,
-          contains: [
-            {
-              begin: /[\w-]+\(/, returnBegin: true,
-              contains: [
-                {
-                  className: 'built_in',
-                  begin: /[\w-]+/
-                },
-                {
-                  begin: /\(/, end: /\)/,
-                  contains: [
-                    hljs.APOS_STRING_MODE,
-                    hljs.QUOTE_STRING_MODE
-                  ]
-                }
-              ]
-            },
-            hljs.CSS_NUMBER_MODE,
-            hljs.QUOTE_STRING_MODE,
-            hljs.APOS_STRING_MODE,
-            hljs.C_BLOCK_COMMENT_MODE,
-            {
-              className: 'number', begin: '#[0-9A-Fa-f]+'
-            },
-            {
-              className: 'meta', begin: '!important'
-            }
-          ]
-        }
-      }
+      ATTRIBUTE
     ]
   };
 
@@ -13069,16 +13183,23 @@ module.exports = function(hljs) {
       {
         className: 'selector-attr',
         begin: /\[/, end: /\]/,
-        illegal: '$'
+        illegal: '$',
+        contains: [
+          hljs.APOS_STRING_MODE,
+          hljs.QUOTE_STRING_MODE,
+        ]
       },
       {
         className: 'selector-pseudo',
         begin: /:(:)?[a-zA-Z0-9\_\-\+\(\)"'.]+/
       },
+      // matching these here allows us to treat them more like regular CSS
+      // rules so everything between the {} gets regular rule highlighting,
+      // which is what we want for page and font-face
       {
-        begin: '@(font-face|page)',
-        lexemes: '[a-z-]+',
-        keywords: 'font-face page'
+        begin: '@(page|font-face)',
+        lexemes: AT_IDENTIFIER,
+        keywords: '@page @font-face'
       },
       {
         begin: '@', end: '[{;]', // at_rule eating first "{" is a good thing
@@ -13086,16 +13207,23 @@ module.exports = function(hljs) {
                                  // a rule set but instead drops parser into
                                  // the default mode which is how it should be.
         illegal: /:/, // break on Less variables @var: ...
+        returnBegin: true,
         contains: [
           {
             className: 'keyword',
-            begin: /\w+/
+            begin: AT_PROPERTY_RE
           },
           {
             begin: /\s/, endsWithParent: true, excludeEnd: true,
             relevance: 0,
+            keywords: AT_MODIFIERS,
             contains: [
-              hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE,
+              {
+                begin: /[a-z-]+:/,
+                className:"attribute"
+              },
+              hljs.APOS_STRING_MODE,
+              hljs.QUOTE_STRING_MODE,
               hljs.CSS_NUMBER_MODE
             ]
           }
@@ -13208,7 +13336,7 @@ module.exports = function(hljs) {
   ]);
 
   return {
-    aliases: ['js', 'jsx'],
+    aliases: ['js', 'jsx', 'mjs', 'cjs'],
     keywords: KEYWORDS,
     contains: [
       {
@@ -13226,6 +13354,39 @@ module.exports = function(hljs) {
       CSS_TEMPLATE,
       TEMPLATE_STRING,
       hljs.C_LINE_COMMENT_MODE,
+      hljs.COMMENT(
+        '/\\*\\*',
+        '\\*/',
+        {
+          relevance : 0,
+          contains : [
+            {
+              className : 'doctag',
+              begin : '@[A-Za-z]+',
+              contains : [
+                {
+                  className: 'type',
+                  begin: '\\{',
+                  end: '\\}',
+                  relevance: 0
+                },
+                {
+                  className: 'variable',
+                  begin: IDENT_RE + '(?=\\s*(-)|$)',
+                  endsParent: true,
+                  relevance: 0
+                },
+                // eat spaces (not newlines) so we can find
+                // types or variables
+                {
+                  begin: /(?=[^\n])\s/,
+                  relevance: 0
+                },
+              ]
+            }
+          ]
+        }
+      ),
       hljs.C_BLOCK_COMMENT_MODE,
       NUMBER,
       { // object attr container
@@ -13353,18 +13514,62 @@ module.exports = function(hljs) {
 /***/ (function(module, exports) {
 
 module.exports = function(hljs){
+
+  var TYPES =
+    ["string", "char", "byte", "int", "long", "bool",  "decimal",  "single",
+     "double", "DateTime", "xml", "array", "hashtable", "void"];
+
+  // https://msdn.microsoft.com/en-us/library/ms714428(v=vs.85).aspx
+  var VALID_VERBS =
+    'Add|Clear|Close|Copy|Enter|Exit|Find|Format|Get|Hide|Join|Lock|' +
+    'Move|New|Open|Optimize|Pop|Push|Redo|Remove|Rename|Reset|Resize|' +
+    'Search|Select|Set|Show|Skip|Split|Step|Switch|Undo|Unlock|' +
+    'Watch|Backup|Checkpoint|Compare|Compress|Convert|ConvertFrom|' +
+    'ConvertTo|Dismount|Edit|Expand|Export|Group|Import|Initialize|' +
+    'Limit|Merge|New|Out|Publish|Restore|Save|Sync|Unpublish|Update|' +
+    'Approve|Assert|Complete|Confirm|Deny|Disable|Enable|Install|Invoke|Register|' +
+    'Request|Restart|Resume|Start|Stop|Submit|Suspend|Uninstall|' +
+    'Unregister|Wait|Debug|Measure|Ping|Repair|Resolve|Test|Trace|Connect|' +
+    'Disconnect|Read|Receive|Send|Write|Block|Grant|Protect|Revoke|Unblock|' +
+    'Unprotect|Use|ForEach|Sort|Tee|Where';
+
+  var COMPARISON_OPERATORS =
+    '-and|-as|-band|-bnot|-bor|-bxor|-casesensitive|-ccontains|-ceq|-cge|-cgt|' +
+    '-cle|-clike|-clt|-cmatch|-cne|-cnotcontains|-cnotlike|-cnotmatch|-contains|' +
+    '-creplace|-csplit|-eq|-exact|-f|-file|-ge|-gt|-icontains|-ieq|-ige|-igt|' +
+    '-ile|-ilike|-ilt|-imatch|-in|-ine|-inotcontains|-inotlike|-inotmatch|' +
+    '-ireplace|-is|-isnot|-isplit|-join|-le|-like|-lt|-match|-ne|-not|' +
+    '-notcontains|-notin|-notlike|-notmatch|-or|-regex|-replace|-shl|-shr|' +
+    '-split|-wildcard|-xor';
+
+  var KEYWORDS = {
+    keyword: 'if else foreach return do while until elseif begin for trap data dynamicparam ' +
+    'end break throw param continue finally in switch exit filter try process catch ' +
+    'hidden static parameter'
+    // TODO: 'validate[A-Z]+' can't work in keywords
+  };
+
+  var TITLE_NAME_RE = /\w[\w\d]*((-)[\w\d]+)*/;
+
   var BACKTICK_ESCAPE = {
-    begin: "`[\\s\\S]",
-    relevance: 0,
+    begin: '`[\\s\\S]',
+    relevance: 0
   };
+
   var VAR = {
-    className: "variable",
-    variants: [{ begin: /\$[\w\d][\w\d_:]*/ }],
+    className: 'variable',
+    variants: [
+      { begin: /\$\B/ },
+      { className: 'keyword', begin: /\$this/ },
+      { begin: /\$[\w\d][\w\d_:]*/ }
+    ]
   };
+
   var LITERAL = {
-    className: "literal",
-    begin: /\$(null|true|false)\b/,
+    className: 'literal',
+    begin: /\$(null|true|false)\b/
   };
+
   var QUOTE_STRING = {
     className: "string",
     variants: [{ begin: /"/, end: /"/ }, { begin: /@"/, end: /^"@/ }],
@@ -13372,255 +13577,182 @@ module.exports = function(hljs){
       BACKTICK_ESCAPE,
       VAR,
       {
-        className: "variable",
-        begin: /\$[A-z]/,
-        end: /[^A-z]/,
-      },
-    ],
+        className: 'variable',
+        begin: /\$[A-z]/, end: /[^A-z]/
+      }
+    ]
   };
+
   var APOS_STRING = {
-    className: "string",
-    variants: [{ begin: /'/, end: /'/ }, { begin: /@'/, end: /^'@/ }],
+    className: 'string',
+    variants: [
+      { begin: /'/, end: /'/ },
+      { begin: /@'/, end: /^'@/ }
+    ]
   };
 
   var PS_HELPTAGS = {
     className: "doctag",
     variants: [
       /* no paramater help tags */
-
       {
-        begin: /\.(synopsis|description|example|inputs|outputs|notes|link|component|role|functionality)/,
+        begin: /\.(synopsis|description|example|inputs|outputs|notes|link|component|role|functionality)/
       },
       /* one parameter help tags */
-      {
-        begin: /\.(parameter|forwardhelptargetname|forwardhelpcategory|remotehelprunspace|externalhelp)\s+\S+/,
-      },
-    ],
+      { begin: /\.(parameter|forwardhelptargetname|forwardhelpcategory|remotehelprunspace|externalhelp)\s+\S+/ }
+    ]
   };
-  var PS_COMMENT = hljs.inherit(hljs.COMMENT(null, null), {
+
+  var PS_COMMENT = hljs.inherit(
+    hljs.COMMENT(null, null),
+    {
+      variants: [
+        /* single-line comment */
+        { begin: /#/, end: /$/ },
+        /* multi-line comment */
+        { begin: /<#/, end: /#>/ }
+      ],
+      contains: [PS_HELPTAGS]
+    }
+  );
+
+  var CMDLETS = {
+    className: 'built_in',
     variants: [
-      /* single-line comment */
-      { begin: /#/, end: /$/ },
-      /* multi-line comment */
-      { begin: /<#/, end: /#>/ },
-    ],
-    contains: [PS_HELPTAGS],
-  });
+      { begin: '('.concat(VALID_VERBS, ')+(-)[\\w\\d]+') }
+    ]
+  };
+
+  var PS_CLASS = {
+    className: 'class',
+    beginKeywords: 'class enum', end: /\s*[{]/, excludeEnd: true,
+    relevance: 0,
+    contains: [hljs.TITLE_MODE]
+  };
+
+  var PS_FUNCTION = {
+    className: 'function',
+    begin: /function\s+/, end: /\s*\{|$/,
+    excludeEnd: true,
+    returnBegin: true,
+    relevance: 0,
+    contains: [
+      { begin: "function", relevance: 0, className: "keyword" },
+      { className: "title",
+        begin: TITLE_NAME_RE, relevance:0 },
+      { begin: /\(/, end: /\)/, className: "params",
+        relevance: 0,
+        contains: [VAR] }
+      // CMDLETS
+    ]
+  };
+
+  // Using statment, plus type, plus assembly name.
+  var PS_USING = {
+    begin: /using\s/, end: /$/,
+    returnBegin: true,
+    contains: [
+      QUOTE_STRING,
+      APOS_STRING,
+      { className: 'keyword', begin: /(using|assembly|command|module|namespace|type)/ }
+    ]
+  };
+
+  // Comperison operators & function named parameters.
+  var PS_ARGUMENTS = {
+    variants: [
+      // PS literals are pretty verbose so it's a good idea to accent them a bit.
+      { className: 'operator', begin: '('.concat(COMPARISON_OPERATORS, ')\\b') },
+      { className: 'literal', begin: /(-)[\w\d]+/, relevance:0 }
+    ]
+  };
+
+  var STATIC_MEMBER = {
+    className: 'selector-tag',
+    begin: /::\w+\b/, end: /$/,
+    returnBegin: true,
+    contains: [
+      { className: 'attribute', begin: /\w+/, endsParent: true }
+    ]
+  };
+
+  var HASH_SIGNS = {
+    className: 'selector-tag',
+    begin: /\@\B/,
+    relevance: 0
+  };
+
+  var PS_NEW_OBJECT_TYPE = {
+    className: 'built_in',
+    begin: /New-Object\s+\w/, end: /$/,
+    returnBegin: true,
+    contains: [
+      { begin: /New-Object\s+/, relevance: 0 },
+      { className: 'meta', begin: /([\w\.])+/, endsParent: true }
+    ]
+  };
+
+  // It's a very general rule so I'll narrow it a bit with some strict boundaries
+  // to avoid any possible false-positive collisions!
+  var PS_METHODS = {
+    className: 'function',
+    begin: /\[.*\]\s*[\w]+[ ]??\(/, end: /$/,
+    returnBegin: true,
+    relevance: 0,
+    contains: [
+      {
+        className: 'keyword', begin: '('.concat(
+        KEYWORDS.keyword.toString().replace(/\s/g, '|'
+        ), ')\\b'),
+        endsParent: true,
+        relevance: 0
+      },
+      hljs.inherit(hljs.TITLE_MODE, { endsParent: true })
+    ]
+  };
+
+  var GENTLEMANS_SET = [
+    // STATIC_MEMBER,
+    PS_METHODS,
+    PS_COMMENT,
+    BACKTICK_ESCAPE,
+    hljs.NUMBER_MODE,
+    QUOTE_STRING,
+    APOS_STRING,
+    // PS_NEW_OBJECT_TYPE,
+    CMDLETS,
+    VAR,
+    LITERAL,
+    HASH_SIGNS
+  ];
+
+  var PS_TYPE = {
+    begin: /\[/, end: /\]/,
+    excludeBegin: true,
+    excludeEnd: true,
+    relevance: 0,
+    contains: [].concat(
+      'self',
+      GENTLEMANS_SET,
+      { begin: "(" + TYPES.join("|") + ")", className: "built_in", relevance:0 },
+      { className: 'type', begin: /[\.\w\d]+/, relevance: 0 }
+    )
+  };
+
+  PS_METHODS.contains.unshift(PS_TYPE)
 
   return {
     aliases: ["ps", "ps1"],
     lexemes: /-?[A-z\.\-]+/,
     case_insensitive: true,
-    keywords: {
-      keyword:
-        "if else foreach return function do while until elseif begin for trap data dynamicparam end break throw param continue finally in switch exit filter try process catch" +
-        "ValidateNoCircleInNodeResources ValidateNodeExclusiveResources ValidateNodeManager ValidateNodeResources ValidateNodeResourceSource ValidateNoNameNodeResources ThrowError IsHiddenResource" +
-        "IsPatternMatched ",
-      built_in:
-        "Add-Computer Add-Content Add-History Add-JobTrigger Add-Member Add-PSSnapin Add-Type Checkpoint-Computer Clear-Content " +
-        "Clear-EventLog Clear-History Clear-Host Clear-Item Clear-ItemProperty Clear-Variable Compare-Object Complete-Transaction Connect-PSSession " +
-        "Connect-WSMan Convert-Path ConvertFrom-Csv ConvertFrom-Json ConvertFrom-SecureString ConvertFrom-StringData ConvertTo-Csv ConvertTo-Html " +
-        "ConvertTo-Json ConvertTo-SecureString ConvertTo-Xml Copy-Item Copy-ItemProperty Debug-Process Disable-ComputerRestore Disable-JobTrigger " +
-        "Disable-PSBreakpoint Disable-PSRemoting Disable-PSSessionConfiguration Disable-WSManCredSSP Disconnect-PSSession Disconnect-WSMan " +
-        "Disable-ScheduledJob Enable-ComputerRestore Enable-JobTrigger Enable-PSBreakpoint Enable-PSRemoting Enable-PSSessionConfiguration " +
-        "Enable-ScheduledJob Enable-WSManCredSSP Enter-PSSession Exit-PSSession Export-Alias Export-Clixml Export-Console Export-Counter Export-Csv " +
-        "Export-FormatData Export-ModuleMember Export-PSSession ForEach-Object Format-Custom Format-List Format-Table Format-Wide Get-Acl Get-Alias " +
-        "Get-AuthenticodeSignature Get-ChildItem Get-Command Get-ComputerRestorePoint Get-Content Get-ControlPanelItem Get-Counter Get-Credential " +
-        "Get-Culture Get-Date Get-Event Get-EventLog Get-EventSubscriber Get-ExecutionPolicy Get-FormatData Get-Host Get-HotFix Get-Help Get-History " +
-        "Get-IseSnippet Get-Item Get-ItemProperty Get-Job Get-JobTrigger Get-Location Get-Member Get-Module Get-PfxCertificate Get-Process " +
-        "Get-PSBreakpoint Get-PSCallStack Get-PSDrive Get-PSProvider Get-PSSession Get-PSSessionConfiguration Get-PSSnapin Get-Random Get-ScheduledJob " +
-        "Get-ScheduledJobOption Get-Service Get-TraceSource Get-Transaction Get-TypeData Get-UICulture Get-Unique Get-Variable Get-Verb Get-WinEvent " +
-        "Get-WmiObject Get-WSManCredSSP Get-WSManInstance Group-Object Import-Alias Import-Clixml Import-Counter Import-Csv Import-IseSnippet " +
-        "Import-LocalizedData Import-PSSession Import-Module Invoke-AsWorkflow Invoke-Command Invoke-Expression Invoke-History Invoke-Item " +
-        "Invoke-RestMethod Invoke-WebRequest Invoke-WmiMethod Invoke-WSManAction Join-Path Limit-EventLog Measure-Command Measure-Object Move-Item " +
-        "Move-ItemProperty New-Alias New-Event New-EventLog New-IseSnippet New-Item New-ItemProperty New-JobTrigger New-Object New-Module " +
-        "New-ModuleManifest New-PSDrive New-PSSession New-PSSessionConfigurationFile New-PSSessionOption New-PSTransportOption " +
-        "New-PSWorkflowExecutionOption New-PSWorkflowSession New-ScheduledJobOption New-Service New-TimeSpan New-Variable New-WebServiceProxy " +
-        "New-WinEvent New-WSManInstance New-WSManSessionOption Out-Default Out-File Out-GridView Out-Host Out-Null Out-Printer Out-String Pop-Location " +
-        "Push-Location Read-Host Receive-Job Register-EngineEvent Register-ObjectEvent Register-PSSessionConfiguration Register-ScheduledJob " +
-        "Register-WmiEvent Remove-Computer Remove-Event Remove-EventLog Remove-Item Remove-ItemProperty Remove-Job Remove-JobTrigger Remove-Module " +
-        "Remove-PSBreakpoint Remove-PSDrive Remove-PSSession Remove-PSSnapin Remove-TypeData Remove-Variable Remove-WmiObject Remove-WSManInstance " +
-        "Rename-Computer Rename-Item Rename-ItemProperty Reset-ComputerMachinePassword Resolve-Path Restart-Computer Restart-Service Restore-Computer " +
-        "Resume-Job Resume-Service Save-Help Select-Object Select-String Select-Xml Send-MailMessage Set-Acl Set-Alias Set-AuthenticodeSignature " +
-        "Set-Content Set-Date Set-ExecutionPolicy Set-Item Set-ItemProperty Set-JobTrigger Set-Location Set-PSBreakpoint Set-PSDebug " +
-        "Set-PSSessionConfiguration Set-ScheduledJob Set-ScheduledJobOption Set-Service Set-StrictMode Set-TraceSource Set-Variable Set-WmiInstance " +
-        "Set-WSManInstance Set-WSManQuickConfig Show-Command Show-ControlPanelItem Show-EventLog Sort-Object Split-Path Start-Job Start-Process " +
-        "Start-Service Start-Sleep Start-Transaction Start-Transcript Stop-Computer Stop-Job Stop-Process Stop-Service Stop-Transcript Suspend-Job " +
-        "Suspend-Service Tee-Object Test-ComputerSecureChannel Test-Connection Test-ModuleManifest Test-Path Test-PSSessionConfigurationFile " +
-        "Trace-Command Unblock-File Undo-Transaction Unregister-Event Unregister-PSSessionConfiguration Unregister-ScheduledJob Update-FormatData " +
-        "Update-Help Update-List Update-TypeData Use-Transaction Wait-Event Wait-Job Wait-Process Where-Object Write-Debug Write-Error Write-EventLog " +
-        "Write-Host Write-Output Write-Progress Write-Verbose Write-Warning Add-MDTPersistentDrive Disable-MDTMonitorService Enable-MDTMonitorService " +
-        "Get-MDTDeploymentShareStatistics Get-MDTMonitorData Get-MDTOperatingSystemCatalog Get-MDTPersistentDrive Import-MDTApplication " +
-        "Import-MDTDriver Import-MDTOperatingSystem Import-MDTPackage Import-MDTTaskSequence New-MDTDatabase Remove-MDTMonitorData " +
-        "Remove-MDTPersistentDrive Restore-MDTPersistentDrive Set-MDTMonitorData Test-MDTDeploymentShare Test-MDTMonitorData Update-MDTDatabaseSchema " +
-        "Update-MDTDeploymentShare Update-MDTLinkedDS Update-MDTMedia Add-VamtProductKey Export-VamtData Find-VamtManagedMachine " +
-        "Get-VamtConfirmationId Get-VamtProduct Get-VamtProductKey Import-VamtData Initialize-VamtData Install-VamtConfirmationId " +
-        "Install-VamtProductActivation Install-VamtProductKey Update-VamtProduct Add-CIDatastore Add-KeyManagementServer Add-NodeKeys " +
-        "Add-NsxDynamicCriteria Add-NsxDynamicMemberSet Add-NsxEdgeInterfaceAddress Add-NsxFirewallExclusionListMember Add-NsxFirewallRuleMember " +
-        "Add-NsxIpSetMember Add-NsxLicense Add-NsxLoadBalancerPoolMember Add-NsxLoadBalancerVip Add-NsxSecondaryManager Add-NsxSecurityGroupMember " +
-        "Add-NsxSecurityPolicyRule Add-NsxSecurityPolicyRuleGroup Add-NsxSecurityPolicyRuleService Add-NsxServiceGroupMember " +
-        "Add-NsxTransportZoneMember Add-PassthroughDevice Add-VDSwitchPhysicalNetworkAdapter Add-VDSwitchVMHost Add-VMHost Add-VMHostNtpServer " +
-        "Add-VirtualSwitchPhysicalNetworkAdapter Add-XmlElement Add-vRACustomForm Add-vRAPrincipalToTenantRole Add-vRAReservationNetwork " +
-        "Add-vRAReservationStorage Clear-NsxEdgeInterface Clear-NsxManagerTimeSettings Compress-Archive Connect-CIServer Connect-CisServer " +
-        "Connect-HCXServer Connect-NIServer Connect-NsxLogicalSwitch Connect-NsxServer Connect-NsxtServer Connect-SrmServer Connect-VIServer " +
-        "Connect-Vmc Connect-vRAServer Connect-vRNIServer ConvertFrom-Markdown ConvertTo-MOFInstance Copy-DatastoreItem Copy-HardDisk Copy-NsxEdge " +
-        "Copy-VDisk Copy-VMGuestFile Debug-Runspace Disable-NsxEdgeSsh Disable-RunspaceDebug Disable-vRNIDataSource Disconnect-CIServer " +
-        "Disconnect-CisServer Disconnect-HCXServer Disconnect-NsxLogicalSwitch Disconnect-NsxServer Disconnect-NsxtServer Disconnect-SrmServer " +
-        "Disconnect-VIServer Disconnect-Vmc Disconnect-vRAServer Disconnect-vRNIServer Dismount-Tools Enable-NsxEdgeSsh Enable-RunspaceDebug " +
-        "Enable-vRNIDataSource Expand-Archive Export-NsxObject Export-SpbmStoragePolicy Export-VApp Export-VDPortGroup Export-VDSwitch " +
-        "Export-VMHostProfile Export-vRAIcon Export-vRAPackage Find-Command Find-DscResource Find-Module Find-NsxWhereVMUsed Find-Package " +
-        "Find-PackageProvider Find-RoleCapability Find-Script Format-Hex Format-VMHostDiskPartition Format-XML Generate-VersionInfo " +
-        "Get-AdvancedSetting Get-AlarmAction Get-AlarmActionTrigger Get-AlarmDefinition Get-Annotation Get-CDDrive Get-CIAccessControlRule " +
-        "Get-CIDatastore Get-CINetworkAdapter Get-CIRole Get-CIUser Get-CIVApp Get-CIVAppNetwork Get-CIVAppStartRule Get-CIVAppTemplate Get-CIVM " +
-        "Get-CIVMTemplate Get-CIView Get-Catalog Get-CisCommand Get-CisService Get-CloudCommand Get-Cluster Get-CompatibleVersionAddtionaPropertiesStr " +
-        "Get-ComplexResourceQualifier Get-ConfigurationErrorCount Get-ContentLibraryItem Get-CustomAttribute Get-DSCResourceModules Get-Datacenter " +
-        "Get-Datastore Get-DatastoreCluster Get-DrsClusterGroup Get-DrsRecommendation Get-DrsRule Get-DrsVMHostRule Get-DscResource Get-EdgeGateway " +
-        "Get-EncryptedPassword Get-ErrorReport Get-EsxCli Get-EsxTop Get-ExternalNetwork Get-FileHash Get-FloppyDrive Get-Folder Get-HAPrimaryVMHost " +
-        "Get-HCXAppliance Get-HCXApplianceCompute Get-HCXApplianceDVS Get-HCXApplianceDatastore Get-HCXApplianceNetwork Get-HCXContainer " +
-        "Get-HCXDatastore Get-HCXGateway Get-HCXInterconnectStatus Get-HCXJob Get-HCXMigration Get-HCXNetwork Get-HCXNetworkExtension " +
-        "Get-HCXReplication Get-HCXReplicationSnapshot Get-HCXService Get-HCXSite Get-HCXSitePairing Get-HCXVM Get-HardDisk Get-IScsiHbaTarget " +
-        "Get-InnerMostErrorRecord Get-InstallPath Get-InstalledModule Get-InstalledScript Get-Inventory Get-ItemPropertyValue Get-KeyManagementServer " +
-        "Get-KmipClientCertificate Get-KmsCluster Get-Log Get-LogType Get-MarkdownOption Get-Media Get-MofInstanceName Get-MofInstanceText Get-NetworkAdapter Get-NetworkPool " +
-        "Get-NfsUser Get-NicTeamingPolicy Get-NsxApplicableMember Get-NsxApplicableSecurityAction Get-NsxBackingDVSwitch Get-NsxBackingPortGroup Get-NsxCliDfwAddrSet " +
-        "Get-NsxCliDfwFilter Get-NsxCliDfwRule Get-NsxClusterStatus Get-NsxController Get-NsxDynamicCriteria Get-NsxDynamicMemberSet Get-NsxEdge Get-NsxEdgeBgp " +
-        "Get-NsxEdgeBgpNeighbour Get-NsxEdgeCertificate Get-NsxEdgeCsr Get-NsxEdgeFirewall Get-NsxEdgeFirewallRule Get-NsxEdgeInterface Get-NsxEdgeInterfaceAddress " +
-        "Get-NsxEdgeNat Get-NsxEdgeNatRule Get-NsxEdgeOspf Get-NsxEdgeOspfArea Get-NsxEdgeOspfInterface Get-NsxEdgePrefix Get-NsxEdgeRedistributionRule Get-NsxEdgeRouting " +
-        "Get-NsxEdgeStaticRoute Get-NsxEdgeSubInterface Get-NsxFirewallExclusionListMember Get-NsxFirewallGlobalConfiguration Get-NsxFirewallPublishStatus Get-NsxFirewallRule " +
-        "Get-NsxFirewallRuleMember Get-NsxFirewallSavedConfiguration Get-NsxFirewallSection Get-NsxFirewallThreshold Get-NsxIpPool Get-NsxIpSet Get-NsxLicense Get-NsxLoadBalancer " +
-        "Get-NsxLoadBalancerApplicationProfile Get-NsxLoadBalancerApplicationRule Get-NsxLoadBalancerMonitor Get-NsxLoadBalancerPool Get-NsxLoadBalancerPoolMember Get-NsxLoadBalancerStats " +
-        "Get-NsxLoadBalancerVip Get-NsxLogicalRouter Get-NsxLogicalRouterBgp Get-NsxLogicalRouterBgpNeighbour Get-NsxLogicalRouterBridge Get-NsxLogicalRouterBridging " +
-        "Get-NsxLogicalRouterInterface Get-NsxLogicalRouterOspf Get-NsxLogicalRouterOspfArea Get-NsxLogicalRouterOspfInterface Get-NsxLogicalRouterPrefix " +
-        "Get-NsxLogicalRouterRedistributionRule Get-NsxLogicalRouterRouting Get-NsxLogicalRouterStaticRoute Get-NsxLogicalSwitch Get-NsxMacSet Get-NsxManagerBackup " +
-        "Get-NsxManagerCertificate Get-NsxManagerComponentSummary Get-NsxManagerNetwork Get-NsxManagerRole Get-NsxManagerSsoConfig Get-NsxManagerSyncStatus Get-NsxManagerSyslogServer " +
-        "Get-NsxManagerSystemSummary Get-NsxManagerTimeSettings Get-NsxManagerVcenterConfig Get-NsxSecondaryManager Get-NsxSecurityGroup Get-NsxSecurityGroupEffectiveIpAddress " +
-        "Get-NsxSecurityGroupEffectiveMacAddress Get-NsxSecurityGroupEffectiveMember Get-NsxSecurityGroupEffectiveVirtualMachine Get-NsxSecurityGroupEffectiveVnic " +
-        "Get-NsxSecurityGroupMemberTypes Get-NsxSecurityPolicy Get-NsxSecurityPolicyHighestUsedPrecedence Get-NsxSecurityPolicyRule Get-NsxSecurityTag Get-NsxSecurityTagAssignment " +
-        "Get-NsxSegmentIdRange Get-NsxService Get-NsxServiceDefinition Get-NsxServiceGroup Get-NsxServiceGroupMember Get-NsxServiceProfile Get-NsxSpoofguardNic Get-NsxSpoofguardPolicy " +
-        "Get-NsxSslVpn Get-NsxSslVpnAuthServer Get-NsxSslVpnClientInstallationPackage Get-NsxSslVpnIpPool Get-NsxSslVpnPrivateNetwork Get-NsxSslVpnUser Get-NsxTransportZone " +
-        "Get-NsxUserRole Get-NsxVdsContext Get-NsxtPolicyService Get-NsxtService Get-OSCustomizationNicMapping Get-OSCustomizationSpec Get-Org Get-OrgNetwork Get-OrgVdc " +
-        "Get-OrgVdcNetwork Get-OvfConfiguration Get-PSCurrentConfigurationNode Get-PSDefaultConfigurationDocument Get-PSMetaConfigDocumentInstVersionInfo Get-PSMetaConfigurationProcessed " +
-        "Get-PSReadLineKeyHandler Get-PSReadLineOption Get-PSRepository Get-PSTopConfigurationName Get-PSVersion Get-Package Get-PackageProvider Get-PackageSource Get-PassthroughDevice " +
-        "Get-PositionInfo Get-PowerCLICommunity Get-PowerCLIConfiguration Get-PowerCLIHelp Get-PowerCLIVersion Get-PowerNsxVersion Get-ProviderVdc Get-PublicKeyFromFile " +
-        "Get-PublicKeyFromStore Get-ResourcePool Get-Runspace Get-RunspaceDebug Get-ScsiController Get-ScsiLun Get-ScsiLunPath Get-SecurityInfo Get-SecurityPolicy Get-Snapshot " +
-        "Get-SpbmCapability Get-SpbmCompatibleStorage Get-SpbmEntityConfiguration Get-SpbmFaultDomain Get-SpbmPointInTimeReplica Get-SpbmReplicationGroup Get-SpbmReplicationPair " +
-        "Get-SpbmStoragePolicy Get-Stat Get-StatInterval Get-StatType Get-Tag Get-TagAssignment Get-TagCategory Get-Task Get-Template Get-TimeZone Get-Uptime Get-UsbDevice Get-VAIOFilter " +
-        "Get-VApp Get-VDBlockedPolicy Get-VDPort Get-VDPortgroup Get-VDPortgroupOverridePolicy Get-VDSecurityPolicy Get-VDSwitch Get-VDSwitchPrivateVlan Get-VDTrafficShapingPolicy " +
-        "Get-VDUplinkLacpPolicy Get-VDUplinkTeamingPolicy Get-VDisk Get-VIAccount Get-VICommand Get-VICredentialStoreItem Get-VIEvent Get-VIObjectByVIView Get-VIPermission Get-VIPrivilege " +
-        "Get-VIProperty Get-VIRole Get-VM Get-VMGuest Get-VMHost Get-VMHostAccount Get-VMHostAdvancedConfiguration Get-VMHostAuthentication Get-VMHostAvailableTimeZone " +
-        "Get-VMHostDiagnosticPartition Get-VMHostDisk Get-VMHostDiskPartition Get-VMHostFirewallDefaultPolicy Get-VMHostFirewallException Get-VMHostFirmware Get-VMHostHardware " +
-        "Get-VMHostHba Get-VMHostModule Get-VMHostNetwork Get-VMHostNetworkAdapter Get-VMHostNtpServer Get-VMHostPatch Get-VMHostPciDevice Get-VMHostProfile " +
-        "Get-VMHostProfileImageCacheConfiguration Get-VMHostProfileRequiredInput Get-VMHostProfileStorageDeviceConfiguration Get-VMHostProfileUserConfiguration " +
-        "Get-VMHostProfileVmPortGroupConfiguration Get-VMHostRoute Get-VMHostService Get-VMHostSnmp Get-VMHostStartPolicy Get-VMHostStorage Get-VMHostSysLogServer Get-VMQuestion " +
-        "Get-VMResourceConfiguration Get-VMStartPolicy Get-VTpm Get-VTpmCSR Get-VTpmCertificate Get-VasaProvider Get-VasaStorageArray Get-View Get-VirtualPortGroup Get-VirtualSwitch " +
-        "Get-VmcSddcNetworkService Get-VmcService Get-VsanClusterConfiguration Get-VsanComponent Get-VsanDisk Get-VsanDiskGroup Get-VsanEvacuationPlan Get-VsanFaultDomain " +
-        "Get-VsanIscsiInitiatorGroup Get-VsanIscsiInitiatorGroupTargetAssociation Get-VsanIscsiLun Get-VsanIscsiTarget Get-VsanObject Get-VsanResyncingComponent Get-VsanRuntimeInfo " +
-        "Get-VsanSpaceUsage Get-VsanStat Get-VsanView Get-vRAApplianceServiceStatus Get-vRAAuthorizationRole Get-vRABlueprint Get-vRABusinessGroup Get-vRACatalogItem " +
-        "Get-vRACatalogItemRequestTemplate Get-vRACatalogPrincipal Get-vRAComponentRegistryService Get-vRAComponentRegistryServiceEndpoint Get-vRAComponentRegistryServiceStatus " +
-        "Get-vRAContent Get-vRAContentData Get-vRAContentType Get-vRACustomForm Get-vRAEntitledCatalogItem Get-vRAEntitledService Get-vRAEntitlement Get-vRAExternalNetworkProfile " +
-        "Get-vRAGroupPrincipal Get-vRAIcon Get-vRANATNetworkProfile Get-vRANetworkProfileIPAddressList Get-vRANetworkProfileIPRangeSummary Get-vRAPackage Get-vRAPackageContent " +
-        "Get-vRAPropertyDefinition Get-vRAPropertyGroup Get-vRARequest Get-vRARequestDetail Get-vRAReservation Get-vRAReservationComputeResource Get-vRAReservationComputeResourceMemory " +
-        "Get-vRAReservationComputeResourceNetwork Get-vRAReservationComputeResourceResourcePool Get-vRAReservationComputeResourceStorage Get-vRAReservationPolicy " +
-        "Get-vRAReservationTemplate Get-vRAReservationType Get-vRAResource Get-vRAResourceAction Get-vRAResourceActionRequestTemplate Get-vRAResourceMetric Get-vRAResourceOperation " +
-        "Get-vRAResourceType Get-vRARoutedNetworkProfile Get-vRAService Get-vRAServiceBlueprint Get-vRASourceMachine Get-vRAStorageReservationPolicy Get-vRATenant Get-vRATenantDirectory " +
-        "Get-vRATenantDirectoryStatus Get-vRATenantRole Get-vRAUserPrincipal Get-vRAUserPrincipalGroupMembership Get-vRAVersion Get-vRNIAPIVersion Get-vRNIApplication " +
-        "Get-vRNIApplicationTier Get-vRNIDataSource Get-vRNIDataSourceSNMPConfig Get-vRNIDatastore Get-vRNIDistributedSwitch Get-vRNIDistributedSwitchPortGroup Get-vRNIEntity " +
-        "Get-vRNIEntityName Get-vRNIFirewallRule Get-vRNIFlow Get-vRNIHost Get-vRNIHostVMKNic Get-vRNIIPSet Get-vRNIL2Network Get-vRNINSXManager Get-vRNINodes Get-vRNIProblem " +
-        "Get-vRNIRecommendedRules Get-vRNIRecommendedRulesNsxBundle Get-vRNISecurityGroup Get-vRNISecurityTag Get-vRNIService Get-vRNIServiceGroup Get-vRNIVM Get-vRNIVMvNIC " +
-        "Get-vRNIvCenter Get-vRNIvCenterCluster Get-vRNIvCenterDatacenter Get-vRNIvCenterFolder Grant-NsxSpoofguardNicApproval Import-CIVApp Import-CIVAppTemplate Import-NsxObject " +
-        "Import-PackageProvider Import-PowerShellDataFile Import-SpbmStoragePolicy Import-VApp Import-VMHostProfile Import-vRAContentData Import-vRAIcon Import-vRAPackage " +
-        "Initialize-ConfigurationRuntimeState Install-Module Install-NsxCluster Install-Package Install-PackageProvider Install-Script Install-VMHostPatch Invoke-DrsRecommendation " +
-        "Invoke-NsxCli Invoke-NsxClusterResolveAll Invoke-NsxManagerSync Invoke-NsxRestMethod Invoke-NsxWebRequest Invoke-VMHostProfile Invoke-VMScript Invoke-XpathQuery " +
-        "Invoke-vRADataCollection Invoke-vRARestMethod Invoke-vRATenantDirectorySync Invoke-vRNIRestMethod Join-String Mount-Tools Move-Cluster Move-Datacenter Move-Datastore Move-Folder " +
-        "Move-HardDisk Move-Inventory Move-NsxSecurityPolicyRule Move-ResourcePool Move-Template Move-VApp Move-VDisk Move-VM Move-VMHost New-AdvancedSetting New-AlarmAction " +
-        "New-AlarmActionTrigger New-CDDrive New-CIAccessControlRule New-CIVApp New-CIVAppNetwork New-CIVAppTemplate New-CIVM New-Cluster New-CustomAttribute New-Datacenter New-Datastore " +
-        "New-DatastoreCluster New-DatastoreDrive New-DrsClusterGroup New-DrsRule New-DrsVMHostRule New-DscChecksum New-FloppyDrive New-Folder New-Guid New-HCXAppliance New-HCXMigration " +
-        "New-HCXNetworkExtension New-HCXNetworkMapping New-HCXReplication New-HCXSitePairing New-HCXStaticRoute New-HardDisk New-IScsiHbaTarget New-KmipClientCertificate " +
-        "New-NetworkAdapter New-NfsUser New-NsxAddressSpec New-NsxClusterVxlanConfig New-NsxController New-NsxDynamicCriteriaSpec New-NsxEdge New-NsxEdgeBgpNeighbour New-NsxEdgeCsr " +
-        "New-NsxEdgeFirewallRule New-NsxEdgeInterfaceSpec New-NsxEdgeNatRule New-NsxEdgeOspfArea New-NsxEdgeOspfInterface New-NsxEdgePrefix New-NsxEdgeRedistributionRule " +
-        "New-NsxEdgeSelfSignedCertificate New-NsxEdgeStaticRoute New-NsxEdgeSubInterface New-NsxEdgeSubInterfaceSpec New-NsxFirewallRule New-NsxFirewallSavedConfiguration " +
-        "New-NsxFirewallSection New-NsxIpPool New-NsxIpSet New-NsxLoadBalancerApplicationProfile New-NsxLoadBalancerApplicationRule New-NsxLoadBalancerMemberSpec " +
-        "New-NsxLoadBalancerMonitor New-NsxLoadBalancerPool New-NsxLogicalRouter New-NsxLogicalRouterBgpNeighbour New-NsxLogicalRouterBridge New-NsxLogicalRouterInterface " +
-        "New-NsxLogicalRouterInterfaceSpec New-NsxLogicalRouterOspfArea New-NsxLogicalRouterOspfInterface New-NsxLogicalRouterPrefix New-NsxLogicalRouterRedistributionRule " +
-        "New-NsxLogicalRouterStaticRoute New-NsxLogicalSwitch New-NsxMacSet New-NsxManager New-NsxSecurityGroup New-NsxSecurityPolicy New-NsxSecurityPolicyAssignment " +
-        "New-NsxSecurityPolicyFirewallRuleSpec New-NsxSecurityPolicyGuestIntrospectionSpec New-NsxSecurityPolicyNetworkIntrospectionSpec New-NsxSecurityTag New-NsxSecurityTagAssignment " +
-        "New-NsxSegmentIdRange New-NsxService New-NsxServiceGroup New-NsxSpoofguardPolicy New-NsxSslVpnAuthServer New-NsxSslVpnClientInstallationPackage New-NsxSslVpnIpPool " +
-        "New-NsxSslVpnPrivateNetwork New-NsxSslVpnUser New-NsxTransportZone New-NsxVdsContext New-OSCustomizationNicMapping New-OSCustomizationSpec New-Org New-OrgNetwork New-OrgVdc " +
-        "New-OrgVdcNetwork New-ResourcePool New-ScriptFileInfo New-ScsiController New-Snapshot New-SpbmRule New-SpbmRuleSet New-SpbmStoragePolicy New-StatInterval New-Tag " +
-        "New-TagAssignment New-TagCategory New-Template New-TemporaryFile New-VAIOFilter New-VApp New-VDPortgroup New-VDSwitch New-VDSwitchPrivateVlan New-VDisk " +
-        "New-VICredentialStoreItem New-VIInventoryDrive New-VIPermission New-VIProperty New-VIRole New-VISamlSecurityContext New-VM New-VMHostAccount New-VMHostNetworkAdapter " +
-        "New-VMHostProfile New-VMHostProfileVmPortGroupConfiguration New-VMHostRoute New-VTpm New-VasaProvider New-VcsOAuthSecurityContext New-VirtualPortGroup New-VirtualSwitch " +
-        "New-VsanDisk New-VsanDiskGroup New-VsanFaultDomain New-VsanIscsiInitiatorGroup New-VsanIscsiInitiatorGroupTargetAssociation New-VsanIscsiLun New-VsanIscsiTarget " +
-        "New-vRABusinessGroup New-vRAEntitlement New-vRAExternalNetworkProfile New-vRAGroupPrincipal New-vRANATNetworkProfile New-vRANetworkProfileIPRangeDefinition New-vRAPackage " +
-        "New-vRAPropertyDefinition New-vRAPropertyGroup New-vRAReservation New-vRAReservationNetworkDefinition New-vRAReservationPolicy New-vRAReservationStorageDefinition " +
-        "New-vRARoutedNetworkProfile New-vRAService New-vRAStorageReservationPolicy New-vRATenant New-vRATenantDirectory New-vRAUserPrincipal New-vRNIApplication New-vRNIApplicationTier " +
-        "New-vRNIDataSource Open-VMConsoleWindow Publish-Module Publish-NsxSpoofguardPolicy Publish-Script Register-PSRepository Register-PackageSource Remove-AdvancedSetting " +
-        "Remove-AlarmAction Remove-AlarmActionTrigger Remove-Alias Remove-CDDrive Remove-CIAccessControlRule Remove-CIVApp Remove-CIVAppNetwork Remove-CIVAppTemplate Remove-Cluster " +
-        "Remove-CustomAttribute Remove-Datacenter Remove-Datastore Remove-DatastoreCluster Remove-DrsClusterGroup Remove-DrsRule Remove-DrsVMHostRule Remove-FloppyDrive Remove-Folder " +
-        "Remove-HCXAppliance Remove-HCXNetworkExtension Remove-HCXReplication Remove-HCXSitePairing Remove-HardDisk Remove-IScsiHbaTarget Remove-Inventory Remove-KeyManagementServer " +
-        "Remove-NetworkAdapter Remove-NfsUser Remove-NsxCluster Remove-NsxClusterVxlanConfig Remove-NsxController Remove-NsxDynamicCriteria Remove-NsxDynamicMemberSet Remove-NsxEdge " +
-        "Remove-NsxEdgeBgpNeighbour Remove-NsxEdgeCertificate Remove-NsxEdgeCsr Remove-NsxEdgeFirewallRule Remove-NsxEdgeInterfaceAddress Remove-NsxEdgeNatRule Remove-NsxEdgeOspfArea " +
-        "Remove-NsxEdgeOspfInterface Remove-NsxEdgePrefix Remove-NsxEdgeRedistributionRule Remove-NsxEdgeStaticRoute Remove-NsxEdgeSubInterface Remove-NsxFirewallExclusionListMember " +
-        "Remove-NsxFirewallRule Remove-NsxFirewallRuleMember Remove-NsxFirewallSavedConfiguration Remove-NsxFirewallSection Remove-NsxIpPool Remove-NsxIpSet Remove-NsxIpSetMember " +
-        "Remove-NsxLoadBalancerApplicationProfile Remove-NsxLoadBalancerMonitor Remove-NsxLoadBalancerPool Remove-NsxLoadBalancerPoolMember Remove-NsxLoadBalancerVip " +
-        "Remove-NsxLogicalRouter Remove-NsxLogicalRouterBgpNeighbour Remove-NsxLogicalRouterBridge Remove-NsxLogicalRouterInterface Remove-NsxLogicalRouterOspfArea " +
-        "Remove-NsxLogicalRouterOspfInterface Remove-NsxLogicalRouterPrefix Remove-NsxLogicalRouterRedistributionRule Remove-NsxLogicalRouterStaticRoute Remove-NsxLogicalSwitch " +
-        "Remove-NsxMacSet Remove-NsxSecondaryManager Remove-NsxSecurityGroup Remove-NsxSecurityGroupMember Remove-NsxSecurityPolicy Remove-NsxSecurityPolicyAssignment " +
-        "Remove-NsxSecurityPolicyRule Remove-NsxSecurityPolicyRuleGroup Remove-NsxSecurityPolicyRuleService Remove-NsxSecurityTag Remove-NsxSecurityTagAssignment " +
-        "Remove-NsxSegmentIdRange Remove-NsxService Remove-NsxServiceGroup Remove-NsxSpoofguardPolicy Remove-NsxSslVpnClientInstallationPackage Remove-NsxSslVpnIpPool " +
-        "Remove-NsxSslVpnPrivateNetwork Remove-NsxSslVpnUser Remove-NsxTransportZone Remove-NsxTransportZoneMember Remove-NsxVdsContext Remove-OSCustomizationNicMapping " +
-        "Remove-OSCustomizationSpec Remove-Org Remove-OrgNetwork Remove-OrgVdc Remove-OrgVdcNetwork Remove-PSReadLineKeyHandler Remove-PassthroughDevice Remove-ResourcePool " +
-        "Remove-Snapshot Remove-SpbmStoragePolicy Remove-StatInterval Remove-Tag Remove-TagAssignment Remove-TagCategory Remove-Template Remove-UsbDevice Remove-VAIOFilter Remove-VApp " +
-        "Remove-VDPortGroup Remove-VDSwitch Remove-VDSwitchPhysicalNetworkAdapter Remove-VDSwitchPrivateVlan Remove-VDSwitchVMHost Remove-VDisk Remove-VICredentialStoreItem " +
-        "Remove-VIPermission Remove-VIProperty Remove-VIRole Remove-VM Remove-VMHost Remove-VMHostAccount Remove-VMHostNetworkAdapter Remove-VMHostNtpServer Remove-VMHostProfile " +
-        "Remove-VMHostProfileVmPortGroupConfiguration Remove-VMHostRoute Remove-VTpm Remove-VasaProvider Remove-VirtualPortGroup Remove-VirtualSwitch " +
-        "Remove-VirtualSwitchPhysicalNetworkAdapter Remove-VsanDisk Remove-VsanDiskGroup Remove-VsanFaultDomain Remove-VsanIscsiInitiatorGroup " +
-        "Remove-VsanIscsiInitiatorGroupTargetAssociation Remove-VsanIscsiLun Remove-VsanIscsiTarget Remove-vRABusinessGroup Remove-vRACustomForm Remove-vRAExternalNetworkProfile " +
-        "Remove-vRAGroupPrincipal Remove-vRAIcon Remove-vRANATNetworkProfile Remove-vRAPackage Remove-vRAPrincipalFromTenantRole Remove-vRAPropertyDefinition Remove-vRAPropertyGroup " +
-        "Remove-vRAReservation Remove-vRAReservationNetwork Remove-vRAReservationPolicy Remove-vRAReservationStorage Remove-vRARoutedNetworkProfile Remove-vRAService " +
-        "Remove-vRAStorageReservationPolicy Remove-vRATenant Remove-vRATenantDirectory Remove-vRAUserPrincipal Remove-vRNIApplication Remove-vRNIApplicationTier Remove-vRNIDataSource " +
-        "Repair-NsxEdge Repair-VsanObject Request-vRACatalogItem Request-vRAResourceAction Restart-CIVApp Restart-CIVAppGuest Restart-CIVM Restart-CIVMGuest Restart-VM Restart-VMGuest " +
-        "Restart-VMHost Restart-VMHostService Resume-HCXReplication Revoke-NsxSpoofguardNicApproval Save-Module Save-Package Save-Script Search-Cloud Set-AdvancedSetting " +
-        "Set-AlarmDefinition Set-Annotation Set-CDDrive Set-CIAccessControlRule Set-CINetworkAdapter Set-CIVApp Set-CIVAppNetwork Set-CIVAppStartRule Set-CIVAppTemplate Set-Cluster " +
-        "Set-CustomAttribute Set-Datacenter Set-Datastore Set-DatastoreCluster Set-DrsClusterGroup Set-DrsRule Set-DrsVMHostRule Set-FloppyDrive Set-Folder Set-HCXAppliance " +
-        "Set-HCXMigration Set-HCXReplication Set-HardDisk Set-IScsiHbaTarget Set-KeyManagementServer Set-KmsCluster Set-MarkdownOption Set-NetworkAdapter Set-NfsUser Set-NicTeamingPolicy " +
-        "Set-NodeExclusiveResources Set-NodeManager Set-NodeResourceSource Set-NodeResources Set-NsxEdge Set-NsxEdgeBgp Set-NsxEdgeFirewall Set-NsxEdgeInterface Set-NsxEdgeNat " +
-        "Set-NsxEdgeOspf Set-NsxEdgeRouting Set-NsxFirewallGlobalConfiguration Set-NsxFirewallRule Set-NsxFirewallSavedConfiguration Set-NsxFirewallThreshold Set-NsxLoadBalancer " +
-        "Set-NsxLoadBalancerPoolMember Set-NsxLogicalRouter Set-NsxLogicalRouterBgp Set-NsxLogicalRouterBridging Set-NsxLogicalRouterInterface Set-NsxLogicalRouterOspf " +
-        "Set-NsxLogicalRouterRouting Set-NsxManager Set-NsxManagerRole Set-NsxManagerTimeSettings Set-NsxSecurityPolicy Set-NsxSecurityPolicyFirewallRule Set-NsxSslVpn " +
-        "Set-OSCustomizationNicMapping Set-OSCustomizationSpec Set-Org Set-OrgNetwork Set-OrgVdc Set-OrgVdcNetwork Set-PSCurrentConfigurationNode Set-PSDefaultConfigurationDocument " +
-        "Set-PSMetaConfigDocInsProcessedBeforeMeta Set-PSMetaConfigVersionInfoV2 Set-PSReadLineKeyHandler Set-PSReadLineOption Set-PSRepository Set-PSTopConfigurationName " +
-        "Set-PackageSource Set-PowerCLIConfiguration Set-ResourcePool Set-ScsiController Set-ScsiLun Set-ScsiLunPath Set-SecurityPolicy Set-Snapshot Set-SpbmEntityConfiguration " +
-        "Set-SpbmStoragePolicy Set-StatInterval Set-Tag Set-TagCategory Set-Template Set-VAIOFilter Set-VApp Set-VDBlockedPolicy Set-VDPort Set-VDPortgroup Set-VDPortgroupOverridePolicy " +
-        "Set-VDSecurityPolicy Set-VDSwitch Set-VDTrafficShapingPolicy Set-VDUplinkLacpPolicy Set-VDUplinkTeamingPolicy Set-VDVlanConfiguration Set-VDisk Set-VIPermission Set-VIRole Set-VM " +
-        "Set-VMHost Set-VMHostAccount Set-VMHostAdvancedConfiguration Set-VMHostAuthentication Set-VMHostDiagnosticPartition Set-VMHostFirewallDefaultPolicy Set-VMHostFirewallException " +
-        "Set-VMHostFirmware Set-VMHostHba Set-VMHostModule Set-VMHostNetwork Set-VMHostNetworkAdapter Set-VMHostProfile Set-VMHostProfileImageCacheConfiguration " +
-        "Set-VMHostProfileStorageDeviceConfiguration Set-VMHostProfileUserConfiguration Set-VMHostProfileVmPortGroupConfiguration Set-VMHostRoute Set-VMHostService Set-VMHostSnmp " +
-        "Set-VMHostStartPolicy Set-VMHostStorage Set-VMHostSysLogServer Set-VMQuestion Set-VMResourceConfiguration Set-VMStartPolicy Set-VTpm Set-VirtualPortGroup Set-VirtualSwitch " +
-        "Set-VsanClusterConfiguration Set-VsanFaultDomain Set-VsanIscsiInitiatorGroup Set-VsanIscsiLun Set-VsanIscsiTarget Set-vRABusinessGroup Set-vRACatalogItem Set-vRACustomForm " +
-        "Set-vRAEntitlement Set-vRAExternalNetworkProfile Set-vRANATNetworkProfile Set-vRAReservation Set-vRAReservationNetwork Set-vRAReservationPolicy Set-vRAReservationStorage " +
-        "Set-vRARoutedNetworkProfile Set-vRAService Set-vRAStorageReservationPolicy Set-vRATenant Set-vRATenantDirectory Set-vRAUserPrincipal Set-vRNIDataSourceSNMPConfig Show-Markdown " +
-        "Start-CIVApp Start-CIVM Start-HCXMigration Start-HCXReplication Start-SpbmReplicationFailover Start-SpbmReplicationPrepareFailover Start-SpbmReplicationPromote " +
-        "Start-SpbmReplicationReverse Start-SpbmReplicationTestFailover Start-ThreadJob Start-VApp Start-VM Start-VMHost Start-VMHostService Start-VsanClusterDiskUpdate " +
-        "Start-VsanClusterRebalance Start-VsanEncryptionConfiguration Stop-CIVApp Stop-CIVAppGuest Stop-CIVM Stop-CIVMGuest Stop-SpbmReplicationTestFailover Stop-Task Stop-VApp Stop-VM " +
-        "Stop-VMGuest Stop-VMHost Stop-VMHostService Stop-VsanClusterRebalance Suspend-CIVApp Suspend-CIVM Suspend-HCXReplication Suspend-VM Suspend-VMGuest Suspend-VMHost " +
-        "Sync-SpbmReplicationGroup Test-ConflictingResources Test-HCXMigration Test-HCXReplication Test-Json Test-ModuleReloadRequired Test-MofInstanceText Test-NodeManager " +
-        "Test-NodeResourceSource Test-NodeResources Test-ScriptFileInfo Test-VMHostProfileCompliance Test-VMHostSnmp Test-VsanClusterHealth Test-VsanNetworkPerformance " +
-        "Test-VsanStoragePerformance Test-VsanVMCreation Test-vRAPackage Uninstall-Module Uninstall-Package Uninstall-Script Unlock-VM Unregister-PSRepository Unregister-PackageSource " +
-        "Update-ConfigurationDocumentRef Update-ConfigurationErrorCount Update-DependsOn Update-LocalConfigManager Update-Module Update-ModuleManifest Update-ModuleVersion Update-PowerNsx " +
-        "Update-Script Update-ScriptFileInfo Update-Tools Update-VsanHclDatabase ValidateUpdate-ConfigurationData Wait-Debugger Wait-NsxControllerJob Wait-NsxGenericJob Wait-NsxJob " +
-        "Wait-Task Wait-Tools Write-Information Write-Log Write-MetaConfigFile Write-NodeMOFFile",
-      nomarkup:
-        "-ne -eq -lt -gt -ge -le -not -like -notlike -match -notmatch -contains -notcontains -in -notin -replace",
-    },
-    contains: [
-      BACKTICK_ESCAPE,
-      hljs.NUMBER_MODE,
-      QUOTE_STRING,
-      APOS_STRING,
-      LITERAL,
-      VAR,
-      PS_COMMENT,
-    ],
+    keywords: KEYWORDS,
+    contains: GENTLEMANS_SET.concat(
+      PS_CLASS,
+      PS_FUNCTION,
+      PS_USING,
+      PS_ARGUMENTS,
+      PS_TYPE
+    )
   };
 };
 
@@ -13770,17 +13902,16 @@ module.exports = function(hljs) {
           {
             className: 'string',
             begin: '\'', end: '\'',
-            contains: [hljs.BACKSLASH_ESCAPE, {begin: '\'\''}]
+            contains: [{begin: '\'\''}]
           },
           {
             className: 'string',
             begin: '"', end: '"',
-            contains: [hljs.BACKSLASH_ESCAPE, {begin: '""'}]
+            contains: [{begin: '""'}]
           },
           {
             className: 'string',
-            begin: '`', end: '`',
-            contains: [hljs.BACKSLASH_ESCAPE]
+            begin: '`', end: '`'
           },
           hljs.C_NUMBER_MODE,
           hljs.C_BLOCK_COMMENT_MODE,
@@ -14021,6 +14152,23 @@ module.exports = function(hljs) {
 
 module.exports = function(hljs) {
   var XML_IDENT_RE = '[A-Za-z0-9\\._:-]+';
+  var XML_ENTITIES = {
+    className: 'symbol',
+    begin: '&[a-z]+;|&#[0-9]+;|&#x[a-f0-9]+;'
+  };
+  var XML_META_KEYWORDS = {
+	  begin: '\\s',
+	  contains:[
+	    {
+	      className: 'meta-keyword',
+	      begin: '#?[a-z_][a-z1-9_-]+',
+	      illegal: '\\n',
+      }
+	  ]
+  };
+  var XML_META_PAR_KEYWORDS = hljs.inherit(XML_META_KEYWORDS, {begin: '\\(', end: '\\)'});
+  var APOS_META_STRING_MODE = hljs.inherit(hljs.APOS_STRING_MODE, {className: 'meta-string'});
+  var QUOTE_META_STRING_MODE = hljs.inherit(hljs.QUOTE_STRING_MODE, {className: 'meta-string'});
   var TAG_INTERNALS = {
     endsWithParent: true,
     illegal: /</,
@@ -14039,8 +14187,8 @@ module.exports = function(hljs) {
             className: 'string',
             endsParent: true,
             variants: [
-              {begin: /"/, end: /"/},
-              {begin: /'/, end: /'/},
+              {begin: /"/, end: /"/, contains: [XML_ENTITIES]},
+              {begin: /'/, end: /'/, contains: [XML_ENTITIES]},
               {begin: /[^\s"'=<>`]+/}
             ]
           }
@@ -14054,9 +14202,29 @@ module.exports = function(hljs) {
     contains: [
       {
         className: 'meta',
-        begin: '<!DOCTYPE', end: '>',
+        begin: '<![a-z]', end: '>',
         relevance: 10,
-        contains: [{begin: '\\[', end: '\\]'}]
+        contains: [
+				  XML_META_KEYWORDS,
+				  QUOTE_META_STRING_MODE,
+				  APOS_META_STRING_MODE,
+					XML_META_PAR_KEYWORDS,
+					{
+					  begin: '\\[', end: '\\]',
+					  contains:[
+						  {
+					      className: 'meta',
+					      begin: '<![a-z]', end: '>',
+					      contains: [
+					        XML_META_KEYWORDS,
+					        XML_META_PAR_KEYWORDS,
+					        QUOTE_META_STRING_MODE,
+					        APOS_META_STRING_MODE
+						    ]
+			        }
+					  ]
+				  }
+				]
       },
       hljs.COMMENT(
         '<!--',
@@ -14069,6 +14237,7 @@ module.exports = function(hljs) {
         begin: '<\\!\\[CDATA\\[', end: '\\]\\]>',
         relevance: 10
       },
+      XML_ENTITIES,
       {
         className: 'meta',
         begin: /<\?xml/, end: /\?>/, relevance: 10
@@ -14583,27 +14752,1678 @@ exports.TagInput = TagInput_1.TagInput;
 
 /***/ }),
 
-/***/ "./node_modules/marked/lib/marked.js":
+/***/ "./node_modules/marked/src/InlineLexer.js":
+/*!************************************************!*\
+  !*** ./node_modules/marked/src/InlineLexer.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Renderer = __webpack_require__(/*! ./Renderer.js */ "./node_modules/marked/src/Renderer.js");
+const { defaults } = __webpack_require__(/*! ./defaults.js */ "./node_modules/marked/src/defaults.js");
+const { inline } = __webpack_require__(/*! ./rules.js */ "./node_modules/marked/src/rules.js");
+const {
+  findClosingBracket,
+  escape
+} = __webpack_require__(/*! ./helpers.js */ "./node_modules/marked/src/helpers.js");
+
+/**
+ * Inline Lexer & Compiler
+ */
+module.exports = class InlineLexer {
+  constructor(links, options) {
+    this.options = options || defaults;
+    this.links = links;
+    this.rules = inline.normal;
+    this.options.renderer = this.options.renderer || new Renderer();
+    this.renderer = this.options.renderer;
+    this.renderer.options = this.options;
+
+    if (!this.links) {
+      throw new Error('Tokens array requires a `links` property.');
+    }
+
+    if (this.options.pedantic) {
+      this.rules = inline.pedantic;
+    } else if (this.options.gfm) {
+      if (this.options.breaks) {
+        this.rules = inline.breaks;
+      } else {
+        this.rules = inline.gfm;
+      }
+    }
+  }
+
+  /**
+   * Expose Inline Rules
+   */
+  static get rules() {
+    return inline;
+  }
+
+  /**
+   * Static Lexing/Compiling Method
+   */
+  static output(src, links, options) {
+    const inline = new InlineLexer(links, options);
+    return inline.output(src);
+  }
+
+  /**
+   * Lexing/Compiling
+   */
+  output(src) {
+    let out = '',
+      link,
+      text,
+      href,
+      title,
+      cap,
+      prevCapZero;
+
+    while (src) {
+      // escape
+      if (cap = this.rules.escape.exec(src)) {
+        src = src.substring(cap[0].length);
+        out += escape(cap[1]);
+        continue;
+      }
+
+      // tag
+      if (cap = this.rules.tag.exec(src)) {
+        if (!this.inLink && /^<a /i.test(cap[0])) {
+          this.inLink = true;
+        } else if (this.inLink && /^<\/a>/i.test(cap[0])) {
+          this.inLink = false;
+        }
+        if (!this.inRawBlock && /^<(pre|code|kbd|script)(\s|>)/i.test(cap[0])) {
+          this.inRawBlock = true;
+        } else if (this.inRawBlock && /^<\/(pre|code|kbd|script)(\s|>)/i.test(cap[0])) {
+          this.inRawBlock = false;
+        }
+
+        src = src.substring(cap[0].length);
+        out += this.options.sanitize
+          ? this.options.sanitizer
+            ? this.options.sanitizer(cap[0])
+            : escape(cap[0])
+          : cap[0];
+        continue;
+      }
+
+      // link
+      if (cap = this.rules.link.exec(src)) {
+        const lastParenIndex = findClosingBracket(cap[2], '()');
+        if (lastParenIndex > -1) {
+          const start = cap[0].indexOf('!') === 0 ? 5 : 4;
+          const linkLen = start + cap[1].length + lastParenIndex;
+          cap[2] = cap[2].substring(0, lastParenIndex);
+          cap[0] = cap[0].substring(0, linkLen).trim();
+          cap[3] = '';
+        }
+        src = src.substring(cap[0].length);
+        this.inLink = true;
+        href = cap[2];
+        if (this.options.pedantic) {
+          link = /^([^'"]*[^\s])\s+(['"])(.*)\2/.exec(href);
+
+          if (link) {
+            href = link[1];
+            title = link[3];
+          } else {
+            title = '';
+          }
+        } else {
+          title = cap[3] ? cap[3].slice(1, -1) : '';
+        }
+        href = href.trim().replace(/^<([\s\S]*)>$/, '$1');
+        out += this.outputLink(cap, {
+          href: InlineLexer.escapes(href),
+          title: InlineLexer.escapes(title)
+        });
+        this.inLink = false;
+        continue;
+      }
+
+      // reflink, nolink
+      if ((cap = this.rules.reflink.exec(src))
+          || (cap = this.rules.nolink.exec(src))) {
+        src = src.substring(cap[0].length);
+        link = (cap[2] || cap[1]).replace(/\s+/g, ' ');
+        link = this.links[link.toLowerCase()];
+        if (!link || !link.href) {
+          out += cap[0].charAt(0);
+          src = cap[0].substring(1) + src;
+          continue;
+        }
+        this.inLink = true;
+        out += this.outputLink(cap, link);
+        this.inLink = false;
+        continue;
+      }
+
+      // strong
+      if (cap = this.rules.strong.exec(src)) {
+        src = src.substring(cap[0].length);
+        out += this.renderer.strong(this.output(cap[4] || cap[3] || cap[2] || cap[1]));
+        continue;
+      }
+
+      // em
+      if (cap = this.rules.em.exec(src)) {
+        src = src.substring(cap[0].length);
+        out += this.renderer.em(this.output(cap[6] || cap[5] || cap[4] || cap[3] || cap[2] || cap[1]));
+        continue;
+      }
+
+      // code
+      if (cap = this.rules.code.exec(src)) {
+        src = src.substring(cap[0].length);
+        out += this.renderer.codespan(escape(cap[2].trim(), true));
+        continue;
+      }
+
+      // br
+      if (cap = this.rules.br.exec(src)) {
+        src = src.substring(cap[0].length);
+        out += this.renderer.br();
+        continue;
+      }
+
+      // del (gfm)
+      if (cap = this.rules.del.exec(src)) {
+        src = src.substring(cap[0].length);
+        out += this.renderer.del(this.output(cap[1]));
+        continue;
+      }
+
+      // autolink
+      if (cap = this.rules.autolink.exec(src)) {
+        src = src.substring(cap[0].length);
+        if (cap[2] === '@') {
+          text = escape(this.mangle(cap[1]));
+          href = 'mailto:' + text;
+        } else {
+          text = escape(cap[1]);
+          href = text;
+        }
+        out += this.renderer.link(href, null, text);
+        continue;
+      }
+
+      // url (gfm)
+      if (!this.inLink && (cap = this.rules.url.exec(src))) {
+        if (cap[2] === '@') {
+          text = escape(cap[0]);
+          href = 'mailto:' + text;
+        } else {
+          // do extended autolink path validation
+          do {
+            prevCapZero = cap[0];
+            cap[0] = this.rules._backpedal.exec(cap[0])[0];
+          } while (prevCapZero !== cap[0]);
+          text = escape(cap[0]);
+          if (cap[1] === 'www.') {
+            href = 'http://' + text;
+          } else {
+            href = text;
+          }
+        }
+        src = src.substring(cap[0].length);
+        out += this.renderer.link(href, null, text);
+        continue;
+      }
+
+      // text
+      if (cap = this.rules.text.exec(src)) {
+        src = src.substring(cap[0].length);
+        if (this.inRawBlock) {
+          out += this.renderer.text(this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0])) : cap[0]);
+        } else {
+          out += this.renderer.text(escape(this.smartypants(cap[0])));
+        }
+        continue;
+      }
+
+      if (src) {
+        throw new Error('Infinite loop on byte: ' + src.charCodeAt(0));
+      }
+    }
+
+    return out;
+  }
+
+  static escapes(text) {
+    return text ? text.replace(InlineLexer.rules._escapes, '$1') : text;
+  }
+
+  /**
+   * Compile Link
+   */
+  outputLink(cap, link) {
+    const href = link.href,
+      title = link.title ? escape(link.title) : null;
+
+    return cap[0].charAt(0) !== '!'
+      ? this.renderer.link(href, title, this.output(cap[1]))
+      : this.renderer.image(href, title, escape(cap[1]));
+  }
+
+  /**
+   * Smartypants Transformations
+   */
+  smartypants(text) {
+    if (!this.options.smartypants) return text;
+    return text
+      // em-dashes
+      .replace(/---/g, '\u2014')
+      // en-dashes
+      .replace(/--/g, '\u2013')
+      // opening singles
+      .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
+      // closing singles & apostrophes
+      .replace(/'/g, '\u2019')
+      // opening doubles
+      .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
+      // closing doubles
+      .replace(/"/g, '\u201d')
+      // ellipses
+      .replace(/\.{3}/g, '\u2026');
+  }
+
+  /**
+   * Mangle Links
+   */
+  mangle(text) {
+    if (!this.options.mangle) return text;
+    const l = text.length;
+    let out = '',
+      i = 0,
+      ch;
+
+    for (; i < l; i++) {
+      ch = text.charCodeAt(i);
+      if (Math.random() > 0.5) {
+        ch = 'x' + ch.toString(16);
+      }
+      out += '&#' + ch + ';';
+    }
+
+    return out;
+  }
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/Lexer.js":
+/*!******************************************!*\
+  !*** ./node_modules/marked/src/Lexer.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const { defaults } = __webpack_require__(/*! ./defaults.js */ "./node_modules/marked/src/defaults.js");
+const { block } = __webpack_require__(/*! ./rules.js */ "./node_modules/marked/src/rules.js");
+const {
+  rtrim,
+  splitCells,
+  escape
+} = __webpack_require__(/*! ./helpers.js */ "./node_modules/marked/src/helpers.js");
+
+/**
+ * Block Lexer
+ */
+module.exports = class Lexer {
+  constructor(options) {
+    this.tokens = [];
+    this.tokens.links = Object.create(null);
+    this.options = options || defaults;
+    this.rules = block.normal;
+
+    if (this.options.pedantic) {
+      this.rules = block.pedantic;
+    } else if (this.options.gfm) {
+      this.rules = block.gfm;
+    }
+  }
+
+  /**
+   * Expose Block Rules
+   */
+  static get rules() {
+    return block;
+  }
+
+  /**
+   * Static Lex Method
+   */
+  static lex(src, options) {
+    const lexer = new Lexer(options);
+    return lexer.lex(src);
+  };
+
+  /**
+   * Preprocessing
+   */
+  lex(src) {
+    src = src
+      .replace(/\r\n|\r/g, '\n')
+      .replace(/\t/g, '    ');
+
+    return this.token(src, true);
+  };
+
+  /**
+   * Lexing
+   */
+  token(src, top) {
+    src = src.replace(/^ +$/gm, '');
+    let next,
+      loose,
+      cap,
+      bull,
+      b,
+      item,
+      listStart,
+      listItems,
+      t,
+      space,
+      i,
+      tag,
+      l,
+      isordered,
+      istask,
+      ischecked;
+
+    while (src) {
+      // newline
+      if (cap = this.rules.newline.exec(src)) {
+        src = src.substring(cap[0].length);
+        if (cap[0].length > 1) {
+          this.tokens.push({
+            type: 'space'
+          });
+        }
+      }
+
+      // code
+      if (cap = this.rules.code.exec(src)) {
+        const lastToken = this.tokens[this.tokens.length - 1];
+        src = src.substring(cap[0].length);
+        // An indented code block cannot interrupt a paragraph.
+        if (lastToken && lastToken.type === 'paragraph') {
+          lastToken.text += '\n' + cap[0].trimRight();
+        } else {
+          cap = cap[0].replace(/^ {4}/gm, '');
+          this.tokens.push({
+            type: 'code',
+            codeBlockStyle: 'indented',
+            text: !this.options.pedantic
+              ? rtrim(cap, '\n')
+              : cap
+          });
+        }
+        continue;
+      }
+
+      // fences
+      if (cap = this.rules.fences.exec(src)) {
+        src = src.substring(cap[0].length);
+        this.tokens.push({
+          type: 'code',
+          lang: cap[2] ? cap[2].trim() : cap[2],
+          text: cap[3] || ''
+        });
+        continue;
+      }
+
+      // heading
+      if (cap = this.rules.heading.exec(src)) {
+        src = src.substring(cap[0].length);
+        this.tokens.push({
+          type: 'heading',
+          depth: cap[1].length,
+          text: cap[2]
+        });
+        continue;
+      }
+
+      // table no leading pipe (gfm)
+      if (cap = this.rules.nptable.exec(src)) {
+        item = {
+          type: 'table',
+          header: splitCells(cap[1].replace(/^ *| *\| *$/g, '')),
+          align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+          cells: cap[3] ? cap[3].replace(/\n$/, '').split('\n') : []
+        };
+
+        if (item.header.length === item.align.length) {
+          src = src.substring(cap[0].length);
+
+          for (i = 0; i < item.align.length; i++) {
+            if (/^ *-+: *$/.test(item.align[i])) {
+              item.align[i] = 'right';
+            } else if (/^ *:-+: *$/.test(item.align[i])) {
+              item.align[i] = 'center';
+            } else if (/^ *:-+ *$/.test(item.align[i])) {
+              item.align[i] = 'left';
+            } else {
+              item.align[i] = null;
+            }
+          }
+
+          for (i = 0; i < item.cells.length; i++) {
+            item.cells[i] = splitCells(item.cells[i], item.header.length);
+          }
+
+          this.tokens.push(item);
+
+          continue;
+        }
+      }
+
+      // hr
+      if (cap = this.rules.hr.exec(src)) {
+        src = src.substring(cap[0].length);
+        this.tokens.push({
+          type: 'hr'
+        });
+        continue;
+      }
+
+      // blockquote
+      if (cap = this.rules.blockquote.exec(src)) {
+        src = src.substring(cap[0].length);
+
+        this.tokens.push({
+          type: 'blockquote_start'
+        });
+
+        cap = cap[0].replace(/^ *> ?/gm, '');
+
+        // Pass `top` to keep the current
+        // "toplevel" state. This is exactly
+        // how markdown.pl works.
+        this.token(cap, top);
+
+        this.tokens.push({
+          type: 'blockquote_end'
+        });
+
+        continue;
+      }
+
+      // list
+      if (cap = this.rules.list.exec(src)) {
+        src = src.substring(cap[0].length);
+        bull = cap[2];
+        isordered = bull.length > 1;
+
+        listStart = {
+          type: 'list_start',
+          ordered: isordered,
+          start: isordered ? +bull : '',
+          loose: false
+        };
+
+        this.tokens.push(listStart);
+
+        // Get each top-level item.
+        cap = cap[0].match(this.rules.item);
+
+        listItems = [];
+        next = false;
+        l = cap.length;
+        i = 0;
+
+        for (; i < l; i++) {
+          item = cap[i];
+
+          // Remove the list item's bullet
+          // so it is seen as the next token.
+          space = item.length;
+          item = item.replace(/^ *([*+-]|\d+\.) */, '');
+
+          // Outdent whatever the
+          // list item contains. Hacky.
+          if (~item.indexOf('\n ')) {
+            space -= item.length;
+            item = !this.options.pedantic
+              ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
+              : item.replace(/^ {1,4}/gm, '');
+          }
+
+          // Determine whether the next list item belongs here.
+          // Backpedal if it does not belong in this list.
+          if (i !== l - 1) {
+            b = block.bullet.exec(cap[i + 1])[0];
+            if (bull.length > 1 ? b.length === 1
+              : (b.length > 1 || (this.options.smartLists && b !== bull))) {
+              src = cap.slice(i + 1).join('\n') + src;
+              i = l - 1;
+            }
+          }
+
+          // Determine whether item is loose or not.
+          // Use: /(^|\n)(?! )[^\n]+\n\n(?!\s*$)/
+          // for discount behavior.
+          loose = next || /\n\n(?!\s*$)/.test(item);
+          if (i !== l - 1) {
+            next = item.charAt(item.length - 1) === '\n';
+            if (!loose) loose = next;
+          }
+
+          if (loose) {
+            listStart.loose = true;
+          }
+
+          // Check for task list items
+          istask = /^\[[ xX]\] /.test(item);
+          ischecked = undefined;
+          if (istask) {
+            ischecked = item[1] !== ' ';
+            item = item.replace(/^\[[ xX]\] +/, '');
+          }
+
+          t = {
+            type: 'list_item_start',
+            task: istask,
+            checked: ischecked,
+            loose: loose
+          };
+
+          listItems.push(t);
+          this.tokens.push(t);
+
+          // Recurse.
+          this.token(item, false);
+
+          this.tokens.push({
+            type: 'list_item_end'
+          });
+        }
+
+        if (listStart.loose) {
+          l = listItems.length;
+          i = 0;
+          for (; i < l; i++) {
+            listItems[i].loose = true;
+          }
+        }
+
+        this.tokens.push({
+          type: 'list_end'
+        });
+
+        continue;
+      }
+
+      // html
+      if (cap = this.rules.html.exec(src)) {
+        src = src.substring(cap[0].length);
+        this.tokens.push({
+          type: this.options.sanitize
+            ? 'paragraph'
+            : 'html',
+          pre: !this.options.sanitizer
+            && (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
+          text: this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0])) : cap[0]
+        });
+        continue;
+      }
+
+      // def
+      if (top && (cap = this.rules.def.exec(src))) {
+        src = src.substring(cap[0].length);
+        if (cap[3]) cap[3] = cap[3].substring(1, cap[3].length - 1);
+        tag = cap[1].toLowerCase().replace(/\s+/g, ' ');
+        if (!this.tokens.links[tag]) {
+          this.tokens.links[tag] = {
+            href: cap[2],
+            title: cap[3]
+          };
+        }
+        continue;
+      }
+
+      // table (gfm)
+      if (cap = this.rules.table.exec(src)) {
+        item = {
+          type: 'table',
+          header: splitCells(cap[1].replace(/^ *| *\| *$/g, '')),
+          align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+          cells: cap[3] ? cap[3].replace(/\n$/, '').split('\n') : []
+        };
+
+        if (item.header.length === item.align.length) {
+          src = src.substring(cap[0].length);
+
+          for (i = 0; i < item.align.length; i++) {
+            if (/^ *-+: *$/.test(item.align[i])) {
+              item.align[i] = 'right';
+            } else if (/^ *:-+: *$/.test(item.align[i])) {
+              item.align[i] = 'center';
+            } else if (/^ *:-+ *$/.test(item.align[i])) {
+              item.align[i] = 'left';
+            } else {
+              item.align[i] = null;
+            }
+          }
+
+          for (i = 0; i < item.cells.length; i++) {
+            item.cells[i] = splitCells(
+              item.cells[i].replace(/^ *\| *| *\| *$/g, ''),
+              item.header.length);
+          }
+
+          this.tokens.push(item);
+
+          continue;
+        }
+      }
+
+      // lheading
+      if (cap = this.rules.lheading.exec(src)) {
+        src = src.substring(cap[0].length);
+        this.tokens.push({
+          type: 'heading',
+          depth: cap[2].charAt(0) === '=' ? 1 : 2,
+          text: cap[1]
+        });
+        continue;
+      }
+
+      // top-level paragraph
+      if (top && (cap = this.rules.paragraph.exec(src))) {
+        src = src.substring(cap[0].length);
+        this.tokens.push({
+          type: 'paragraph',
+          text: cap[1].charAt(cap[1].length - 1) === '\n'
+            ? cap[1].slice(0, -1)
+            : cap[1]
+        });
+        continue;
+      }
+
+      // text
+      if (cap = this.rules.text.exec(src)) {
+        // Top-level should never reach here.
+        src = src.substring(cap[0].length);
+        this.tokens.push({
+          type: 'text',
+          text: cap[0]
+        });
+        continue;
+      }
+
+      if (src) {
+        throw new Error('Infinite loop on byte: ' + src.charCodeAt(0));
+      }
+    }
+
+    return this.tokens;
+  };
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/Parser.js":
 /*!*******************************************!*\
-  !*** ./node_modules/marked/lib/marked.js ***!
+  !*** ./node_modules/marked/src/Parser.js ***!
   \*******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {/**
- * marked - a markdown parser
- * Copyright (c) 2011-2018, Christopher Jeffrey. (MIT Licensed)
- * https://github.com/markedjs/marked
+const Renderer = __webpack_require__(/*! ./Renderer.js */ "./node_modules/marked/src/Renderer.js");
+const Slugger = __webpack_require__(/*! ./Slugger.js */ "./node_modules/marked/src/Slugger.js");
+const InlineLexer = __webpack_require__(/*! ./InlineLexer.js */ "./node_modules/marked/src/InlineLexer.js");
+const TextRenderer = __webpack_require__(/*! ./TextRenderer.js */ "./node_modules/marked/src/TextRenderer.js");
+const { defaults } = __webpack_require__(/*! ./defaults.js */ "./node_modules/marked/src/defaults.js");
+const {
+  merge,
+  unescape
+} = __webpack_require__(/*! ./helpers.js */ "./node_modules/marked/src/helpers.js");
+
+/**
+ * Parsing & Compiling
+ */
+module.exports = class Parser {
+  constructor(options) {
+    this.tokens = [];
+    this.token = null;
+    this.options = options || defaults;
+    this.options.renderer = this.options.renderer || new Renderer();
+    this.renderer = this.options.renderer;
+    this.renderer.options = this.options;
+    this.slugger = new Slugger();
+  }
+
+  /**
+   * Static Parse Method
+   */
+  static parse(tokens, options) {
+    const parser = new Parser(options);
+    return parser.parse(tokens);
+  };
+
+  /**
+   * Parse Loop
+   */
+  parse(tokens) {
+    this.inline = new InlineLexer(tokens.links, this.options);
+    // use an InlineLexer with a TextRenderer to extract pure text
+    this.inlineText = new InlineLexer(
+      tokens.links,
+      merge({}, this.options, { renderer: new TextRenderer() })
+    );
+    this.tokens = tokens.reverse();
+
+    let out = '';
+    while (this.next()) {
+      out += this.tok();
+    }
+
+    return out;
+  };
+
+  /**
+   * Next Token
+   */
+  next() {
+    this.token = this.tokens.pop();
+    return this.token;
+  };
+
+  /**
+   * Preview Next Token
+   */
+  peek() {
+    return this.tokens[this.tokens.length - 1] || 0;
+  };
+
+  /**
+   * Parse Text Tokens
+   */
+  parseText() {
+    let body = this.token.text;
+
+    while (this.peek().type === 'text') {
+      body += '\n' + this.next().text;
+    }
+
+    return this.inline.output(body);
+  };
+
+  /**
+   * Parse Current Token
+   */
+  tok() {
+    let body = '';
+    switch (this.token.type) {
+      case 'space': {
+        return '';
+      }
+      case 'hr': {
+        return this.renderer.hr();
+      }
+      case 'heading': {
+        return this.renderer.heading(
+          this.inline.output(this.token.text),
+          this.token.depth,
+          unescape(this.inlineText.output(this.token.text)),
+          this.slugger);
+      }
+      case 'code': {
+        return this.renderer.code(this.token.text,
+          this.token.lang,
+          this.token.escaped);
+      }
+      case 'table': {
+        let header = '',
+          i,
+          row,
+          cell,
+          j;
+
+        // header
+        cell = '';
+        for (i = 0; i < this.token.header.length; i++) {
+          cell += this.renderer.tablecell(
+            this.inline.output(this.token.header[i]),
+            { header: true, align: this.token.align[i] }
+          );
+        }
+        header += this.renderer.tablerow(cell);
+
+        for (i = 0; i < this.token.cells.length; i++) {
+          row = this.token.cells[i];
+
+          cell = '';
+          for (j = 0; j < row.length; j++) {
+            cell += this.renderer.tablecell(
+              this.inline.output(row[j]),
+              { header: false, align: this.token.align[j] }
+            );
+          }
+
+          body += this.renderer.tablerow(cell);
+        }
+        return this.renderer.table(header, body);
+      }
+      case 'blockquote_start': {
+        body = '';
+
+        while (this.next().type !== 'blockquote_end') {
+          body += this.tok();
+        }
+
+        return this.renderer.blockquote(body);
+      }
+      case 'list_start': {
+        body = '';
+        const ordered = this.token.ordered,
+          start = this.token.start;
+
+        while (this.next().type !== 'list_end') {
+          body += this.tok();
+        }
+
+        return this.renderer.list(body, ordered, start);
+      }
+      case 'list_item_start': {
+        body = '';
+        const loose = this.token.loose;
+        const checked = this.token.checked;
+        const task = this.token.task;
+
+        if (this.token.task) {
+          if (loose) {
+            if (this.peek().type === 'text') {
+              const nextToken = this.peek();
+              nextToken.text = this.renderer.checkbox(checked) + ' ' + nextToken.text;
+            } else {
+              this.tokens.push({
+                type: 'text',
+                text: this.renderer.checkbox(checked)
+              });
+            }
+          } else {
+            body += this.renderer.checkbox(checked);
+          }
+        }
+
+        while (this.next().type !== 'list_item_end') {
+          body += !loose && this.token.type === 'text'
+            ? this.parseText()
+            : this.tok();
+        }
+        return this.renderer.listitem(body, task, checked);
+      }
+      case 'html': {
+        // TODO parse inline content if parameter markdown=1
+        return this.renderer.html(this.token.text);
+      }
+      case 'paragraph': {
+        return this.renderer.paragraph(this.inline.output(this.token.text));
+      }
+      case 'text': {
+        return this.renderer.paragraph(this.parseText());
+      }
+      default: {
+        const errMsg = 'Token with "' + this.token.type + '" type was not found.';
+        if (this.options.silent) {
+          console.log(errMsg);
+        } else {
+          throw new Error(errMsg);
+        }
+      }
+    }
+  };
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/Renderer.js":
+/*!*********************************************!*\
+  !*** ./node_modules/marked/src/Renderer.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const { defaults } = __webpack_require__(/*! ./defaults.js */ "./node_modules/marked/src/defaults.js");
+const {
+  cleanUrl,
+  escape
+} = __webpack_require__(/*! ./helpers.js */ "./node_modules/marked/src/helpers.js");
+
+/**
+ * Renderer
+ */
+module.exports = class Renderer {
+  constructor(options) {
+    this.options = options || defaults;
+  }
+
+  code(code, infostring, escaped) {
+    const lang = (infostring || '').match(/\S*/)[0];
+    if (this.options.highlight) {
+      const out = this.options.highlight(code, lang);
+      if (out != null && out !== code) {
+        escaped = true;
+        code = out;
+      }
+    }
+
+    if (!lang) {
+      return '<pre><code>'
+        + (escaped ? code : escape(code, true))
+        + '</code></pre>';
+    }
+
+    return '<pre><code class="'
+      + this.options.langPrefix
+      + escape(lang, true)
+      + '">'
+      + (escaped ? code : escape(code, true))
+      + '</code></pre>\n';
+  };
+
+  blockquote(quote) {
+    return '<blockquote>\n' + quote + '</blockquote>\n';
+  };
+
+  html(html) {
+    return html;
+  };
+
+  heading(text, level, raw, slugger) {
+    if (this.options.headerIds) {
+      return '<h'
+        + level
+        + ' id="'
+        + this.options.headerPrefix
+        + slugger.slug(raw)
+        + '">'
+        + text
+        + '</h'
+        + level
+        + '>\n';
+    }
+    // ignore IDs
+    return '<h' + level + '>' + text + '</h' + level + '>\n';
+  };
+
+  hr() {
+    return this.options.xhtml ? '<hr/>\n' : '<hr>\n';
+  };
+
+  list(body, ordered, start) {
+    const type = ordered ? 'ol' : 'ul',
+      startatt = (ordered && start !== 1) ? (' start="' + start + '"') : '';
+    return '<' + type + startatt + '>\n' + body + '</' + type + '>\n';
+  };
+
+  listitem(text) {
+    return '<li>' + text + '</li>\n';
+  };
+
+  checkbox(checked) {
+    return '<input '
+      + (checked ? 'checked="" ' : '')
+      + 'disabled="" type="checkbox"'
+      + (this.options.xhtml ? ' /' : '')
+      + '> ';
+  };
+
+  paragraph(text) {
+    return '<p>' + text + '</p>\n';
+  };
+
+  table(header, body) {
+    if (body) body = '<tbody>' + body + '</tbody>';
+
+    return '<table>\n'
+      + '<thead>\n'
+      + header
+      + '</thead>\n'
+      + body
+      + '</table>\n';
+  };
+
+  tablerow(content) {
+    return '<tr>\n' + content + '</tr>\n';
+  };
+
+  tablecell(content, flags) {
+    const type = flags.header ? 'th' : 'td';
+    const tag = flags.align
+      ? '<' + type + ' align="' + flags.align + '">'
+      : '<' + type + '>';
+    return tag + content + '</' + type + '>\n';
+  };
+
+  // span level renderer
+  strong(text) {
+    return '<strong>' + text + '</strong>';
+  };
+
+  em(text) {
+    return '<em>' + text + '</em>';
+  };
+
+  codespan(text) {
+    return '<code>' + text + '</code>';
+  };
+
+  br() {
+    return this.options.xhtml ? '<br/>' : '<br>';
+  };
+
+  del(text) {
+    return '<del>' + text + '</del>';
+  };
+
+  link(href, title, text) {
+    href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
+    if (href === null) {
+      return text;
+    }
+    let out = '<a href="' + escape(href) + '"';
+    if (title) {
+      out += ' title="' + title + '"';
+    }
+    out += '>' + text + '</a>';
+    return out;
+  };
+
+  image(href, title, text) {
+    href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
+    if (href === null) {
+      return text;
+    }
+
+    let out = '<img src="' + href + '" alt="' + text + '"';
+    if (title) {
+      out += ' title="' + title + '"';
+    }
+    out += this.options.xhtml ? '/>' : '>';
+    return out;
+  };
+
+  text(text) {
+    return text;
+  };
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/Slugger.js":
+/*!********************************************!*\
+  !*** ./node_modules/marked/src/Slugger.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Slugger generates header id
+ */
+module.exports = class Slugger {
+  constructor() {
+    this.seen = {};
+  }
+
+  /**
+   * Convert string to unique id
+   */
+  slug(value) {
+    let slug = value
+      .toLowerCase()
+      .trim()
+      .replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g, '')
+      .replace(/\s/g, '-');
+
+    if (this.seen.hasOwnProperty(slug)) {
+      const originalSlug = slug;
+      do {
+        this.seen[originalSlug]++;
+        slug = originalSlug + '-' + this.seen[originalSlug];
+      } while (this.seen.hasOwnProperty(slug));
+    }
+    this.seen[slug] = 0;
+
+    return slug;
+  };
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/TextRenderer.js":
+/*!*************************************************!*\
+  !*** ./node_modules/marked/src/TextRenderer.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * TextRenderer
+ * returns only the textual part of the token
+ */
+module.exports = class TextRenderer {
+  // no need for block level renderers
+  strong(text) {
+    return text;
+  }
+
+  em(text) {
+    return text;
+  }
+
+  codespan(text) {
+    return text;
+  }
+
+  del(text) {
+    return text;
+  }
+
+  text(text) {
+    return text;
+  }
+
+  link(href, title, text) {
+    return '' + text;
+  }
+
+  image(href, title, text) {
+    return '' + text;
+  }
+
+  br() {
+    return '';
+  }
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/defaults.js":
+/*!*********************************************!*\
+  !*** ./node_modules/marked/src/defaults.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function getDefaults() {
+  return {
+    baseUrl: null,
+    breaks: false,
+    gfm: true,
+    headerIds: true,
+    headerPrefix: '',
+    highlight: null,
+    langPrefix: 'language-',
+    mangle: true,
+    pedantic: false,
+    renderer: null,
+    sanitize: false,
+    sanitizer: null,
+    silent: false,
+    smartLists: false,
+    smartypants: false,
+    xhtml: false
+  };
+}
+
+function changeDefaults(newDefaults) {
+  module.exports.defaults = newDefaults;
+}
+
+module.exports = {
+  defaults: getDefaults(),
+  getDefaults,
+  changeDefaults
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/helpers.js":
+/*!********************************************!*\
+  !*** ./node_modules/marked/src/helpers.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Helpers
+ */
+const escapeTest = /[&<>"']/;
+const escapeReplace = /[&<>"']/g;
+const escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/;
+const escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g;
+const escapeReplacements = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+};
+const getEscapeReplacement = (ch) => escapeReplacements[ch];
+function escape(html, encode) {
+  if (encode) {
+    if (escapeTest.test(html)) {
+      return html.replace(escapeReplace, getEscapeReplacement);
+    }
+  } else {
+    if (escapeTestNoEncode.test(html)) {
+      return html.replace(escapeReplaceNoEncode, getEscapeReplacement);
+    }
+  }
+
+  return html;
+}
+
+const unescapeTest = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig;
+
+function unescape(html) {
+  // explicitly match decimal, hex, and named HTML entities
+  return html.replace(unescapeTest, (_, n) => {
+    n = n.toLowerCase();
+    if (n === 'colon') return ':';
+    if (n.charAt(0) === '#') {
+      return n.charAt(1) === 'x'
+        ? String.fromCharCode(parseInt(n.substring(2), 16))
+        : String.fromCharCode(+n.substring(1));
+    }
+    return '';
+  });
+}
+
+const caret = /(^|[^\[])\^/g;
+function edit(regex, opt) {
+  regex = regex.source || regex;
+  opt = opt || '';
+  const obj = {
+    replace: (name, val) => {
+      val = val.source || val;
+      val = val.replace(caret, '$1');
+      regex = regex.replace(name, val);
+      return obj;
+    },
+    getRegex: () => {
+      return new RegExp(regex, opt);
+    }
+  };
+  return obj;
+}
+
+const nonWordAndColonTest = /[^\w:]/g;
+const originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
+function cleanUrl(sanitize, base, href) {
+  if (sanitize) {
+    let prot;
+    try {
+      prot = decodeURIComponent(unescape(href))
+        .replace(nonWordAndColonTest, '')
+        .toLowerCase();
+    } catch (e) {
+      return null;
+    }
+    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0 || prot.indexOf('data:') === 0) {
+      return null;
+    }
+  }
+  if (base && !originIndependentUrl.test(href)) {
+    href = resolveUrl(base, href);
+  }
+  try {
+    href = encodeURI(href).replace(/%25/g, '%');
+  } catch (e) {
+    return null;
+  }
+  return href;
+}
+
+const baseUrls = {};
+const justDomain = /^[^:]+:\/*[^/]*$/;
+const protocol = /^([^:]+:)[\s\S]*$/;
+const domain = /^([^:]+:\/*[^/]*)[\s\S]*$/;
+
+function resolveUrl(base, href) {
+  if (!baseUrls[' ' + base]) {
+    // we can ignore everything in base after the last slash of its path component,
+    // but we might need to add _that_
+    // https://tools.ietf.org/html/rfc3986#section-3
+    if (justDomain.test(base)) {
+      baseUrls[' ' + base] = base + '/';
+    } else {
+      baseUrls[' ' + base] = rtrim(base, '/', true);
+    }
+  }
+  base = baseUrls[' ' + base];
+  const relativeBase = base.indexOf(':') === -1;
+
+  if (href.substring(0, 2) === '//') {
+    if (relativeBase) {
+      return href;
+    }
+    return base.replace(protocol, '$1') + href;
+  } else if (href.charAt(0) === '/') {
+    if (relativeBase) {
+      return href;
+    }
+    return base.replace(domain, '$1') + href;
+  } else {
+    return base + href;
+  }
+}
+
+const noopTest = { exec: function noopTest() {} };
+
+function merge(obj) {
+  let i = 1,
+    target,
+    key;
+
+  for (; i < arguments.length; i++) {
+    target = arguments[i];
+    for (key in target) {
+      if (Object.prototype.hasOwnProperty.call(target, key)) {
+        obj[key] = target[key];
+      }
+    }
+  }
+
+  return obj;
+}
+
+function splitCells(tableRow, count) {
+  // ensure that every cell-delimiting pipe has a space
+  // before it to distinguish it from an escaped pipe
+  const row = tableRow.replace(/\|/g, (match, offset, str) => {
+      let escaped = false,
+        curr = offset;
+      while (--curr >= 0 && str[curr] === '\\') escaped = !escaped;
+      if (escaped) {
+        // odd number of slashes means | is escaped
+        // so we leave it alone
+        return '|';
+      } else {
+        // add space before unescaped |
+        return ' |';
+      }
+    }),
+    cells = row.split(/ \|/);
+  let i = 0;
+
+  if (cells.length > count) {
+    cells.splice(count);
+  } else {
+    while (cells.length < count) cells.push('');
+  }
+
+  for (; i < cells.length; i++) {
+    // leading or trailing whitespace is ignored per the gfm spec
+    cells[i] = cells[i].trim().replace(/\\\|/g, '|');
+  }
+  return cells;
+}
+
+// Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
+// /c*$/ is vulnerable to REDOS.
+// invert: Remove suffix of non-c chars instead. Default falsey.
+function rtrim(str, c, invert) {
+  const l = str.length;
+  if (l === 0) {
+    return '';
+  }
+
+  // Length of suffix matching the invert condition.
+  let suffLen = 0;
+
+  // Step left until we fail to match the invert condition.
+  while (suffLen < l) {
+    const currChar = str.charAt(l - suffLen - 1);
+    if (currChar === c && !invert) {
+      suffLen++;
+    } else if (currChar !== c && invert) {
+      suffLen++;
+    } else {
+      break;
+    }
+  }
+
+  return str.substr(0, l - suffLen);
+}
+
+function findClosingBracket(str, b) {
+  if (str.indexOf(b[1]) === -1) {
+    return -1;
+  }
+  const l = str.length;
+  let level = 0,
+    i = 0;
+  for (; i < l; i++) {
+    if (str[i] === '\\') {
+      i++;
+    } else if (str[i] === b[0]) {
+      level++;
+    } else if (str[i] === b[1]) {
+      level--;
+      if (level < 0) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
+
+function checkSanitizeDeprecation(opt) {
+  if (opt && opt.sanitize && !opt.silent) {
+    console.warn('marked(): sanitize and sanitizer parameters are deprecated since version 0.7.0, should not be used and will be removed in the future. Read more here: https://marked.js.org/#/USING_ADVANCED.md#options');
+  }
+}
+
+module.exports = {
+  escape,
+  unescape,
+  edit,
+  cleanUrl,
+  resolveUrl,
+  noopTest,
+  merge,
+  splitCells,
+  rtrim,
+  findClosingBracket,
+  checkSanitizeDeprecation
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/marked.js":
+/*!*******************************************!*\
+  !*** ./node_modules/marked/src/marked.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Lexer = __webpack_require__(/*! ./Lexer.js */ "./node_modules/marked/src/Lexer.js");
+const Parser = __webpack_require__(/*! ./Parser.js */ "./node_modules/marked/src/Parser.js");
+const Renderer = __webpack_require__(/*! ./Renderer.js */ "./node_modules/marked/src/Renderer.js");
+const TextRenderer = __webpack_require__(/*! ./TextRenderer.js */ "./node_modules/marked/src/TextRenderer.js");
+const InlineLexer = __webpack_require__(/*! ./InlineLexer.js */ "./node_modules/marked/src/InlineLexer.js");
+const Slugger = __webpack_require__(/*! ./Slugger.js */ "./node_modules/marked/src/Slugger.js");
+const {
+  merge,
+  checkSanitizeDeprecation,
+  escape
+} = __webpack_require__(/*! ./helpers.js */ "./node_modules/marked/src/helpers.js");
+const {
+  getDefaults,
+  changeDefaults,
+  defaults
+} = __webpack_require__(/*! ./defaults.js */ "./node_modules/marked/src/defaults.js");
+
+/**
+ * Marked
+ */
+function marked(src, opt, callback) {
+  // throw error in case of non string input
+  if (typeof src === 'undefined' || src === null) {
+    throw new Error('marked(): input parameter is undefined or null');
+  }
+  if (typeof src !== 'string') {
+    throw new Error('marked(): input parameter is of type '
+      + Object.prototype.toString.call(src) + ', string expected');
+  }
+
+  if (callback || typeof opt === 'function') {
+    if (!callback) {
+      callback = opt;
+      opt = null;
+    }
+
+    opt = merge({}, marked.defaults, opt || {});
+    checkSanitizeDeprecation(opt);
+    const highlight = opt.highlight;
+    let tokens,
+      pending,
+      i = 0;
+
+    try {
+      tokens = Lexer.lex(src, opt);
+    } catch (e) {
+      return callback(e);
+    }
+
+    pending = tokens.length;
+
+    const done = function(err) {
+      if (err) {
+        opt.highlight = highlight;
+        return callback(err);
+      }
+
+      let out;
+
+      try {
+        out = Parser.parse(tokens, opt);
+      } catch (e) {
+        err = e;
+      }
+
+      opt.highlight = highlight;
+
+      return err
+        ? callback(err)
+        : callback(null, out);
+    };
+
+    if (!highlight || highlight.length < 3) {
+      return done();
+    }
+
+    delete opt.highlight;
+
+    if (!pending) return done();
+
+    for (; i < tokens.length; i++) {
+      (function(token) {
+        if (token.type !== 'code') {
+          return --pending || done();
+        }
+        return highlight(token.text, token.lang, function(err, code) {
+          if (err) return done(err);
+          if (code == null || code === token.text) {
+            return --pending || done();
+          }
+          token.text = code;
+          token.escaped = true;
+          --pending || done();
+        });
+      })(tokens[i]);
+    }
+
+    return;
+  }
+  try {
+    opt = merge({}, marked.defaults, opt || {});
+    checkSanitizeDeprecation(opt);
+    return Parser.parse(Lexer.lex(src, opt), opt);
+  } catch (e) {
+    e.message += '\nPlease report this to https://github.com/markedjs/marked.';
+    if ((opt || marked.defaults).silent) {
+      return '<p>An error occurred:</p><pre>'
+        + escape(e.message + '', true)
+        + '</pre>';
+    }
+    throw e;
+  }
+}
+
+/**
+ * Options
  */
 
-;(function(root) {
-'use strict';
+marked.options =
+marked.setOptions = function(opt) {
+  merge(marked.defaults, opt);
+  changeDefaults(marked.defaults);
+  return marked;
+};
+
+marked.getDefaults = getDefaults;
+
+marked.defaults = defaults;
+
+/**
+ * Expose
+ */
+
+marked.Parser = Parser;
+marked.parser = Parser.parse;
+
+marked.Renderer = Renderer;
+marked.TextRenderer = TextRenderer;
+
+marked.Lexer = Lexer;
+marked.lexer = Lexer.lex;
+
+marked.InlineLexer = InlineLexer;
+marked.inlineLexer = InlineLexer.output;
+
+marked.Slugger = Slugger;
+
+marked.parse = marked;
+
+module.exports = marked;
+
+
+/***/ }),
+
+/***/ "./node_modules/marked/src/rules.js":
+/*!******************************************!*\
+  !*** ./node_modules/marked/src/rules.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const {
+  noopTest,
+  edit,
+  merge
+} = __webpack_require__(/*! ./helpers.js */ "./node_modules/marked/src/helpers.js");
 
 /**
  * Block-Level Grammar
  */
-
-var block = {
+const block = {
   newline: /^\n+/,
   code: /^( {4}[^\n]+\n*)+/,
   fences: /^ {0,3}(`{3,}|~{3,})([^`~\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?:\n+|$)|$)/,
@@ -14622,8 +16442,8 @@ var block = {
     + '|</(?!script|pre|style)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:\\n{2,}|$)' // (7) closing tag
     + ')',
   def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
-  nptable: noop,
-  table: noop,
+  nptable: noopTest,
+  table: noopTest,
   lheading: /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/,
   // regex template, placeholders will be replaced according to different paragraph
   // interruption rules of commonmark and the original markdown spec:
@@ -14710,7 +16530,7 @@ block.pedantic = merge({}, block.normal, {
     .getRegex(),
   def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
   heading: /^ *(#{1,6}) *([^\n]+?) *(?:#+ *)?(?:\n+|$)/,
-  fences: noop, // fences not supported
+  fences: noopTest, // fences not supported
   paragraph: edit(block.normal._paragraph)
     .replace('hr', block.hr)
     .replace('heading', ' *#{1,6} *[^\n]')
@@ -14723,411 +16543,12 @@ block.pedantic = merge({}, block.normal, {
 });
 
 /**
- * Block Lexer
- */
-
-function Lexer(options) {
-  this.tokens = [];
-  this.tokens.links = Object.create(null);
-  this.options = options || marked.defaults;
-  this.rules = block.normal;
-
-  if (this.options.pedantic) {
-    this.rules = block.pedantic;
-  } else if (this.options.gfm) {
-    this.rules = block.gfm;
-  }
-}
-
-/**
- * Expose Block Rules
- */
-
-Lexer.rules = block;
-
-/**
- * Static Lex Method
- */
-
-Lexer.lex = function(src, options) {
-  var lexer = new Lexer(options);
-  return lexer.lex(src);
-};
-
-/**
- * Preprocessing
- */
-
-Lexer.prototype.lex = function(src) {
-  src = src
-    .replace(/\r\n|\r/g, '\n')
-    .replace(/\t/g, '    ')
-    .replace(/\u00a0/g, ' ')
-    .replace(/\u2424/g, '\n');
-
-  return this.token(src, true);
-};
-
-/**
- * Lexing
- */
-
-Lexer.prototype.token = function(src, top) {
-  src = src.replace(/^ +$/gm, '');
-  var next,
-      loose,
-      cap,
-      bull,
-      b,
-      item,
-      listStart,
-      listItems,
-      t,
-      space,
-      i,
-      tag,
-      l,
-      isordered,
-      istask,
-      ischecked;
-
-  while (src) {
-    // newline
-    if (cap = this.rules.newline.exec(src)) {
-      src = src.substring(cap[0].length);
-      if (cap[0].length > 1) {
-        this.tokens.push({
-          type: 'space'
-        });
-      }
-    }
-
-    // code
-    if (cap = this.rules.code.exec(src)) {
-      var lastToken = this.tokens[this.tokens.length - 1];
-      src = src.substring(cap[0].length);
-      // An indented code block cannot interrupt a paragraph.
-      if (lastToken && lastToken.type === 'paragraph') {
-        lastToken.text += '\n' + cap[0].trimRight();
-      } else {
-        cap = cap[0].replace(/^ {4}/gm, '');
-        this.tokens.push({
-          type: 'code',
-          codeBlockStyle: 'indented',
-          text: !this.options.pedantic
-            ? rtrim(cap, '\n')
-            : cap
-        });
-      }
-      continue;
-    }
-
-    // fences
-    if (cap = this.rules.fences.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'code',
-        lang: cap[2] ? cap[2].trim() : cap[2],
-        text: cap[3] || ''
-      });
-      continue;
-    }
-
-    // heading
-    if (cap = this.rules.heading.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'heading',
-        depth: cap[1].length,
-        text: cap[2]
-      });
-      continue;
-    }
-
-    // table no leading pipe (gfm)
-    if (cap = this.rules.nptable.exec(src)) {
-      item = {
-        type: 'table',
-        header: splitCells(cap[1].replace(/^ *| *\| *$/g, '')),
-        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        cells: cap[3] ? cap[3].replace(/\n$/, '').split('\n') : []
-      };
-
-      if (item.header.length === item.align.length) {
-        src = src.substring(cap[0].length);
-
-        for (i = 0; i < item.align.length; i++) {
-          if (/^ *-+: *$/.test(item.align[i])) {
-            item.align[i] = 'right';
-          } else if (/^ *:-+: *$/.test(item.align[i])) {
-            item.align[i] = 'center';
-          } else if (/^ *:-+ *$/.test(item.align[i])) {
-            item.align[i] = 'left';
-          } else {
-            item.align[i] = null;
-          }
-        }
-
-        for (i = 0; i < item.cells.length; i++) {
-          item.cells[i] = splitCells(item.cells[i], item.header.length);
-        }
-
-        this.tokens.push(item);
-
-        continue;
-      }
-    }
-
-    // hr
-    if (cap = this.rules.hr.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'hr'
-      });
-      continue;
-    }
-
-    // blockquote
-    if (cap = this.rules.blockquote.exec(src)) {
-      src = src.substring(cap[0].length);
-
-      this.tokens.push({
-        type: 'blockquote_start'
-      });
-
-      cap = cap[0].replace(/^ *> ?/gm, '');
-
-      // Pass `top` to keep the current
-      // "toplevel" state. This is exactly
-      // how markdown.pl works.
-      this.token(cap, top);
-
-      this.tokens.push({
-        type: 'blockquote_end'
-      });
-
-      continue;
-    }
-
-    // list
-    if (cap = this.rules.list.exec(src)) {
-      src = src.substring(cap[0].length);
-      bull = cap[2];
-      isordered = bull.length > 1;
-
-      listStart = {
-        type: 'list_start',
-        ordered: isordered,
-        start: isordered ? +bull : '',
-        loose: false
-      };
-
-      this.tokens.push(listStart);
-
-      // Get each top-level item.
-      cap = cap[0].match(this.rules.item);
-
-      listItems = [];
-      next = false;
-      l = cap.length;
-      i = 0;
-
-      for (; i < l; i++) {
-        item = cap[i];
-
-        // Remove the list item's bullet
-        // so it is seen as the next token.
-        space = item.length;
-        item = item.replace(/^ *([*+-]|\d+\.) */, '');
-
-        // Outdent whatever the
-        // list item contains. Hacky.
-        if (~item.indexOf('\n ')) {
-          space -= item.length;
-          item = !this.options.pedantic
-            ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
-            : item.replace(/^ {1,4}/gm, '');
-        }
-
-        // Determine whether the next list item belongs here.
-        // Backpedal if it does not belong in this list.
-        if (i !== l - 1) {
-          b = block.bullet.exec(cap[i + 1])[0];
-          if (bull.length > 1 ? b.length === 1
-            : (b.length > 1 || (this.options.smartLists && b !== bull))) {
-            src = cap.slice(i + 1).join('\n') + src;
-            i = l - 1;
-          }
-        }
-
-        // Determine whether item is loose or not.
-        // Use: /(^|\n)(?! )[^\n]+\n\n(?!\s*$)/
-        // for discount behavior.
-        loose = next || /\n\n(?!\s*$)/.test(item);
-        if (i !== l - 1) {
-          next = item.charAt(item.length - 1) === '\n';
-          if (!loose) loose = next;
-        }
-
-        if (loose) {
-          listStart.loose = true;
-        }
-
-        // Check for task list items
-        istask = /^\[[ xX]\] /.test(item);
-        ischecked = undefined;
-        if (istask) {
-          ischecked = item[1] !== ' ';
-          item = item.replace(/^\[[ xX]\] +/, '');
-        }
-
-        t = {
-          type: 'list_item_start',
-          task: istask,
-          checked: ischecked,
-          loose: loose
-        };
-
-        listItems.push(t);
-        this.tokens.push(t);
-
-        // Recurse.
-        this.token(item, false);
-
-        this.tokens.push({
-          type: 'list_item_end'
-        });
-      }
-
-      if (listStart.loose) {
-        l = listItems.length;
-        i = 0;
-        for (; i < l; i++) {
-          listItems[i].loose = true;
-        }
-      }
-
-      this.tokens.push({
-        type: 'list_end'
-      });
-
-      continue;
-    }
-
-    // html
-    if (cap = this.rules.html.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: this.options.sanitize
-          ? 'paragraph'
-          : 'html',
-        pre: !this.options.sanitizer
-          && (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
-        text: this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0])) : cap[0]
-      });
-      continue;
-    }
-
-    // def
-    if (top && (cap = this.rules.def.exec(src))) {
-      src = src.substring(cap[0].length);
-      if (cap[3]) cap[3] = cap[3].substring(1, cap[3].length - 1);
-      tag = cap[1].toLowerCase().replace(/\s+/g, ' ');
-      if (!this.tokens.links[tag]) {
-        this.tokens.links[tag] = {
-          href: cap[2],
-          title: cap[3]
-        };
-      }
-      continue;
-    }
-
-    // table (gfm)
-    if (cap = this.rules.table.exec(src)) {
-      item = {
-        type: 'table',
-        header: splitCells(cap[1].replace(/^ *| *\| *$/g, '')),
-        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        cells: cap[3] ? cap[3].replace(/\n$/, '').split('\n') : []
-      };
-
-      if (item.header.length === item.align.length) {
-        src = src.substring(cap[0].length);
-
-        for (i = 0; i < item.align.length; i++) {
-          if (/^ *-+: *$/.test(item.align[i])) {
-            item.align[i] = 'right';
-          } else if (/^ *:-+: *$/.test(item.align[i])) {
-            item.align[i] = 'center';
-          } else if (/^ *:-+ *$/.test(item.align[i])) {
-            item.align[i] = 'left';
-          } else {
-            item.align[i] = null;
-          }
-        }
-
-        for (i = 0; i < item.cells.length; i++) {
-          item.cells[i] = splitCells(
-            item.cells[i].replace(/^ *\| *| *\| *$/g, ''),
-            item.header.length);
-        }
-
-        this.tokens.push(item);
-
-        continue;
-      }
-    }
-
-    // lheading
-    if (cap = this.rules.lheading.exec(src)) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'heading',
-        depth: cap[2].charAt(0) === '=' ? 1 : 2,
-        text: cap[1]
-      });
-      continue;
-    }
-
-    // top-level paragraph
-    if (top && (cap = this.rules.paragraph.exec(src))) {
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'paragraph',
-        text: cap[1].charAt(cap[1].length - 1) === '\n'
-          ? cap[1].slice(0, -1)
-          : cap[1]
-      });
-      continue;
-    }
-
-    // text
-    if (cap = this.rules.text.exec(src)) {
-      // Top-level should never reach here.
-      src = src.substring(cap[0].length);
-      this.tokens.push({
-        type: 'text',
-        text: cap[0]
-      });
-      continue;
-    }
-
-    if (src) {
-      throw new Error('Infinite loop on byte: ' + src.charCodeAt(0));
-    }
-  }
-
-  return this.tokens;
-};
-
-/**
  * Inline-Level Grammar
  */
-
-var inline = {
+const inline = {
   escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
   autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
-  url: noop,
+  url: noopTest,
   tag: '^comment'
     + '|^</[a-zA-Z][\\w:-]*\\s*>' // self-closing tag
     + '|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>' // open tag
@@ -15141,7 +16562,7 @@ var inline = {
   em: /^_([^\s_])_(?!_)|^\*([^\s*<\[])\*(?!\*)|^_([^\s<][\s\S]*?[^\s_])_(?!_|[^\spunctuation])|^_([^\s_<][\s\S]*?[^\s])_(?!_|[^\spunctuation])|^\*([^\s<"][\s\S]*?[^\s\*])\*(?!\*|[^\spunctuation])|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
-  del: noop,
+  del: noopTest,
   text: /^(`+|[^`])(?:[\s\S]*?(?:(?=[\\<!\[`*]|\b_|$)|[^ ](?= {2,}\n))|(?= {2,}\n))/
 };
 
@@ -15229,1069 +16650,11 @@ inline.breaks = merge({}, inline.gfm, {
     .getRegex()
 });
 
-/**
- * Inline Lexer & Compiler
- */
-
-function InlineLexer(links, options) {
-  this.options = options || marked.defaults;
-  this.links = links;
-  this.rules = inline.normal;
-  this.renderer = this.options.renderer || new Renderer();
-  this.renderer.options = this.options;
-
-  if (!this.links) {
-    throw new Error('Tokens array requires a `links` property.');
-  }
-
-  if (this.options.pedantic) {
-    this.rules = inline.pedantic;
-  } else if (this.options.gfm) {
-    if (this.options.breaks) {
-      this.rules = inline.breaks;
-    } else {
-      this.rules = inline.gfm;
-    }
-  }
-}
-
-/**
- * Expose Inline Rules
- */
-
-InlineLexer.rules = inline;
-
-/**
- * Static Lexing/Compiling Method
- */
-
-InlineLexer.output = function(src, links, options) {
-  var inline = new InlineLexer(links, options);
-  return inline.output(src);
+module.exports = {
+  block,
+  inline
 };
 
-/**
- * Lexing/Compiling
- */
-
-InlineLexer.prototype.output = function(src) {
-  var out = '',
-      link,
-      text,
-      href,
-      title,
-      cap,
-      prevCapZero;
-
-  while (src) {
-    // escape
-    if (cap = this.rules.escape.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += escape(cap[1]);
-      continue;
-    }
-
-    // tag
-    if (cap = this.rules.tag.exec(src)) {
-      if (!this.inLink && /^<a /i.test(cap[0])) {
-        this.inLink = true;
-      } else if (this.inLink && /^<\/a>/i.test(cap[0])) {
-        this.inLink = false;
-      }
-      if (!this.inRawBlock && /^<(pre|code|kbd|script)(\s|>)/i.test(cap[0])) {
-        this.inRawBlock = true;
-      } else if (this.inRawBlock && /^<\/(pre|code|kbd|script)(\s|>)/i.test(cap[0])) {
-        this.inRawBlock = false;
-      }
-
-      src = src.substring(cap[0].length);
-      out += this.options.sanitize
-        ? this.options.sanitizer
-          ? this.options.sanitizer(cap[0])
-          : escape(cap[0])
-        : cap[0];
-      continue;
-    }
-
-    // link
-    if (cap = this.rules.link.exec(src)) {
-      var lastParenIndex = findClosingBracket(cap[2], '()');
-      if (lastParenIndex > -1) {
-        var linkLen = 4 + cap[1].length + lastParenIndex;
-        cap[2] = cap[2].substring(0, lastParenIndex);
-        cap[0] = cap[0].substring(0, linkLen).trim();
-        cap[3] = '';
-      }
-      src = src.substring(cap[0].length);
-      this.inLink = true;
-      href = cap[2];
-      if (this.options.pedantic) {
-        link = /^([^'"]*[^\s])\s+(['"])(.*)\2/.exec(href);
-
-        if (link) {
-          href = link[1];
-          title = link[3];
-        } else {
-          title = '';
-        }
-      } else {
-        title = cap[3] ? cap[3].slice(1, -1) : '';
-      }
-      href = href.trim().replace(/^<([\s\S]*)>$/, '$1');
-      out += this.outputLink(cap, {
-        href: InlineLexer.escapes(href),
-        title: InlineLexer.escapes(title)
-      });
-      this.inLink = false;
-      continue;
-    }
-
-    // reflink, nolink
-    if ((cap = this.rules.reflink.exec(src))
-        || (cap = this.rules.nolink.exec(src))) {
-      src = src.substring(cap[0].length);
-      link = (cap[2] || cap[1]).replace(/\s+/g, ' ');
-      link = this.links[link.toLowerCase()];
-      if (!link || !link.href) {
-        out += cap[0].charAt(0);
-        src = cap[0].substring(1) + src;
-        continue;
-      }
-      this.inLink = true;
-      out += this.outputLink(cap, link);
-      this.inLink = false;
-      continue;
-    }
-
-    // strong
-    if (cap = this.rules.strong.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += this.renderer.strong(this.output(cap[4] || cap[3] || cap[2] || cap[1]));
-      continue;
-    }
-
-    // em
-    if (cap = this.rules.em.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += this.renderer.em(this.output(cap[6] || cap[5] || cap[4] || cap[3] || cap[2] || cap[1]));
-      continue;
-    }
-
-    // code
-    if (cap = this.rules.code.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += this.renderer.codespan(escape(cap[2].trim(), true));
-      continue;
-    }
-
-    // br
-    if (cap = this.rules.br.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += this.renderer.br();
-      continue;
-    }
-
-    // del (gfm)
-    if (cap = this.rules.del.exec(src)) {
-      src = src.substring(cap[0].length);
-      out += this.renderer.del(this.output(cap[1]));
-      continue;
-    }
-
-    // autolink
-    if (cap = this.rules.autolink.exec(src)) {
-      src = src.substring(cap[0].length);
-      if (cap[2] === '@') {
-        text = escape(this.mangle(cap[1]));
-        href = 'mailto:' + text;
-      } else {
-        text = escape(cap[1]);
-        href = text;
-      }
-      out += this.renderer.link(href, null, text);
-      continue;
-    }
-
-    // url (gfm)
-    if (!this.inLink && (cap = this.rules.url.exec(src))) {
-      if (cap[2] === '@') {
-        text = escape(cap[0]);
-        href = 'mailto:' + text;
-      } else {
-        // do extended autolink path validation
-        do {
-          prevCapZero = cap[0];
-          cap[0] = this.rules._backpedal.exec(cap[0])[0];
-        } while (prevCapZero !== cap[0]);
-        text = escape(cap[0]);
-        if (cap[1] === 'www.') {
-          href = 'http://' + text;
-        } else {
-          href = text;
-        }
-      }
-      src = src.substring(cap[0].length);
-      out += this.renderer.link(href, null, text);
-      continue;
-    }
-
-    // text
-    if (cap = this.rules.text.exec(src)) {
-      src = src.substring(cap[0].length);
-      if (this.inRawBlock) {
-        out += this.renderer.text(this.options.sanitize ? (this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0])) : cap[0]);
-      } else {
-        out += this.renderer.text(escape(this.smartypants(cap[0])));
-      }
-      continue;
-    }
-
-    if (src) {
-      throw new Error('Infinite loop on byte: ' + src.charCodeAt(0));
-    }
-  }
-
-  return out;
-};
-
-InlineLexer.escapes = function(text) {
-  return text ? text.replace(InlineLexer.rules._escapes, '$1') : text;
-};
-
-/**
- * Compile Link
- */
-
-InlineLexer.prototype.outputLink = function(cap, link) {
-  var href = link.href,
-      title = link.title ? escape(link.title) : null;
-
-  return cap[0].charAt(0) !== '!'
-    ? this.renderer.link(href, title, this.output(cap[1]))
-    : this.renderer.image(href, title, escape(cap[1]));
-};
-
-/**
- * Smartypants Transformations
- */
-
-InlineLexer.prototype.smartypants = function(text) {
-  if (!this.options.smartypants) return text;
-  return text
-    // em-dashes
-    .replace(/---/g, '\u2014')
-    // en-dashes
-    .replace(/--/g, '\u2013')
-    // opening singles
-    .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
-    // closing singles & apostrophes
-    .replace(/'/g, '\u2019')
-    // opening doubles
-    .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
-    // closing doubles
-    .replace(/"/g, '\u201d')
-    // ellipses
-    .replace(/\.{3}/g, '\u2026');
-};
-
-/**
- * Mangle Links
- */
-
-InlineLexer.prototype.mangle = function(text) {
-  if (!this.options.mangle) return text;
-  var out = '',
-      l = text.length,
-      i = 0,
-      ch;
-
-  for (; i < l; i++) {
-    ch = text.charCodeAt(i);
-    if (Math.random() > 0.5) {
-      ch = 'x' + ch.toString(16);
-    }
-    out += '&#' + ch + ';';
-  }
-
-  return out;
-};
-
-/**
- * Renderer
- */
-
-function Renderer(options) {
-  this.options = options || marked.defaults;
-}
-
-Renderer.prototype.code = function(code, infostring, escaped) {
-  var lang = (infostring || '').match(/\S*/)[0];
-  if (this.options.highlight) {
-    var out = this.options.highlight(code, lang);
-    if (out != null && out !== code) {
-      escaped = true;
-      code = out;
-    }
-  }
-
-  if (!lang) {
-    return '<pre><code>'
-      + (escaped ? code : escape(code, true))
-      + '</code></pre>';
-  }
-
-  return '<pre><code class="'
-    + this.options.langPrefix
-    + escape(lang, true)
-    + '">'
-    + (escaped ? code : escape(code, true))
-    + '</code></pre>\n';
-};
-
-Renderer.prototype.blockquote = function(quote) {
-  return '<blockquote>\n' + quote + '</blockquote>\n';
-};
-
-Renderer.prototype.html = function(html) {
-  return html;
-};
-
-Renderer.prototype.heading = function(text, level, raw, slugger) {
-  if (this.options.headerIds) {
-    return '<h'
-      + level
-      + ' id="'
-      + this.options.headerPrefix
-      + slugger.slug(raw)
-      + '">'
-      + text
-      + '</h'
-      + level
-      + '>\n';
-  }
-  // ignore IDs
-  return '<h' + level + '>' + text + '</h' + level + '>\n';
-};
-
-Renderer.prototype.hr = function() {
-  return this.options.xhtml ? '<hr/>\n' : '<hr>\n';
-};
-
-Renderer.prototype.list = function(body, ordered, start) {
-  var type = ordered ? 'ol' : 'ul',
-      startatt = (ordered && start !== 1) ? (' start="' + start + '"') : '';
-  return '<' + type + startatt + '>\n' + body + '</' + type + '>\n';
-};
-
-Renderer.prototype.listitem = function(text) {
-  return '<li>' + text + '</li>\n';
-};
-
-Renderer.prototype.checkbox = function(checked) {
-  return '<input '
-    + (checked ? 'checked="" ' : '')
-    + 'disabled="" type="checkbox"'
-    + (this.options.xhtml ? ' /' : '')
-    + '> ';
-};
-
-Renderer.prototype.paragraph = function(text) {
-  return '<p>' + text + '</p>\n';
-};
-
-Renderer.prototype.table = function(header, body) {
-  if (body) body = '<tbody>' + body + '</tbody>';
-
-  return '<table>\n'
-    + '<thead>\n'
-    + header
-    + '</thead>\n'
-    + body
-    + '</table>\n';
-};
-
-Renderer.prototype.tablerow = function(content) {
-  return '<tr>\n' + content + '</tr>\n';
-};
-
-Renderer.prototype.tablecell = function(content, flags) {
-  var type = flags.header ? 'th' : 'td';
-  var tag = flags.align
-    ? '<' + type + ' align="' + flags.align + '">'
-    : '<' + type + '>';
-  return tag + content + '</' + type + '>\n';
-};
-
-// span level renderer
-Renderer.prototype.strong = function(text) {
-  return '<strong>' + text + '</strong>';
-};
-
-Renderer.prototype.em = function(text) {
-  return '<em>' + text + '</em>';
-};
-
-Renderer.prototype.codespan = function(text) {
-  return '<code>' + text + '</code>';
-};
-
-Renderer.prototype.br = function() {
-  return this.options.xhtml ? '<br/>' : '<br>';
-};
-
-Renderer.prototype.del = function(text) {
-  return '<del>' + text + '</del>';
-};
-
-Renderer.prototype.link = function(href, title, text) {
-  href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
-  if (href === null) {
-    return text;
-  }
-  var out = '<a href="' + escape(href) + '"';
-  if (title) {
-    out += ' title="' + title + '"';
-  }
-  out += '>' + text + '</a>';
-  return out;
-};
-
-Renderer.prototype.image = function(href, title, text) {
-  href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
-  if (href === null) {
-    return text;
-  }
-
-  var out = '<img src="' + href + '" alt="' + text + '"';
-  if (title) {
-    out += ' title="' + title + '"';
-  }
-  out += this.options.xhtml ? '/>' : '>';
-  return out;
-};
-
-Renderer.prototype.text = function(text) {
-  return text;
-};
-
-/**
- * TextRenderer
- * returns only the textual part of the token
- */
-
-function TextRenderer() {}
-
-// no need for block level renderers
-
-TextRenderer.prototype.strong =
-TextRenderer.prototype.em =
-TextRenderer.prototype.codespan =
-TextRenderer.prototype.del =
-TextRenderer.prototype.text = function(text) {
-  return text;
-};
-
-TextRenderer.prototype.link =
-TextRenderer.prototype.image = function(href, title, text) {
-  return '' + text;
-};
-
-TextRenderer.prototype.br = function() {
-  return '';
-};
-
-/**
- * Parsing & Compiling
- */
-
-function Parser(options) {
-  this.tokens = [];
-  this.token = null;
-  this.options = options || marked.defaults;
-  this.options.renderer = this.options.renderer || new Renderer();
-  this.renderer = this.options.renderer;
-  this.renderer.options = this.options;
-  this.slugger = new Slugger();
-}
-
-/**
- * Static Parse Method
- */
-
-Parser.parse = function(src, options) {
-  var parser = new Parser(options);
-  return parser.parse(src);
-};
-
-/**
- * Parse Loop
- */
-
-Parser.prototype.parse = function(src) {
-  this.inline = new InlineLexer(src.links, this.options);
-  // use an InlineLexer with a TextRenderer to extract pure text
-  this.inlineText = new InlineLexer(
-    src.links,
-    merge({}, this.options, { renderer: new TextRenderer() })
-  );
-  this.tokens = src.reverse();
-
-  var out = '';
-  while (this.next()) {
-    out += this.tok();
-  }
-
-  return out;
-};
-
-/**
- * Next Token
- */
-
-Parser.prototype.next = function() {
-  this.token = this.tokens.pop();
-  return this.token;
-};
-
-/**
- * Preview Next Token
- */
-
-Parser.prototype.peek = function() {
-  return this.tokens[this.tokens.length - 1] || 0;
-};
-
-/**
- * Parse Text Tokens
- */
-
-Parser.prototype.parseText = function() {
-  var body = this.token.text;
-
-  while (this.peek().type === 'text') {
-    body += '\n' + this.next().text;
-  }
-
-  return this.inline.output(body);
-};
-
-/**
- * Parse Current Token
- */
-
-Parser.prototype.tok = function() {
-  switch (this.token.type) {
-    case 'space': {
-      return '';
-    }
-    case 'hr': {
-      return this.renderer.hr();
-    }
-    case 'heading': {
-      return this.renderer.heading(
-        this.inline.output(this.token.text),
-        this.token.depth,
-        unescape(this.inlineText.output(this.token.text)),
-        this.slugger);
-    }
-    case 'code': {
-      return this.renderer.code(this.token.text,
-        this.token.lang,
-        this.token.escaped);
-    }
-    case 'table': {
-      var header = '',
-          body = '',
-          i,
-          row,
-          cell,
-          j;
-
-      // header
-      cell = '';
-      for (i = 0; i < this.token.header.length; i++) {
-        cell += this.renderer.tablecell(
-          this.inline.output(this.token.header[i]),
-          { header: true, align: this.token.align[i] }
-        );
-      }
-      header += this.renderer.tablerow(cell);
-
-      for (i = 0; i < this.token.cells.length; i++) {
-        row = this.token.cells[i];
-
-        cell = '';
-        for (j = 0; j < row.length; j++) {
-          cell += this.renderer.tablecell(
-            this.inline.output(row[j]),
-            { header: false, align: this.token.align[j] }
-          );
-        }
-
-        body += this.renderer.tablerow(cell);
-      }
-      return this.renderer.table(header, body);
-    }
-    case 'blockquote_start': {
-      body = '';
-
-      while (this.next().type !== 'blockquote_end') {
-        body += this.tok();
-      }
-
-      return this.renderer.blockquote(body);
-    }
-    case 'list_start': {
-      body = '';
-      var ordered = this.token.ordered,
-          start = this.token.start;
-
-      while (this.next().type !== 'list_end') {
-        body += this.tok();
-      }
-
-      return this.renderer.list(body, ordered, start);
-    }
-    case 'list_item_start': {
-      body = '';
-      var loose = this.token.loose;
-      var checked = this.token.checked;
-      var task = this.token.task;
-
-      if (this.token.task) {
-        body += this.renderer.checkbox(checked);
-      }
-
-      while (this.next().type !== 'list_item_end') {
-        body += !loose && this.token.type === 'text'
-          ? this.parseText()
-          : this.tok();
-      }
-      return this.renderer.listitem(body, task, checked);
-    }
-    case 'html': {
-      // TODO parse inline content if parameter markdown=1
-      return this.renderer.html(this.token.text);
-    }
-    case 'paragraph': {
-      return this.renderer.paragraph(this.inline.output(this.token.text));
-    }
-    case 'text': {
-      return this.renderer.paragraph(this.parseText());
-    }
-    default: {
-      var errMsg = 'Token with "' + this.token.type + '" type was not found.';
-      if (this.options.silent) {
-        console.log(errMsg);
-      } else {
-        throw new Error(errMsg);
-      }
-    }
-  }
-};
-
-/**
- * Slugger generates header id
- */
-
-function Slugger() {
-  this.seen = {};
-}
-
-/**
- * Convert string to unique id
- */
-
-Slugger.prototype.slug = function(value) {
-  var slug = value
-    .toLowerCase()
-    .trim()
-    .replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g, '')
-    .replace(/\s/g, '-');
-
-  if (this.seen.hasOwnProperty(slug)) {
-    var originalSlug = slug;
-    do {
-      this.seen[originalSlug]++;
-      slug = originalSlug + '-' + this.seen[originalSlug];
-    } while (this.seen.hasOwnProperty(slug));
-  }
-  this.seen[slug] = 0;
-
-  return slug;
-};
-
-/**
- * Helpers
- */
-
-function escape(html, encode) {
-  if (encode) {
-    if (escape.escapeTest.test(html)) {
-      return html.replace(escape.escapeReplace, function(ch) { return escape.replacements[ch]; });
-    }
-  } else {
-    if (escape.escapeTestNoEncode.test(html)) {
-      return html.replace(escape.escapeReplaceNoEncode, function(ch) { return escape.replacements[ch]; });
-    }
-  }
-
-  return html;
-}
-
-escape.escapeTest = /[&<>"']/;
-escape.escapeReplace = /[&<>"']/g;
-escape.replacements = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;'
-};
-
-escape.escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/;
-escape.escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g;
-
-function unescape(html) {
-  // explicitly match decimal, hex, and named HTML entities
-  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig, function(_, n) {
-    n = n.toLowerCase();
-    if (n === 'colon') return ':';
-    if (n.charAt(0) === '#') {
-      return n.charAt(1) === 'x'
-        ? String.fromCharCode(parseInt(n.substring(2), 16))
-        : String.fromCharCode(+n.substring(1));
-    }
-    return '';
-  });
-}
-
-function edit(regex, opt) {
-  regex = regex.source || regex;
-  opt = opt || '';
-  return {
-    replace: function(name, val) {
-      val = val.source || val;
-      val = val.replace(/(^|[^\[])\^/g, '$1');
-      regex = regex.replace(name, val);
-      return this;
-    },
-    getRegex: function() {
-      return new RegExp(regex, opt);
-    }
-  };
-}
-
-function cleanUrl(sanitize, base, href) {
-  if (sanitize) {
-    try {
-      var prot = decodeURIComponent(unescape(href))
-        .replace(/[^\w:]/g, '')
-        .toLowerCase();
-    } catch (e) {
-      return null;
-    }
-    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0 || prot.indexOf('data:') === 0) {
-      return null;
-    }
-  }
-  if (base && !originIndependentUrl.test(href)) {
-    href = resolveUrl(base, href);
-  }
-  try {
-    href = encodeURI(href).replace(/%25/g, '%');
-  } catch (e) {
-    return null;
-  }
-  return href;
-}
-
-function resolveUrl(base, href) {
-  if (!baseUrls[' ' + base]) {
-    // we can ignore everything in base after the last slash of its path component,
-    // but we might need to add _that_
-    // https://tools.ietf.org/html/rfc3986#section-3
-    if (/^[^:]+:\/*[^/]*$/.test(base)) {
-      baseUrls[' ' + base] = base + '/';
-    } else {
-      baseUrls[' ' + base] = rtrim(base, '/', true);
-    }
-  }
-  base = baseUrls[' ' + base];
-
-  if (href.slice(0, 2) === '//') {
-    return base.replace(/:[\s\S]*/, ':') + href;
-  } else if (href.charAt(0) === '/') {
-    return base.replace(/(:\/*[^/]*)[\s\S]*/, '$1') + href;
-  } else {
-    return base + href;
-  }
-}
-var baseUrls = {};
-var originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
-
-function noop() {}
-noop.exec = noop;
-
-function merge(obj) {
-  var i = 1,
-      target,
-      key;
-
-  for (; i < arguments.length; i++) {
-    target = arguments[i];
-    for (key in target) {
-      if (Object.prototype.hasOwnProperty.call(target, key)) {
-        obj[key] = target[key];
-      }
-    }
-  }
-
-  return obj;
-}
-
-function splitCells(tableRow, count) {
-  // ensure that every cell-delimiting pipe has a space
-  // before it to distinguish it from an escaped pipe
-  var row = tableRow.replace(/\|/g, function(match, offset, str) {
-        var escaped = false,
-            curr = offset;
-        while (--curr >= 0 && str[curr] === '\\') escaped = !escaped;
-        if (escaped) {
-          // odd number of slashes means | is escaped
-          // so we leave it alone
-          return '|';
-        } else {
-          // add space before unescaped |
-          return ' |';
-        }
-      }),
-      cells = row.split(/ \|/),
-      i = 0;
-
-  if (cells.length > count) {
-    cells.splice(count);
-  } else {
-    while (cells.length < count) cells.push('');
-  }
-
-  for (; i < cells.length; i++) {
-    // leading or trailing whitespace is ignored per the gfm spec
-    cells[i] = cells[i].trim().replace(/\\\|/g, '|');
-  }
-  return cells;
-}
-
-// Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
-// /c*$/ is vulnerable to REDOS.
-// invert: Remove suffix of non-c chars instead. Default falsey.
-function rtrim(str, c, invert) {
-  if (str.length === 0) {
-    return '';
-  }
-
-  // Length of suffix matching the invert condition.
-  var suffLen = 0;
-
-  // Step left until we fail to match the invert condition.
-  while (suffLen < str.length) {
-    var currChar = str.charAt(str.length - suffLen - 1);
-    if (currChar === c && !invert) {
-      suffLen++;
-    } else if (currChar !== c && invert) {
-      suffLen++;
-    } else {
-      break;
-    }
-  }
-
-  return str.substr(0, str.length - suffLen);
-}
-
-function findClosingBracket(str, b) {
-  if (str.indexOf(b[1]) === -1) {
-    return -1;
-  }
-  var level = 0;
-  for (var i = 0; i < str.length; i++) {
-    if (str[i] === '\\') {
-      i++;
-    } else if (str[i] === b[0]) {
-      level++;
-    } else if (str[i] === b[1]) {
-      level--;
-      if (level < 0) {
-        return i;
-      }
-    }
-  }
-  return -1;
-}
-
-function checkSanitizeDeprecation(opt) {
-  if (opt && opt.sanitize && !opt.silent) {
-    console.warn('marked(): sanitize and sanitizer parameters are deprecated since version 0.7.0, should not be used and will be removed in the future. Read more here: https://marked.js.org/#/USING_ADVANCED.md#options');
-  }
-}
-
-/**
- * Marked
- */
-
-function marked(src, opt, callback) {
-  // throw error in case of non string input
-  if (typeof src === 'undefined' || src === null) {
-    throw new Error('marked(): input parameter is undefined or null');
-  }
-  if (typeof src !== 'string') {
-    throw new Error('marked(): input parameter is of type '
-      + Object.prototype.toString.call(src) + ', string expected');
-  }
-
-  if (callback || typeof opt === 'function') {
-    if (!callback) {
-      callback = opt;
-      opt = null;
-    }
-
-    opt = merge({}, marked.defaults, opt || {});
-    checkSanitizeDeprecation(opt);
-
-    var highlight = opt.highlight,
-        tokens,
-        pending,
-        i = 0;
-
-    try {
-      tokens = Lexer.lex(src, opt);
-    } catch (e) {
-      return callback(e);
-    }
-
-    pending = tokens.length;
-
-    var done = function(err) {
-      if (err) {
-        opt.highlight = highlight;
-        return callback(err);
-      }
-
-      var out;
-
-      try {
-        out = Parser.parse(tokens, opt);
-      } catch (e) {
-        err = e;
-      }
-
-      opt.highlight = highlight;
-
-      return err
-        ? callback(err)
-        : callback(null, out);
-    };
-
-    if (!highlight || highlight.length < 3) {
-      return done();
-    }
-
-    delete opt.highlight;
-
-    if (!pending) return done();
-
-    for (; i < tokens.length; i++) {
-      (function(token) {
-        if (token.type !== 'code') {
-          return --pending || done();
-        }
-        return highlight(token.text, token.lang, function(err, code) {
-          if (err) return done(err);
-          if (code == null || code === token.text) {
-            return --pending || done();
-          }
-          token.text = code;
-          token.escaped = true;
-          --pending || done();
-        });
-      })(tokens[i]);
-    }
-
-    return;
-  }
-  try {
-    if (opt) opt = merge({}, marked.defaults, opt);
-    checkSanitizeDeprecation(opt);
-    return Parser.parse(Lexer.lex(src, opt), opt);
-  } catch (e) {
-    e.message += '\nPlease report this to https://github.com/markedjs/marked.';
-    if ((opt || marked.defaults).silent) {
-      return '<p>An error occurred:</p><pre>'
-        + escape(e.message + '', true)
-        + '</pre>';
-    }
-    throw e;
-  }
-}
-
-/**
- * Options
- */
-
-marked.options =
-marked.setOptions = function(opt) {
-  merge(marked.defaults, opt);
-  return marked;
-};
-
-marked.getDefaults = function() {
-  return {
-    baseUrl: null,
-    breaks: false,
-    gfm: true,
-    headerIds: true,
-    headerPrefix: '',
-    highlight: null,
-    langPrefix: 'language-',
-    mangle: true,
-    pedantic: false,
-    renderer: new Renderer(),
-    sanitize: false,
-    sanitizer: null,
-    silent: false,
-    smartLists: false,
-    smartypants: false,
-    xhtml: false
-  };
-};
-
-marked.defaults = marked.getDefaults();
-
-/**
- * Expose
- */
-
-marked.Parser = Parser;
-marked.parser = Parser.parse;
-
-marked.Renderer = Renderer;
-marked.TextRenderer = TextRenderer;
-
-marked.Lexer = Lexer;
-marked.lexer = Lexer.lex;
-
-marked.InlineLexer = InlineLexer;
-marked.inlineLexer = InlineLexer.output;
-
-marked.Slugger = Slugger;
-
-marked.parse = marked;
-
-if (true) {
-  module.exports = marked;
-} else {}
-})(this || (typeof window !== 'undefined' ? window : global));
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -16585,37 +16948,6 @@ module.exports = function (list, options) {
     }
   };
 };
-
-/***/ }),
-
-/***/ "./node_modules/webpack/buildin/global.js":
-/*!***********************************!*\
-  !*** (webpack)/buildin/global.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
 
 /***/ }),
 
@@ -17030,7 +17362,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updatePreview", function() { return updatePreview; });
-/* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! marked */ "./node_modules/marked/lib/marked.js");
+/* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! marked */ "./node_modules/marked/src/marked.js");
 /* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(marked__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _highlighter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../highlighter */ "./wwwroot/js/components/highlighter/index.ts");
 

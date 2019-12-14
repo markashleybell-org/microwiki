@@ -94,7 +94,9 @@ var MicroWiki =
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
+// Imports
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+exports = module.exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
 exports.push([module.i, ".mab-bootstrap-taginput {\r\n    display: flex;\r\n    cursor: text;\r\n}\r\n\r\n.mab-bootstrap-taginput.form-control {\r\n    line-height: normal;\r\n}\r\n\r\n.mab-bootstrap-taginput-tag {\r\n    color: #fff;\r\n    background-color: #007bff;\r\n    display: inline-flex;\r\n    align-items: center;\r\n    padding: .25em .4em;\r\n    font-size: 90%;\r\n    font-weight: 700;\r\n    white-space: nowrap;\r\n    border-radius: .25rem;\r\n    margin-right: 5px;\r\n    transition: background-color 1600ms ease-in;\r\n}\r\n\r\n.mab-bootstrap-taginput-tag .fa {\r\n    margin-left: 5px;\r\n    font-size: 80%;\r\n    cursor: pointer;\r\n}\r\n\r\n.mab-bootstrap-taginput-tag-warning {\r\n    background-color:#cc0000;\r\n    transition: none;\r\n}\r\n\r\n.mab-bootstrap-taginput-input {\r\n    border: solid 1px transparent;\r\n    outline: none;\r\n    width: 100px;\r\n}\r\n\r\n.mab-bootstrap-taginput-input.mab-bootstrap-taginput-input-narrowed {\r\n    width: 1px;\r\n}\r\n\r\n.mab-bootstrap-taginput-input-container {\r\n    position: relative;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestions {\r\n    position: absolute;\r\n    top: 30px;\r\n    left: 0;\r\n    min-width: 200px;\r\n    min-height: 30px;\r\n    background-color: #fff;\r\n    border: solid 1px #e0e0e0;\r\n    border-radius: 3px;\r\n    padding: 3px 0;\r\n    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.25);\r\n    z-index: 10000;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestions-hidden {\r\n    display: none;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestion {\r\n    padding: 5px 10px;\r\n    cursor: pointer;\r\n}\r\n\r\n.mab-bootstrap-taginput-suggestion-selected,\r\n.mab-bootstrap-taginput-suggestion:hover {\r\n    background-color: #007bff;\r\n    color: #fff;\r\n}\r\n", ""]);
 
@@ -125,7 +127,7 @@ module.exports = function (useSourceMap) {
       var content = cssWithMappingToString(item, useSourceMap);
 
       if (item[2]) {
-        return "@media ".concat(item[2], "{").concat(content, "}");
+        return "@media ".concat(item[2], " {").concat(content, "}");
       }
 
       return content;
@@ -140,32 +142,18 @@ module.exports = function (useSourceMap) {
       modules = [[null, modules, '']];
     }
 
-    var alreadyImportedModules = {};
+    for (var i = 0; i < modules.length; i++) {
+      var item = [].concat(modules[i]);
 
-    for (var i = 0; i < this.length; i++) {
-      // eslint-disable-next-line prefer-destructuring
-      var id = this[i][0];
-
-      if (id != null) {
-        alreadyImportedModules[id] = true;
-      }
-    }
-
-    for (var _i = 0; _i < modules.length; _i++) {
-      var item = modules[_i]; // skip already imported module
-      // this implementation is not 100% perfect for weird media query combinations
-      // when a module is imported multiple times with different media queries.
-      // I hope this will never occur (Hey this way we have smaller bundles)
-
-      if (item[0] == null || !alreadyImportedModules[item[0]]) {
-        if (mediaQuery && !item[2]) {
+      if (mediaQuery) {
+        if (!item[2]) {
           item[2] = mediaQuery;
-        } else if (mediaQuery) {
-          item[2] = "(".concat(item[2], ") and (").concat(mediaQuery, ")");
+        } else {
+          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
         }
-
-        list.push(item);
       }
+
+      list.push(item);
     }
   };
 
