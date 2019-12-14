@@ -1,7 +1,19 @@
 import { TagInput } from 'mab-bootstrap-taginput';
-import { applyFormat, createCodeBlock, createEditor, createImage, createLink, getImageData, getLinkData, ICodeBlockProperties, IHtmlLinkProperties, IHtmlImageProperties, removeLink, updatePreview } from './components/editor';
-
 import 'mab-bootstrap-taginput/css/standard.css';
+import {
+    applyFormat,
+    createCodeBlock,
+    createEditor,
+    createImage,
+    createLink,
+    getImageData,
+    getLinkData,
+    ICodeBlockProperties,
+    IHtmlImageProperties,
+    IHtmlLinkProperties,
+    removeLink,
+    updatePreview
+} from './components/editor';
 
 declare const _ALL_TAGS: string[];
 
@@ -19,7 +31,7 @@ editor.setOption('extraKeys', {
 const tagInputElements = document.getElementsByClassName('tag-input');
 
 for (const tagInputElement of tagInputElements) {
-    new TagInput<string>({
+    const tagInput = new TagInput<string>({
         input: (tagInputElement as HTMLElement),
         data: _ALL_TAGS || [],
         getId: item => item,
@@ -112,7 +124,6 @@ imageModal.on('click', '.btn-success', () => {
 imageModal.on('shown.bs.modal', e => {
     imageModal.find('input[name="image-url"]').focus();
 });
-
 
 imageModal.on('hidden.bs.modal', e => {
     editor.focus();
