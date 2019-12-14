@@ -203,6 +203,7 @@ textarea[name=Body] {
     padding: 1em;
     border-radius: 3px;
     border: solid 1px #efefef;
+    background-color: #e7e7e7;
 }
 
 .tag-cloud {
