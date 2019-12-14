@@ -1,7 +1,13 @@
+$main-background-color: #f8f8f8;
+
 body {
-    background-color: #f8f8f8;
+    background-color: $main-background-color;
 }
 
 .breadcrumb {
     background-color: #dedede;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: $main-background-color;
 }

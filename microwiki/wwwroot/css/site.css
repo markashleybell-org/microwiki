@@ -6,6 +6,10 @@ body {
     background-color: #dedede;
 }
 
+.nav-tabs .nav-link.active {
+    background-color: #f8f8f8;
+}
+
 .toc {
     list-style: none;
     padding: 0;
