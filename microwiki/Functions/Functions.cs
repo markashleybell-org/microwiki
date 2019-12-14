@@ -83,24 +83,25 @@ namespace MicroWiki.Functions
             return SiteMapDocumentViewModel.From(document).WithChildren(children);
         }
 
-        public static HtmlString GetSiteMapTreeHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null)
+        public static HtmlString CreateSiteMapItemLinkHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null)
         {
             // If an ID has been passed in, don't link the item for that document
             var itemContent = currentDocumentId != document.ID
                 ? $"<a class=\"document\" href=\"{document.Location}\" data-id=\"{document.ID}\">{document.Title}</a>"
                 : document.Title;
 
-            var childPageLinks = document.Children.Select(c => GetSiteMapTreeHtml(c, currentDocumentId));
+            return new HtmlString($"<i class=\"fa fa-file-text-o\"></i>{itemContent}");
+        }
 
-            var html = $@"
-<ul>
-    <li>
-        <span class=""glyphicon glyphicon-file""></span> 
-        {itemContent}
-        {string.Join(string.Empty, childPageLinks)}
-    </li>
-</ul>
-";
+        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null)
+        {
+            var childPageLinks = document.Children.Select(c => CreateSiteMapItemHtml(c, currentDocumentId));
+
+            var childPageList = childPageLinks.Any()
+                ? $"<ul>{string.Join(string.Empty, childPageLinks)}</ul>"
+                : string.Empty;
+
+            var html = $"<li>{CreateSiteMapItemLinkHtml(document, currentDocumentId)}{childPageList}</li>";
 
             return new HtmlString(html);
         }

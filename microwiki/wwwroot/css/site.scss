@@ -1,7 +1,8 @@
-﻿@import 'partials/typography';
-@import 'partials/_image.scss';
-@import 'partials/_form.scss';
-@import 'partials/_code.scss';
-@import 'partials/_tag.scss';
-@import 'partials/_upload.scss';
-@import 'partials/_editor.scss';
+﻿@import 'partials/global';
+@import 'partials/typography';
+@import 'partials/image';
+@import 'partials/form';
+@import 'partials/code';
+@import 'partials/tag';
+@import 'partials/upload';
+@import 'partials/editor';

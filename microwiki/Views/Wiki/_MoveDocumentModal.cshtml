@@ -12,7 +12,9 @@
         </div>
         <div class="modal-body">
             <p>Click on the page you want to move '<strong>@Model.Title</strong>' to:</p>
-            @GetSiteMapTreeHtml(Model.Root, currentDocumentId: Model.ID)
+            <div class="site-contents">
+                <ul>@CreateSiteMapItemHtml(Model.Root, currentDocumentId: Model.ID)</ul>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

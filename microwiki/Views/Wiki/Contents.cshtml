@@ -9,6 +9,8 @@
 <div class="row">
     <div class="col">
         <h1>Contents</h1>
-        @GetSiteMapTreeHtml(Model.Root)
+        <div class="site-contents">
+            <ul>@CreateSiteMapItemHtml(Model.Root)</ul>
+        </div>
     </div>
 </div>

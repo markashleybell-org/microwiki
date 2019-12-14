@@ -1,3 +1,11 @@
+body {
+    background-color: #f8f8f8;
+}
+
+.breadcrumb {
+    background-color: #dedede;
+}
+
 .toc {
     list-style: none;
     padding: 0;
@@ -13,14 +21,14 @@ code {
 }
 
 blockquote {
-    background-color: #e0e0e0;
+    background-color: #d8d8d8;
     padding: 1rem 1rem 0.01rem 1rem;
     font-style: italic;
 }
 
 .document-meta-data {
     font-size: 0.8rem;
-    color: #9d9d9d;
+    color: #8a8a8a;
 }
 
 .col-actions {
@@ -32,6 +40,35 @@ blockquote {
     font-weight: bold;
     font-size: 1.2rem;
     margin-bottom: 3rem;
+}
+
+.site-contents {
+    color: #666666;
+}
+
+.site-contents ul {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0 6px 30px;
+}
+
+.site-contents ul:first-child {
+    padding-left: 10px;
+}
+
+.site-contents i {
+    margin-right: 10px;
+}
+
+.site-contents li {
+    margin: 0;
+    padding: 0;
+}
+
+#move-document-modal .site-contents {
+    border: solid 1px #e0e0e0;
+    height: 400px;
+    overflow-y: auto;
 }
 
 img {
