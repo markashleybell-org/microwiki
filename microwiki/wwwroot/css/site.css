@@ -10,20 +10,20 @@ body {
     background-color: #f8f8f8;
 }
 
-h1, h2, h3, h4, h5, h6 {
+[class^=col] h1, [class^=col] h2, [class^=col] h3, [class^=col] h4, [class^=col] h5, [class^=col] h6 {
     padding-bottom: 0.5rem;
     border-bottom: solid 1px #ebebeb;
 }
 
-h1 {
+[class^=col] h1 {
     font-size: 2.4rem;
 }
 
-h2 {
+[class^=col] h2 {
     font-size: 1.8rem;
 }
 
-h3 {
+[class^=col] h3 {
     font-size: 1.4rem;
 }
 
