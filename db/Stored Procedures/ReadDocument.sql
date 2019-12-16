@@ -1,13 +1,13 @@
 ﻿
-CREATE PROCEDURE [dbo].[ReadDocument] 
+CREATE PROCEDURE [dbo].[ReadDocument]
 (
     @ID UNIQUEIDENTIFIER = NULL,
     @Location NVARCHAR(256) = NULL
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
-    
+
     DECLARE @Document TABLE (
         [ID]       UNIQUEIDENTIFIER  NOT NULL,
         [ParentID] UNIQUEIDENTIFIER   NULL,
@@ -25,7 +25,7 @@ BEGIN
     BEGIN
         INSERT INTO
             @Document
-        SELECT 
+        SELECT
             ID,
             ParentID,
             Title,
@@ -34,18 +34,18 @@ BEGIN
             Location,
             NULL,
             Username,
-            Created, 
+            Created,
             Updated
-        FROM 
-            Documents 
-        WHERE 
+        FROM
+            Documents
+        WHERE
             ID = @ID
     END
     ELSE IF @Location IS NOT NULL
     BEGIN
         INSERT INTO
             @Document
-        SELECT 
+        SELECT
             ID,
             ParentID,
             Title,
@@ -54,32 +54,32 @@ BEGIN
             Location,
             NULL,
             Username,
-            Created, 
+            Created,
             Updated
-        FROM 
-            Documents 
-        WHERE 
+        FROM
+            Documents
+        WHERE
             Location = @Location
     END
 
-    UPDATE 
+    UPDATE
         doc
-    SET 
+    SET
         Tags = (
             SELECT STUFF((
-                SELECT 
+                SELECT
                     '|' + [Label]
-                FROM 
+                FROM
                     Tags
-                INNER JOIN 
+                INNER JOIN
                     Tags_Documents ON Tags_Documents.TagID = Tags.ID
-                WHERE 
+                WHERE
                     Tags_Documents.DocumentID = doc.ID
                 FOR XML PATH ('')
-            ), 1, 1, '') 
+            ), 1, 1, '')
         )
     FROM
         @Document doc
 
     SELECT * FROM @Document
-END 
+END

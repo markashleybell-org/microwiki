@@ -1,13 +1,13 @@
 ﻿
-CREATE PROCEDURE [dbo].[SearchDocuments] 
+CREATE PROCEDURE [dbo].[SearchDocuments]
 (
     @Query NVARCHAR(255),
     @Tags [dbo].[TagList] READONLY
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
-    
+
     DECLARE @QueryResults [dbo].[GuidList]
     DECLARE @TagResults [dbo].[GuidList]
 
@@ -20,11 +20,11 @@ BEGIN
     BEGIN
         INSERT INTO
             @QueryResults
-        SELECT 
+        SELECT
             d.ID
-        FROM 
+        FROM
             Documents d
-        WHERE 
+        WHERE
             d.Title LIKE '%' + @Query + '%'
         OR
             d.Body LIKE '%' + @Query + '%'
@@ -65,26 +65,26 @@ BEGIN
         SELECT ID FROM @TagResults
     END
 
-    SELECT 
+    SELECT
         d.ID,
         d.Title,
         d.Body,
         d.Location,
         Tags = (
             SELECT STUFF((
-                SELECT 
+                SELECT
                     '|' + [Label]
-                FROM 
+                FROM
                     Tags
-                INNER JOIN 
+                INNER JOIN
                     Tags_Documents ON Tags_Documents.TagID = Tags.ID
-                WHERE 
+                WHERE
                     Tags_Documents.DocumentID = d.ID
                 FOR XML PATH ('')
-            ), 1, 1, '') 
+            ), 1, 1, '')
         )
-    FROM 
+    FROM
         Documents d
     INNER JOIN
         @SearchResults sr ON sr.ID = d.ID
-END 
+END

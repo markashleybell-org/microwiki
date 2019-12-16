@@ -1,36 +1,36 @@
 ﻿
-CREATE PROCEDURE [dbo].[ReadDocuments] 
+CREATE PROCEDURE [dbo].[ReadDocuments]
 (
     @ParentID UNIQUEIDENTIFIER = NULL
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
-    
+
     IF @ParentID IS NOT NULL
     BEGIN
-        SELECT 
+        SELECT
             ID,
             ParentID,
             Title,
             Location
-        FROM 
-            Documents 
+        FROM
+            Documents
         WHERE
             ParentID = @ParentID
-        ORDER BY 
+        ORDER BY
             Title
     END
     ELSE
     BEGIN
-        SELECT 
+        SELECT
             ID,
             ParentID,
             Title,
             Location
-        FROM 
+        FROM
             Documents
-        ORDER BY 
+        ORDER BY
             Title
     END
-END 
+END

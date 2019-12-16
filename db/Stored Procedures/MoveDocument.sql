@@ -1,29 +1,29 @@
 ﻿
-CREATE PROCEDURE [dbo].[MoveDocument] 
+CREATE PROCEDURE [dbo].[MoveDocument]
 (
     @ID UNIQUEIDENTIFIER,
     @ParentID UNIQUEIDENTIFIER,
     @Username NVARCHAR(128)
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
-    
-    UPDATE 
-        Documents 
-    SET 
-        ParentID = @ParentID, 
+
+    UPDATE
+        Documents
+    SET
+        ParentID = @ParentID,
         Username = @Username,
         Updated = GETDATE()
-    WHERE 
+    WHERE
         ID = @ID
-        
+
     EXEC UpdateDocumentLocations
-    
-    SELECT 
-        Location 
-    FROM 
-        Documents 
-    WHERE 
+
+    SELECT
+        Location
+    FROM
+        Documents
+    WHERE
         ID = @ID
-END 
+END

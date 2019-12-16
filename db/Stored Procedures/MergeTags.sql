@@ -1,19 +1,19 @@
 ﻿
-CREATE PROCEDURE [dbo].[MergeTags] 
+CREATE PROCEDURE [dbo].[MergeTags]
 (
     @TagID UNIQUEIDENTIFIER,
     @TagIdsToMerge [dbo].[GuidList] READONLY
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
 
     BEGIN TRY
         BEGIN TRAN
             -- Update any references to tags we're merging to point to the merge target tag
-            UPDATE 
+            UPDATE
                 td
-            SET 
+            SET
                 td.TagID = @TagID
             FROM
                 Tags_Documents td
@@ -24,9 +24,9 @@ BEGIN
                 -- we need to ignore it, otherwise we'll attempt to add a duplicate
                 SELECT * FROM Tags_Documents c WHERE c.TagID = @TagID and c.DocumentID = td.DocumentID
             )
-            
+
             -- Clean up any join records referencing merged tags which didn't get updated above
-            DELETE 
+            DELETE
                 td
             FROM
                 Tags_Documents td
@@ -34,7 +34,7 @@ BEGIN
                 @TagIdsToMerge m ON m.ID = td.TagID
 
             -- Delete the original tag records
-            DELETE 
+            DELETE
                 t
             FROM
                 Tags t
@@ -48,4 +48,4 @@ BEGIN
 
         THROW;
     END CATCH
-END 
+END

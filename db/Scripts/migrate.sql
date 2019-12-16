@@ -21,7 +21,7 @@ INSERT INTO [microwiki].[dbo].[Tags] (
     ID,
     Label
 )
-SELECT 
+SELECT
     ID,
     LOWER(Label)
 FROM

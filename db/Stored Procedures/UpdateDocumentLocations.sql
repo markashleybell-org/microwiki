@@ -1,7 +1,7 @@
 ﻿
-CREATE PROCEDURE [dbo].[UpdateDocumentLocations] 
+CREATE PROCEDURE [dbo].[UpdateDocumentLocations]
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
     BEGIN TRY
         BEGIN TRAN
@@ -26,45 +26,45 @@ BEGIN
 
             WHILE (@Empty > 0)
             BEGIN
-                UPDATE 
+                UPDATE
                     doc
-                SET 
+                SET
                     doc.Location = parent.Location + '/' + ISNULL(doc.Slug, '')
-                FROM 
+                FROM
                     #Documents doc
-                INNER JOIN 
+                INNER JOIN
                     #Documents parent ON parent.ID = doc.ParentID
-                WHERE 
+                WHERE
                     doc.ParentID != @RootID
 
                 SET @Empty = (SELECT COUNT(*) FROM #Documents WHERE Location IS NULL)
 
-                IF @Empty = 0 
+                IF @Empty = 0
                     BREAK
             END
 
-            UPDATE 
+            UPDATE
                 doc
-            SET 
+            SET
                 Location = tmp.Location
-            FROM 
+            FROM
                 Documents doc
-            INNER JOIN 
+            INNER JOIN
                 #Documents tmp ON doc.ID = tmp.ID
 
         COMMIT TRAN
 
-        RETURN 0        
+        RETURN 0
     END TRY
     BEGIN CATCH
-        SELECT 
+        SELECT
             ERROR_NUMBER() AS ErrorNumber,
             ERROR_MESSAGE() AS ErrorMessage,
             ERROR_LINE() AS ErrorLine
 
-        IF(@@TRANCOUNT > 0) 
-            ROLLBACK TRAN   
+        IF(@@TRANCOUNT > 0)
+            ROLLBACK TRAN
 
-        RETURN -1   
-    END CATCH   
-END 
+        RETURN -1
+    END CATCH
+END

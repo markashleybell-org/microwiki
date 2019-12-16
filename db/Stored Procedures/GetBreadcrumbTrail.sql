@@ -1,21 +1,21 @@
 ﻿
-CREATE PROCEDURE [dbo].[GetBreadcrumbTrail] 
+CREATE PROCEDURE [dbo].[GetBreadcrumbTrail]
 (
     @ID UNIQUEIDENTIFIER
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
 
     DECLARE @Documents TABLE (
         Idx INT NOT NULL,
-        ID UNIQUEIDENTIFIER NOT NULL, 
-        ParentID UNIQUEIDENTIFIER NULL, 
-        Title NVARCHAR(128) NOT NULL, 
+        ID UNIQUEIDENTIFIER NOT NULL,
+        ParentID UNIQUEIDENTIFIER NULL,
+        Title NVARCHAR(128) NOT NULL,
         Location NVARCHAR(256) NULL
     )
 
-    INSERT INTO 
+    INSERT INTO
         @Documents (
             ID,
             ParentID,
@@ -23,66 +23,66 @@ BEGIN
             Location,
             Idx
         )
-    SELECT 
+    SELECT
         ID,
         ParentID,
         CASE WHEN ParentID IS NULL THEN 'Home' ELSE Title END,
         CASE WHEN ID = @ID THEN NULL ELSE Location END,
         0
-    FROM 
-        Documents 
-    WHERE 
+    FROM
+        Documents
+    WHERE
         ID = @ID
 
     DECLARE @CurrentID UNIQUEIDENTIFIER
     DECLARE @ParentID UNIQUEIDENTIFIER
     DECLARE @Idx int = 1
-    
-    SELECT 
+
+    SELECT
         @ParentID = ParentID,
         @CurrentID = ID
-    FROM 
-        @Documents 
-    WHERE 
+    FROM
+        @Documents
+    WHERE
         ID = @ID
 
     WHILE (@ParentID IS NOT NULL AND @ParentID != @CurrentID)
     BEGIN
-        INSERT INTO 
+        INSERT INTO
             @Documents (
-                ID, 
-                ParentID, 
-                Title, 
-                Location, 
+                ID,
+                ParentID,
+                Title,
+                Location,
                 Idx
             )
-        SELECT 
+        SELECT
             ID,
             ParentID,
             CASE WHEN ParentID IS NULL THEN 'Home' ELSE Title END,
             CASE WHEN ID = @ID THEN NULL ELSE Location END,
             @Idx
-        FROM 
-            Documents 
-        WHERE 
+        FROM
+            Documents
+        WHERE
             ID = @ParentID
 
-        SELECT 
-            @ParentID = ParentID, 
-            @CurrentID = ID 
-        FROM 
-            @Documents 
-        WHERE 
+        SELECT
+            @ParentID = ParentID,
+            @CurrentID = ID
+        FROM
+            @Documents
+        WHERE
             ID = @ParentID
 
         SET @Idx = @Idx + 1
     END
 
-    SELECT 
-        Title, 
-        Location 
-    FROM 
-        @Documents 
-    ORDER BY 
+    SELECT
+        Title,
+        Location
+    FROM
+        @Documents
+    ORDER BY
         Idx DESC
-END 
+END

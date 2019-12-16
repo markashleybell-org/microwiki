@@ -1,19 +1,19 @@
 ﻿
-CREATE PROCEDURE [dbo].[CheckFileUse] 
+CREATE PROCEDURE [dbo].[CheckFileUse]
 (
     @Location NVARCHAR(512)
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
 
-    SELECT 
+    SELECT
         ID,
         ParentID,
         Title,
         Location
-    FROM 
-        Documents 
+    FROM
+        Documents
     WHERE
         Body LIKE '%' + @Location + '%'
-END 
+END

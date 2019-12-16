@@ -1,89 +1,89 @@
 ﻿
-CREATE PROCEDURE [dbo].[UpdateTags] 
+CREATE PROCEDURE [dbo].[UpdateTags]
 (
     @DocumentID UNIQUEIDENTIFIER,
     @Tags [dbo].[TagList] READONLY
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
 
     DECLARE @TagsToLink TABLE (
-        TagID UNIQUEIDENTIFIER, 
+        TagID UNIQUEIDENTIFIER,
         [Label] NVARCHAR(64)
     )
 
     DECLARE @NewTagData TABLE (
-        TagID UNIQUEIDENTIFIER, 
+        TagID UNIQUEIDENTIFIER,
         [Label] NVARCHAR(64)
     )
 
     -- For any tags which were passed in that already exist, use the current record
-    INSERT INTO 
+    INSERT INTO
         @TagsToLink (
             TagID,
             [Label]
-        ) 
-    SELECT 
+        )
+    SELECT
         t.ID,
         t.[Label]
-    FROM 
-        Tags t 
-    INNER JOIN 
+    FROM
+        Tags t
+    INNER JOIN
         @Tags dt ON dt.[Label] = t.Label
 
     -- Create tag records for any new tags (those which aren't already in @TagsToLink)
-    INSERT INTO 
+    INSERT INTO
         @NewTagData (
             TagID,
             [Label]
         )
-    SELECT 
-        NEWID() AS TagID, 
-        [Label] 
-    FROM 
-        @Tags t 
-    WHERE 
+    SELECT
+        NEWID() AS TagID,
+        [Label]
+    FROM
+        @Tags t
+    WHERE
         NOT EXISTS (SELECT * FROM @TagsToLink WHERE [Label] = t.[Label])
 
-    INSERT INTO 
+    INSERT INTO
         Tags (
             ID,
             [Label]
         )
-    SELECT 
+    SELECT
         TagID,
-        [Label] 
-    FROM 
+        [Label]
+    FROM
         @NewTagData
 
     -- Add the newly-created tag data to the update table
-    INSERT INTO 
+    INSERT INTO
         @TagsToLink (
             TagID,
             [Label]
-        ) 
-    SELECT 
-        TagID, 
-        [Label] 
-    FROM 
+        )
+    SELECT
+        TagID,
+        [Label]
+    FROM
         @NewTagData
 
     -- Delete all existing tag joins (some tags may have been deleted)
-    DELETE FROM 
-        Tags_Documents 
-    WHERE 
+    DELETE FROM
+        Tags_Documents
+    WHERE
         DocumentID = @DocumentID
 
     -- Re-add joins for all existing and new tags
-    INSERT INTO 
+    INSERT INTO
         Tags_Documents (
             TagID,
             DocumentID
         )
-    SELECT 
+    SELECT
         TagID,
-        @DocumentID 
+        @DocumentID
     FROM
         @TagsToLink
 END

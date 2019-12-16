@@ -8,22 +8,22 @@ BEGIN
     DECLARE @ObjectType NVARCHAR(40)
 
     DECLARE UserDefinedObjects CURSOR FOR
-    SELECT 
+    SELECT
         ROUTINE_NAME AS ObjectName,
         ROUTINE_TYPE AS ObjectType
-    FROM 
+    FROM
         INFORMATION_SCHEMA.ROUTINES
-    WHERE 
+    WHERE
         ROUTINE_TYPE = 'PROCEDURE'
     OR
         ROUTINE_TYPE = 'FUNCTION'
     UNION ALL
-    SELECT 
+    SELECT
         name AS ObjectName,
         'USER_DEFINED_TABLE_TYPE' AS ObjectType
-    FROM 
-        sys.types 
-    WHERE 
+    FROM
+        sys.types
+    WHERE
         is_user_defined = 1
     AND
         is_table_type = 1

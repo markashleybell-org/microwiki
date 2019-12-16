@@ -1,5 +1,5 @@
 ﻿
-CREATE PROCEDURE [dbo].[CreateDocument] 
+CREATE PROCEDURE [dbo].[CreateDocument]
 (
     @ID UNIQUEIDENTIFIER,
     @ParentID UNIQUEIDENTIFIER,
@@ -10,24 +10,24 @@ CREATE PROCEDURE [dbo].[CreateDocument]
     @Tags [dbo].[TagList] READONLY
 )
 AS
-BEGIN 
+BEGIN
     SET NOCOUNT ON
-    
+
     DECLARE @RandomSlug NVARCHAR(5)
-    
+
     WHILE EXISTS (SELECT * FROM Documents WHERE Slug = @Slug)
     BEGIN
         SET @RandomSlug = (SELECT LOWER(LEFT(NEWID(), 5)))
         SET @Slug = @Slug + '-' + @RandomSlug
     END
-    
-    INSERT INTO 
+
+    INSERT INTO
         Documents (
-            ID, 
-            ParentID, 
-            Title, 
-            Body, 
-            Slug, 
+            ID,
+            ParentID,
+            Title,
+            Body,
+            Slug,
             Username
         )
     VALUES (
@@ -38,10 +38,10 @@ BEGIN
         @Slug,
         @Username
     )
-        
+
     EXEC UpdateDocumentLocations
-    
+
     EXEC UpdateTags @ID, @Tags
 
     SELECT Location FROM Documents WHERE ID = @ID
-END 
+END

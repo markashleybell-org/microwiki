@@ -10,5 +10,4 @@
     [Updated]  DATETIME       CONSTRAINT [DF_Documents_Updated] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED ([ID] ASC),
     CONSTRAINT [FK_Documents_Documents] FOREIGN KEY ([ParentID]) REFERENCES [dbo].[Documents] ([ID])
-);
-
+)

@@ -1,4 +1,3 @@
-﻿CREATE TYPE [dbo].[GuidList] AS TABLE
-(
+﻿CREATE TYPE [dbo].[GuidList] AS TABLE (
     [ID] UNIQUEIDENTIFIER
 )
