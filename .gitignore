@@ -349,3 +349,6 @@ MigrationBackup/
 
 # Visual Studio Launch Settings
 launchSettings.json
+
+# Database releases
+!db/Releases/

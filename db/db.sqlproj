@@ -122,6 +122,7 @@
     <Folder Include="Publish" />
     <Folder Include="Types" />
     <Folder Include="Scripts" />
+    <Folder Include="Releases" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Documents.sql">
@@ -191,8 +192,6 @@
       <CopyToOutputDirectory>DoNotCopy</CopyToOutputDirectory>
     </None>
     <None Include="Scripts\security.sql" />
-    <None Include="Publish\live.publish.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="Releases\001 Initial Schema.sql" />
   </ItemGroup>
 </Project>
