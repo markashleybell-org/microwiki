@@ -6,8 +6,8 @@ CREATE PROCEDURE [dbo].[ReadDocument]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
-	
+    SET NOCOUNT ON
+    
     DECLARE @Document TABLE (
         [ID]       UNIQUEIDENTIFIER  NOT NULL,
         [ParentID] UNIQUEIDENTIFIER   NULL,
@@ -21,11 +21,11 @@ BEGIN
         [Updated]  DATETIME NOT NULL
     )
 
-	IF @ID IS NOT NULL
-	BEGIN
+    IF @ID IS NOT NULL
+    BEGIN
         INSERT INTO
             @Document
-	    SELECT 
+        SELECT 
             ID,
             ParentID,
             Title,
@@ -45,7 +45,7 @@ BEGIN
     BEGIN
         INSERT INTO
             @Document
-	    SELECT 
+        SELECT 
             ID,
             ParentID,
             Title,
@@ -64,22 +64,22 @@ BEGIN
 
     UPDATE 
         doc
-	SET 
-		Tags = (
-			SELECT STUFF((
+    SET 
+        Tags = (
+            SELECT STUFF((
                 SELECT 
                     '|' + [Label]
-				FROM 
+                FROM 
                     Tags
-				INNER JOIN 
+                INNER JOIN 
                     Tags_Documents ON Tags_Documents.TagID = Tags.ID
-				WHERE 
+                WHERE 
                     Tags_Documents.DocumentID = doc.ID
-				FOR XML PATH ('')
+                FOR XML PATH ('')
             ), 1, 1, '') 
-		)
+        )
     FROM
-		@Document doc
+        @Document doc
 
     SELECT * FROM @Document
-END	
+END 

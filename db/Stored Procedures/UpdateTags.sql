@@ -6,7 +6,7 @@ CREATE PROCEDURE [dbo].[UpdateTags]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
+    SET NOCOUNT ON
 
     DECLARE @TagsToLink TABLE (
         TagID UNIQUEIDENTIFIER, 

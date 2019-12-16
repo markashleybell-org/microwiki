@@ -5,17 +5,17 @@ CREATE PROCEDURE [dbo].[GetBreadcrumbTrail]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
+    SET NOCOUNT ON
 
-	DECLARE @Documents TABLE (
-		Idx INT NOT NULL,
-		ID UNIQUEIDENTIFIER NOT NULL, 
+    DECLARE @Documents TABLE (
+        Idx INT NOT NULL,
+        ID UNIQUEIDENTIFIER NOT NULL, 
         ParentID UNIQUEIDENTIFIER NULL, 
         Title NVARCHAR(128) NOT NULL, 
         Location NVARCHAR(256) NULL
-	)
+    )
 
-	INSERT INTO 
+    INSERT INTO 
         @Documents (
             ID,
             ParentID,
@@ -23,22 +23,22 @@ BEGIN
             Location,
             Idx
         )
-	SELECT 
-		ID,
+    SELECT 
+        ID,
         ParentID,
         CASE WHEN ParentID IS NULL THEN 'Home' ELSE Title END,
         CASE WHEN ID = @ID THEN NULL ELSE Location END,
         0
-	FROM 
-		Documents 
+    FROM 
+        Documents 
     WHERE 
         ID = @ID
 
-	DECLARE @CurrentID UNIQUEIDENTIFIER
-	DECLARE @ParentID UNIQUEIDENTIFIER
-	DECLARE @Idx int = 1
-	
-	SELECT 
+    DECLARE @CurrentID UNIQUEIDENTIFIER
+    DECLARE @ParentID UNIQUEIDENTIFIER
+    DECLARE @Idx int = 1
+    
+    SELECT 
         @ParentID = ParentID,
         @CurrentID = ID
     FROM 
@@ -46,9 +46,9 @@ BEGIN
     WHERE 
         ID = @ID
 
-	WHILE (@ParentID IS NOT NULL AND @ParentID != @CurrentID)
-	BEGIN
-		INSERT INTO 
+    WHILE (@ParentID IS NOT NULL AND @ParentID != @CurrentID)
+    BEGIN
+        INSERT INTO 
             @Documents (
                 ID, 
                 ParentID, 
@@ -56,18 +56,18 @@ BEGIN
                 Location, 
                 Idx
             )
-		SELECT 
-			ID,
+        SELECT 
+            ID,
             ParentID,
             CASE WHEN ParentID IS NULL THEN 'Home' ELSE Title END,
             CASE WHEN ID = @ID THEN NULL ELSE Location END,
             @Idx
-		FROM 
-			Documents 
+        FROM 
+            Documents 
         WHERE 
             ID = @ParentID
 
-		SELECT 
+        SELECT 
             @ParentID = ParentID, 
             @CurrentID = ID 
         FROM 
@@ -75,8 +75,8 @@ BEGIN
         WHERE 
             ID = @ParentID
 
-		SET @Idx = @Idx + 1
-	END
+        SET @Idx = @Idx + 1
+    END
 
     SELECT 
         Title, 
@@ -85,4 +85,4 @@ BEGIN
         @Documents 
     ORDER BY 
         Idx DESC
-END	
+END 

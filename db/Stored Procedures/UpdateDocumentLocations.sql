@@ -2,69 +2,69 @@
 CREATE PROCEDURE [dbo].[UpdateDocumentLocations] 
 AS
 BEGIN 
-	SET NOCOUNT ON
-	BEGIN TRY
-		BEGIN TRAN
+    SET NOCOUNT ON
+    BEGIN TRY
+        BEGIN TRAN
 
-			-- Insert all documents into a temporary table
-			SELECT ID, ParentID, Slug, Location INTO #Documents FROM Documents
+            -- Insert all documents into a temporary table
+            SELECT ID, ParentID, Slug, Location INTO #Documents FROM Documents
 
-			-- Find the root/home document
-			DECLARE @RootID UNIQUEIDENTIFIER = (SELECT ID FROM #Documents WHERE ParentID IS NULL)
+            -- Find the root/home document
+            DECLARE @RootID UNIQUEIDENTIFIER = (SELECT ID FROM #Documents WHERE ParentID IS NULL)
 
-			-- NULL out all Location fields
-			UPDATE #Documents SET Location = NULL
+            -- NULL out all Location fields
+            UPDATE #Documents SET Location = NULL
 
-			-- Update root/home document location specifically
-			UPDATE #Documents SET Location = '/' WHERE ID = @RootID
+            -- Update root/home document location specifically
+            UPDATE #Documents SET Location = '/' WHERE ID = @RootID
 
-			-- Update location for any children of the root/home document
-			UPDATE #Documents SET Location = '/' + ISNULL(Slug, '') WHERE ParentID = @RootID
+            -- Update location for any children of the root/home document
+            UPDATE #Documents SET Location = '/' + ISNULL(Slug, '') WHERE ParentID = @RootID
 
-			-- Figure out how many documents still have an empty Location field
-			DECLARE @Empty INT = (SELECT COUNT(*) FROM #Documents WHERE Location IS NULL)
+            -- Figure out how many documents still have an empty Location field
+            DECLARE @Empty INT = (SELECT COUNT(*) FROM #Documents WHERE Location IS NULL)
 
-			WHILE (@Empty > 0)
-			BEGIN
-				UPDATE 
+            WHILE (@Empty > 0)
+            BEGIN
+                UPDATE 
                     doc
-				SET 
+                SET 
                     doc.Location = parent.Location + '/' + ISNULL(doc.Slug, '')
-				FROM 
+                FROM 
                     #Documents doc
-				INNER JOIN 
+                INNER JOIN 
                     #Documents parent ON parent.ID = doc.ParentID
-				WHERE 
+                WHERE 
                     doc.ParentID != @RootID
 
-				SET @Empty = (SELECT COUNT(*) FROM #Documents WHERE Location IS NULL)
+                SET @Empty = (SELECT COUNT(*) FROM #Documents WHERE Location IS NULL)
 
-				IF @Empty = 0 
+                IF @Empty = 0 
                     BREAK
-			END
+            END
 
-			UPDATE 
+            UPDATE 
                 doc
-			SET 
+            SET 
                 Location = tmp.Location
-			FROM 
+            FROM 
                 Documents doc
-			INNER JOIN 
+            INNER JOIN 
                 #Documents tmp ON doc.ID = tmp.ID
 
-		COMMIT TRAN
+        COMMIT TRAN
 
-		RETURN 0		
-	END TRY
-	BEGIN CATCH
-		SELECT 
+        RETURN 0        
+    END TRY
+    BEGIN CATCH
+        SELECT 
             ERROR_NUMBER() AS ErrorNumber,
             ERROR_MESSAGE() AS ErrorMessage,
             ERROR_LINE() AS ErrorLine
 
-		IF(@@TRANCOUNT > 0) 
-            ROLLBACK TRAN	
+        IF(@@TRANCOUNT > 0) 
+            ROLLBACK TRAN   
 
-		RETURN -1	
-	END CATCH	
-END	
+        RETURN -1   
+    END CATCH   
+END 

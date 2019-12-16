@@ -11,17 +11,17 @@ CREATE PROCEDURE [dbo].[CreateDocument]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
-	
-	DECLARE @RandomSlug NVARCHAR(5)
-	
-	WHILE EXISTS (SELECT * FROM Documents WHERE Slug = @Slug)
-	BEGIN
-	    SET @RandomSlug = (SELECT LOWER(LEFT(NEWID(), 5)))
-	    SET @Slug = @Slug + '-' + @RandomSlug
-	END
-	
-	INSERT INTO 
+    SET NOCOUNT ON
+    
+    DECLARE @RandomSlug NVARCHAR(5)
+    
+    WHILE EXISTS (SELECT * FROM Documents WHERE Slug = @Slug)
+    BEGIN
+        SET @RandomSlug = (SELECT LOWER(LEFT(NEWID(), 5)))
+        SET @Slug = @Slug + '-' + @RandomSlug
+    END
+    
+    INSERT INTO 
         Documents (
             ID, 
             ParentID, 
@@ -44,4 +44,4 @@ BEGIN
     EXEC UpdateTags @ID, @Tags
 
     SELECT Location FROM Documents WHERE ID = @ID
-END	
+END 

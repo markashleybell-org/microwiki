@@ -5,9 +5,9 @@ CREATE PROCEDURE [dbo].[CheckFileUse]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
+    SET NOCOUNT ON
 
-	SELECT 
+    SELECT 
         ID,
         ParentID,
         Title,
@@ -16,4 +16,4 @@ BEGIN
         Documents 
     WHERE
         Body LIKE '%' + @Location + '%'
-END	
+END 

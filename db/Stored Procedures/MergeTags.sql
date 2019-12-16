@@ -6,7 +6,7 @@ CREATE PROCEDURE [dbo].[MergeTags]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
+    SET NOCOUNT ON
 
     BEGIN TRY
         BEGIN TRAN
@@ -48,4 +48,4 @@ BEGIN
 
         THROW;
     END CATCH
-END	
+END 

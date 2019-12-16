@@ -7,14 +7,14 @@ CREATE PROCEDURE [dbo].[MoveDocument]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
-	
-	UPDATE 
+    SET NOCOUNT ON
+    
+    UPDATE 
         Documents 
     SET 
-	    ParentID = @ParentID, 
-	    Username = @Username,
-	    Updated = GETDATE()
+        ParentID = @ParentID, 
+        Username = @Username,
+        Updated = GETDATE()
     WHERE 
         ID = @ID
         
@@ -26,4 +26,4 @@ BEGIN
         Documents 
     WHERE 
         ID = @ID
-END	
+END 

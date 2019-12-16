@@ -5,11 +5,11 @@ CREATE PROCEDURE [dbo].[ReadDocuments]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
-	
-	IF @ParentID IS NOT NULL
-	BEGIN
-	    SELECT 
+    SET NOCOUNT ON
+    
+    IF @ParentID IS NOT NULL
+    BEGIN
+        SELECT 
             ID,
             ParentID,
             Title,
@@ -33,4 +33,4 @@ BEGIN
         ORDER BY 
             Title
     END
-END	
+END 

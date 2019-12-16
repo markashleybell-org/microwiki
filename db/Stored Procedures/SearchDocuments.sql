@@ -6,8 +6,8 @@ CREATE PROCEDURE [dbo].[SearchDocuments]
 )
 AS
 BEGIN 
-	SET NOCOUNT ON
-	
+    SET NOCOUNT ON
+    
     DECLARE @QueryResults [dbo].[GuidList]
     DECLARE @TagResults [dbo].[GuidList]
 
@@ -25,7 +25,7 @@ BEGIN
         FROM 
             Documents d
         WHERE 
-		    d.Title LIKE '%' + @Query + '%'
+            d.Title LIKE '%' + @Query + '%'
         OR
             d.Body LIKE '%' + @Query + '%'
     END
@@ -71,20 +71,20 @@ BEGIN
         d.Body,
         d.Location,
         Tags = (
-			SELECT STUFF((
+            SELECT STUFF((
                 SELECT 
                     '|' + [Label]
-				FROM 
+                FROM 
                     Tags
-				INNER JOIN 
+                INNER JOIN 
                     Tags_Documents ON Tags_Documents.TagID = Tags.ID
-				WHERE 
+                WHERE 
                     Tags_Documents.DocumentID = d.ID
-				FOR XML PATH ('')
+                FOR XML PATH ('')
             ), 1, 1, '') 
-		)
+        )
     FROM 
         Documents d
     INNER JOIN
         @SearchResults sr ON sr.ID = d.ID
-END	
+END 
