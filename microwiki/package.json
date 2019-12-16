@@ -38,8 +38,8 @@
         "codemirror": "5.49.2"
     },
     "scripts": {
-        "build": "webpack --mode=development --display-modules",
-        "watch-ts": "webpack --watch --mode=development"
+        "build": "webpack --mode=production --display-modules",
+        "watch-ts": "webpack --watch --mode=production"
     },
     "browserslist": [
         "defaults"
