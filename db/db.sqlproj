@@ -192,6 +192,8 @@
       <CopyToOutputDirectory>DoNotCopy</CopyToOutputDirectory>
     </None>
     <None Include="Scripts\security.sql" />
-    <None Include="Releases\001 Initial Schema.sql" />
+    <None Include="Releases\001 Initial Schema.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
