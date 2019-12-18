@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[DeleteDocument]
+﻿ALTER PROCEDURE [dbo].[DeleteDocument]
 (
     @ID UNIQUEIDENTIFIER,
     @Username NVARCHAR(128)

@@ -195,5 +195,8 @@
     <None Include="Releases\001 Initial Schema.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Releases\002 DeleteDocument Tags Fix.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
