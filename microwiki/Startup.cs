@@ -31,7 +31,7 @@ namespace MicroWiki
 
             services.Configure<CookiePolicyOptions>(options => {
                 options.CheckConsentNeeded = context => false;
-                options.MinimumSameSitePolicy = SameSiteMode.Strict;
+                options.MinimumSameSitePolicy = SameSiteMode.Lax;
                 options.HttpOnly = HttpOnlyPolicy.Always;
                 options.Secure = CookieSecurePolicy.Always;
             });
