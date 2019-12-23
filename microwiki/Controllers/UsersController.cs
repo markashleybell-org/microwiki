@@ -32,8 +32,14 @@ namespace MicroWiki.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Login() =>
-            View();
+        public IActionResult Login(string returnUrl)
+        {
+            var model = new LoginViewModel {
+                ReturnUrl = returnUrl
+            };
+
+            return View(model);
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -60,7 +66,11 @@ namespace MicroWiki.Controllers
 
             await _httpContextAccessor.HttpContext.SignInAsync(principal, authenticationProperties);
 
-            return Redirect(SiteRootUrl);
+            var returnUrl = !string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)
+                ? model.ReturnUrl
+                : SiteRootUrl;
+
+            return Redirect(returnUrl);
         }
 
         public async Task<IActionResult> Logout()
