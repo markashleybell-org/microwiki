@@ -40,8 +40,6 @@ namespace MicroWiki
                 .AddCookie(authenticationScheme, options => {
                     options.LoginPath = "/users/login";
                     options.LogoutPath = "/users/logout";
-
-                    // options.AccessDeniedPath = "????";
                 });
 
             services.AddScoped<IUserService, UserService>();
