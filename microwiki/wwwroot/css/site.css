@@ -1,5 +1,6 @@
 body {
     background-color: #f8f8f8;
+    padding-bottom: 60px;
 }
 
 .breadcrumb {
@@ -11,8 +12,12 @@ body {
 }
 
 [class^=col] h1, [class^=col] h2, [class^=col] h3, [class^=col] h4, [class^=col] h5, [class^=col] h6 {
-    padding-bottom: 0.5rem;
     border-bottom: solid 1px #ebebeb;
+    padding-bottom: .5rem;
+}
+
+[class^=col] h2, [class^=col] h3, [class^=col] h4, [class^=col] h5, [class^=col] h6 {
+    margin-top: 1rem;
 }
 
 [class^=col] h1 {
@@ -20,11 +25,11 @@ body {
 }
 
 [class^=col] h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
 }
 
 [class^=col] h3 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
 }
 
 .toc {
@@ -50,6 +55,7 @@ blockquote {
 .document-meta-data {
     font-size: 0.8rem;
     color: #8a8a8a;
+    margin-top: 40px;
 }
 
 .col-actions {
