@@ -186,6 +186,9 @@
     <None Include="Scripts\kill.sql" />
     <None Include="Scripts\seed.sql" />
     <None Include="Scripts\migrate.sql" />
+    <None Include="Releases\003 Remove Tags from DeletedDocuments.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Publish\db.publish.xml">
