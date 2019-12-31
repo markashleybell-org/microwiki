@@ -1,7 +1,4 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+# Build Pipeline
 
 trigger:
 - master
@@ -30,22 +27,16 @@ steps:
     msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Application Build'
-  inputs:
-    command: build
-    projects: '**/microwiki.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Publish'
+  displayName: Publish
   inputs:
     command: publish
     publishWebProjects: True
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
 
-- task: PublishPipelineArtifact@0
-  displayName: 'Push Artifact'
+- task: PublishBuildArtifacts@1
+  displayName: Push Artifact
   inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'microwiki-publish-output'
-    targetPath: '$(Build.ArtifactStagingDirectory)'
+    publishLocation: 'Container'
