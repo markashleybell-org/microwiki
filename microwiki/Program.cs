@@ -1,11 +1,14 @@
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace MicroWiki
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args) =>
-            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>().Build().Run();
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(wh => wh.UseStartup<Startup>())
+                .Build()
+                .Run();
     }
 }
