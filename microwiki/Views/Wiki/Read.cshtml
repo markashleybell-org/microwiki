@@ -49,7 +49,7 @@
             <form asp-controller="Wiki" asp-action="Delete" method="post">
                 <p>
                     @Html.HiddenFor(x => x.ID)
-                    <button class="@DeleteButtonClasses delete-page">Delete This Page</button>
+                    <button class="@DeleteButtonClasses delete-page" data-pagetitle="@Model.Title">Delete This Page</button>
                 </p>
             </form>
         }

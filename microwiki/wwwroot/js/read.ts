@@ -1,4 +1,5 @@
 import { highlightElement } from './components/highlighter';
+import { deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
 
 $('pre code').each(highlightElement);
 
@@ -50,19 +51,14 @@ moveDocumentModal.on('click', 'a.document', e => {
 });
 
 $('.delete-page').on('click', e => {
-    const message = 'Are you sure you want to delete this page and all of its ancestors?\n\n'
-        + 'Like, REALLY, TOTALLY, COMPLETELY SURE ?\n\n'
-        + 'Type YES into the box below and click OK to confirm.\n';
-    const result = prompt(message, 'NO');
-    return result === 'YES';
-});
+    e.preventDefault();
 
-$('.delete-upload').on('click', e => {
-    const message = 'Are you sure you want to delete this file?\n\n'
-        + 'Like, REALLY, TOTALLY, COMPLETELY SURE ?\n\n'
-        + 'Type YES into the box below and click OK to confirm.\n';
-    const result = prompt(message, 'NO');
-    return result === 'YES';
+    const button = e.target as HTMLButtonElement;
+    const fileName = button.getAttribute('data-pagetitle');
+
+    const getMessage = () => getDeleteConfirmationMessage('page', fileName);
+
+    deleteWithConfirmation(button.form, 'Delete Page', getMessage);
 });
 
 $('.custom-file-input').on('change', e => {

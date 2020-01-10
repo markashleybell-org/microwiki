@@ -57,7 +57,7 @@
                             <td>
                                 <form asp-controller="Files" asp-action="DeleteUpload" method="post">
                                     <input type="hidden" name="Location" value="@file" />
-                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" />
+                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" data-filename="@System.IO.Path.GetFileName(file)" />
                                 </form>
                             </td>
                         </tr>
