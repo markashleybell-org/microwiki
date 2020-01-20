@@ -40,7 +40,8 @@ namespace MicroWiki.Concrete
                     document.Body,
                     document.Slug,
                     Tags = document.Tags.AsDataRecords().AsTableValuedParameter("dbo.TagList"),
-                    Username = _username
+                    Username = _username,
+                    document.IsPublic
                 };
 
                 await conn.ExecuteSp(
@@ -98,7 +99,8 @@ namespace MicroWiki.Concrete
                     document.Body,
                     document.Slug,
                     Tags = document.Tags.AsDataRecords().AsTableValuedParameter("dbo.TagList"),
-                    Username = _username
+                    Username = _username,
+                    document.IsPublic
                 };
 
                 await conn.ExecuteSp(

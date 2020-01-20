@@ -189,6 +189,9 @@
     <None Include="Releases\003 Remove Tags from DeletedDocuments.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Releases\004 Public Documents.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Publish\db.publish.xml">

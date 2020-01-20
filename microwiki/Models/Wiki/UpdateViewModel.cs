@@ -31,6 +31,8 @@ namespace MicroWiki.Models
 
         public bool IsRootDocument { get; set; }
 
+        public bool IsPublic { get; set; }
+
         public IEnumerable<Tag> AllTags { get; set; }
 
         public MarkdownEditorViewModel MarkdownEditorData =>
@@ -48,7 +50,8 @@ namespace MicroWiki.Models
                 Body = document.Body,
                 Tags = string.Join("|", document.Tags.Select(t => t.Label)),
                 Slug = document.Slug,
-                AllTags = allTags
+                AllTags = allTags,
+                IsPublic = document.IsPublic
             };
 
         public static Document ToDocument(UpdateViewModel model) =>
@@ -60,7 +63,8 @@ namespace MicroWiki.Models
                 CreateSlug(model.Slug),
                 (model.Tags ?? string.Empty)
                     .Split('|', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(t => new Tag(t))
+                    .Select(t => new Tag(t)),
+                model.IsPublic
             );
     }
 }

@@ -13,7 +13,8 @@ namespace MicroWiki.Domain
             string title,
             string body,
             string slug,
-            IEnumerable<Tag> tags)
+            IEnumerable<Tag> tags,
+            bool isPublic)
             : this(
                   id,
                   parentID,
@@ -24,7 +25,8 @@ namespace MicroWiki.Domain
                   tags,
                   default,
                   default,
-                  default)
+                  default,
+                  isPublic)
         {
         }
 
@@ -38,7 +40,8 @@ namespace MicroWiki.Domain
             string tags,
             string username,
             DateTime created,
-            DateTime updated)
+            DateTime updated,
+            bool isPublic)
             : this(
                   id,
                   parentID,
@@ -50,7 +53,8 @@ namespace MicroWiki.Domain
                   username,
                   created,
                   updated,
-                  null)
+                  null,
+                  isPublic)
         {
         }
 
@@ -64,7 +68,8 @@ namespace MicroWiki.Domain
             IEnumerable<Tag> tags,
             string username,
             DateTime created,
-            DateTime updated)
+            DateTime updated,
+            bool isPublic)
             : this(
                   id,
                   parentID,
@@ -76,7 +81,8 @@ namespace MicroWiki.Domain
                   username,
                   created,
                   updated,
-                  null)
+                  null,
+                  isPublic)
         {
         }
 
@@ -91,7 +97,8 @@ namespace MicroWiki.Domain
             string username,
             DateTime created,
             DateTime updated,
-            IEnumerable<ChildDocument> children)
+            IEnumerable<ChildDocument> children,
+            bool isPublic)
         {
             ID = id;
             ParentID = parentID;
@@ -99,6 +106,7 @@ namespace MicroWiki.Domain
             Body = body;
             Slug = slug;
             Location = location;
+            IsPublic = isPublic;
             Tags = tags ?? Enumerable.Empty<Tag>();
             Username = username;
             Created = created;
@@ -117,6 +125,8 @@ namespace MicroWiki.Domain
         public string Slug { get; }
 
         public string Location { get; }
+
+        public bool IsPublic { get; }
 
         public IEnumerable<Tag> Tags { get; }
 
@@ -140,7 +150,8 @@ namespace MicroWiki.Domain
                 Username,
                 Created,
                 Updated,
-                children
+                children,
+                IsPublic
             );
     }
 }

@@ -15,9 +15,9 @@ GO
 DECLARE @RootID UNIQUEIDENTIFIER = NEWID()
 
 INSERT INTO [Documents]
-    ([ID], [ParentID], [Title], [Body], [Location], [Username])
+    ([ID], [ParentID], [Title], [Body], [Location], [Username],[IsPublic])
 VALUES
-    (@RootID, NULL, 'Welcome to MicroWiki!', 'You can [Edit](/wiki/update/' + CONVERT(NVARCHAR(64), @RootID) + ') this page now, or [Add a Child Page](/wiki/create?parentID=' + CONVERT(NVARCHAR(64), @RootID) + ').', '/', 'SYSTEM');
+    (@RootID, NULL, 'Welcome to MicroWiki!', 'You can [Edit](/wiki/update/' + CONVERT(NVARCHAR(64), @RootID) + ') this page now, or [Add a Child Page](/wiki/create?parentID=' + CONVERT(NVARCHAR(64), @RootID) + ').', '/', 'SYSTEM', 0);
 GO
 
 SELECT * FROM [Documents]
