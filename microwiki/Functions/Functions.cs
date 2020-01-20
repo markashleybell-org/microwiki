@@ -93,9 +93,11 @@ namespace MicroWiki.Functions
             return new HtmlString($"<i class=\"fa fa-file-text-o\"></i>{itemContent}");
         }
 
-        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null)
+        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null, bool showPrivate = false)
         {
-            var childPageLinks = document.Children.Select(c => CreateSiteMapItemHtml(c, currentDocumentId));
+            var childPageLinks = document.Children
+                .Where(c => c.IsPublic || showPrivate)
+                .Select(c => CreateSiteMapItemHtml(c, currentDocumentId));
 
             var childPageList = childPageLinks.Any()
                 ? $"<ul>{string.Join(string.Empty, childPageLinks)}</ul>"

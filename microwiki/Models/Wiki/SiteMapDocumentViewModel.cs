@@ -11,13 +11,15 @@ namespace MicroWiki.Models
             Guid id,
             Guid? parentID,
             string title,
-            string location)
+            string location,
+            bool isPublic)
             : this(
                   id,
                   parentID,
                   title,
                   location,
-                  null)
+                  null,
+                  isPublic)
         {
         }
 
@@ -26,13 +28,15 @@ namespace MicroWiki.Models
             Guid? parentID,
             string title,
             string location,
-            IEnumerable<SiteMapDocumentViewModel> children)
+            IEnumerable<SiteMapDocumentViewModel> children,
+            bool isPublic)
         {
             ID = id;
             ParentID = parentID;
             Title = title;
             Location = location;
             Children = children ?? Enumerable.Empty<SiteMapDocumentViewModel>();
+            IsPublic = isPublic;
         }
 
         public Guid ID { get; }
@@ -45,12 +49,15 @@ namespace MicroWiki.Models
 
         public IEnumerable<SiteMapDocumentViewModel> Children { get; }
 
+        public bool IsPublic { get; }
+
         public static SiteMapDocumentViewModel From(SiteMapDocument document) =>
             new SiteMapDocumentViewModel(
                 document.ID,
                 document.ParentID,
                 document.Title,
-                document.Location
+                document.Location,
+                document.IsPublic
             );
 
         public SiteMapDocumentViewModel WithChildren(IEnumerable<SiteMapDocumentViewModel> children) =>
@@ -59,7 +66,8 @@ namespace MicroWiki.Models
                 ParentID,
                 Title,
                 Location,
-                children
+                children,
+                IsPublic
             );
     }
 }

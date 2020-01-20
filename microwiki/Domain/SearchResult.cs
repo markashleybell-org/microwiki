@@ -13,13 +13,15 @@ namespace MicroWiki.Domain
             string title,
             string body,
             string location,
-            string tags)
+            string tags,
+            bool isPublic)
         {
             ID = id;
             Title = title;
             Body = body;
             Location = location;
             Tags = TagList(tags);
+            IsPublic = isPublic;
         }
 
         public Guid ID { get; }
@@ -34,5 +36,7 @@ namespace MicroWiki.Domain
 
         public string Summary =>
             !string.IsNullOrWhiteSpace(Body) ? Body.Length > 200 ? Body.Substring(0, 200) : Body : null;
+
+        public bool IsPublic { get; }
     }
 }

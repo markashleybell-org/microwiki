@@ -11,7 +11,7 @@ using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Controllers
 {
-   
+    
     public class WikiController : ControllerBase
     {
         private readonly IRepository _repository;
@@ -73,6 +73,11 @@ namespace MicroWiki.Controllers
                 return NotFound();
             }
 
+            if (!document.IsPublic && !User.Identity.IsAuthenticated)
+            {
+                return new ChallengeResult();
+            }
+
             var breadcrumbTrailData = new BreadcrumbTrailViewModel {
                 Segments = await _repository.GetBreadcrumbTrail(document.ID)
             };
@@ -125,7 +130,7 @@ namespace MicroWiki.Controllers
             return Redirect(SiteRootUrl);
         }
 
-        [Authorize]
+   
         public async Task<IActionResult> Contents()
         {
             var model = new ContentsViewModel {

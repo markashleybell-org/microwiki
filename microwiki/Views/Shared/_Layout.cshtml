@@ -36,11 +36,12 @@
                     <button class="btn btn-info my-2 my-sm-0" type="submit">Search</button>
                 </form>
                 <ul class="navbar-nav ml-sm-3">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Wiki" asp-action="Contents">Contents</a>
+                    </li>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Wiki" asp-action="Contents">Contents</a>
-                        </li>
+
                         <li class="nav-item dropdown mr-md-4">
                             <a class="nav-link dropdown-toggle" href="#" id="tags-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Tags
