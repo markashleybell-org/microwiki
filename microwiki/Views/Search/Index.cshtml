@@ -16,7 +16,8 @@
 
         <hr />
 
-        @foreach (var result in Model.SearchResults)
+        @foreach (var result in Model.SearchResults
+            .Where(d=> d.IsPublic || User.Identity.IsAuthenticated))
         {
             <h2><a href="@result.Location">@result.Title</a></h2>
 
