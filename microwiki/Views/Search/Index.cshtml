@@ -16,13 +16,24 @@
 
         <hr />
 
-        @foreach (var result in Model.SearchResults)
+        @foreach (var result in Model.SearchResults
+            .Where(d=> d.IsPublic || User.Identity.IsAuthenticated))
         {
             <h2><a href="@result.Location">@result.Title</a></h2>
 
             <tag-links tags="result.Tags" />
 
-            <p>@(result.Summary ?? "<i>Page has no body text</i>")</p>
+            <p>
+                @if (String.IsNullOrEmpty(result.Summary))
+                {
+                    <em>Page has no body text</em>
+                }
+                else
+                {
+                    @(result.Summary)
+                }
+                
+            </p>
         }
     </div>
 </div>

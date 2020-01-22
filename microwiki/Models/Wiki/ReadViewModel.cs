@@ -60,7 +60,8 @@ namespace MicroWiki.Models
                 Updated = document.Updated,
                 Children = document.Children.Select(c => new ChildDocumentViewModel {
                     Location = c.Location,
-                    Title = c.Title
+                    Title = c.Title,
+                    IsPublic = c.IsPublic
                 })
             };
     }

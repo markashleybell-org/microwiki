@@ -5,5 +5,7 @@ namespace MicroWiki.Models
         public string Title { get; set; }
 
         public string Location { get; set; }
+
+        public bool IsPublic { get; set; }
     }
 }

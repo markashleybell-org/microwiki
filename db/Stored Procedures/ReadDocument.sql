@@ -18,7 +18,8 @@ BEGIN
         [Tags]     NVARCHAR(1024) NULL,
         [Username] NVARCHAR (128) NOT NULL,
         [Created]  DATETIME NOT NULL,
-        [Updated]  DATETIME NOT NULL
+        [Updated]  DATETIME NOT NULL,
+        [IsPublic] BIT NOT NULL
     )
 
     IF @ID IS NOT NULL
@@ -35,7 +36,8 @@ BEGIN
             NULL,
             Username,
             Created,
-            Updated
+            Updated,
+            IsPublic
         FROM
             Documents
         WHERE
@@ -55,7 +57,8 @@ BEGIN
             NULL,
             Username,
             Created,
-            Updated
+            Updated,
+            IsPublic
         FROM
             Documents
         WHERE

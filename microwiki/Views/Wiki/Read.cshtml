@@ -24,7 +24,8 @@
         @if (Model.Children.Any())
         {
             <ul class="toc">
-                @foreach (var child in Model.Children)
+                @foreach (var child in Model.Children
+                   .Where(c => c.IsPublic || User.Identity.IsAuthenticated))
                 {
                     <li><a href="@child.Location">@child.Title</a> &raquo;</li>
                 }
@@ -33,25 +34,28 @@
         <p class="document-meta-data">Created on @Model.Created.ToString("dd/MM/yyyy HH:mm") | Last update @Model.Updated.ToString("dd/MM/yyyy HH:mm") by @Model.Username</p>
     </div>
     <div class="@ActionColumnClasses">
-        <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = ActionButtonClasses })</p>
-
-        <p>@Html.ActionLink("New Child Page", "Create", new { parentID = Model.ID }, new { @class = ActionButtonClasses })</p>
-
-        @if (!Model.IsRootDocument)
+        @if (User.Identity.IsAuthenticated)
         {
-            <p>
-                <a id="move-document-button" href="#move-document-modal" data-id="@Model.ID" data-title="@Model.Title" class="@ActionButtonClasses">Move This Page</a>
-            </p>
-        }
+            <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = ActionButtonClasses })</p>
 
-        @if (!Model.IsRootDocument)
-        {
-            <form asp-controller="Wiki" asp-action="Delete" method="post">
+            <p>@Html.ActionLink("New Child Page", "Create", new { parentID = Model.ID }, new { @class = ActionButtonClasses })</p>
+
+            @if (!Model.IsRootDocument)
+            {
                 <p>
-                    @Html.HiddenFor(x => x.ID)
-                    <button class="@DeleteButtonClasses delete-page" data-pagetitle="@Model.Title">Delete This Page</button>
+                    <a id="move-document-button" href="#move-document-modal" data-id="@Model.ID" data-title="@Model.Title" class="@ActionButtonClasses">Move This Page</a>
                 </p>
-            </form>
+            }
+
+            @if (!Model.IsRootDocument)
+            {
+                <form asp-controller="Wiki" asp-action="Delete" method="post">
+                    <p>
+                        @Html.HiddenFor(x => x.ID)
+                        <button class="@DeleteButtonClasses delete-page" data-pagetitle="@Model.Title">Delete This Page</button>
+                    </p>
+                </form>
+            }
         }
     </div>
 </div>

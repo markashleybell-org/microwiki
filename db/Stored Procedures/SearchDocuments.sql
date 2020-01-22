@@ -82,7 +82,8 @@ BEGIN
                     Tags_Documents.DocumentID = d.ID
                 FOR XML PATH ('')
             ), 1, 1, '')
-        )
+        ),
+        d.IsPublic
     FROM
         Documents d
     INNER JOIN

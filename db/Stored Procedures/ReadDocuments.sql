@@ -13,7 +13,8 @@ BEGIN
             ID,
             ParentID,
             Title,
-            Location
+            Location,
+            IsPublic
         FROM
             Documents
         WHERE
@@ -27,7 +28,8 @@ BEGIN
             ID,
             ParentID,
             Title,
-            Location
+            Location,
+            IsPublic
         FROM
             Documents
         ORDER BY

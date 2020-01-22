@@ -18,6 +18,6 @@ namespace MicroWiki.Models
         public IEnumerable<SearchResult> SearchResults { get; set; }
 
         public HtmlString QueryHtmlForDisplay =>
-            new HtmlString(Query.Replace("[", "<span class=\"badge badge-primary\">").Replace("]", "</span>"));
+            new HtmlString(Query?.Replace("[", "<span class=\"badge badge-primary\">").Replace("]", "</span>"));
     }
 }

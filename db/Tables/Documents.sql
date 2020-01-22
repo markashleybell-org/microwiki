@@ -8,6 +8,7 @@
     [Username] NVARCHAR (128) NOT NULL,
     [Created]  DATETIME       CONSTRAINT [DF_Documents_Created] DEFAULT (getdate()) NOT NULL,
     [Updated]  DATETIME       CONSTRAINT [DF_Documents_Updated] DEFAULT (getdate()) NOT NULL,
+    [IsPublic] BIT NOT NULL DEFAULT 0, 
     CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED ([ID] ASC),
     CONSTRAINT [FK_Documents_Documents] FOREIGN KEY ([ParentID]) REFERENCES [dbo].[Documents] ([ID])
 )

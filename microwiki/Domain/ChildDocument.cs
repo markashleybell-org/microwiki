@@ -8,12 +8,14 @@ namespace MicroWiki.Domain
             Guid id,
             Guid parentID,
             string title,
-            string location)
+            string location,
+            bool isPublic)
         {
             ID = id;
             ParentID = parentID;
             Title = title;
             Location = location;
+            IsPublic = isPublic;
         }
 
         public Guid ID { get; }
@@ -23,5 +25,7 @@ namespace MicroWiki.Domain
         public string Title { get; }
 
         public string Location { get; }
+
+        public bool IsPublic { get; }
     }
 }

@@ -7,7 +7,11 @@ CREATE PROCEDURE [dbo].[CreateDocument]
     @Body NVARCHAR(max),
     @Slug NVARCHAR(256),
     @Username NVARCHAR(128),
-    @Tags [dbo].[TagList] READONLY
+    @Tags [dbo].[TagList] READONLY,
+    @IsPublic [bit] NOT NULL
+
+
+
 )
 AS
 BEGIN
@@ -28,7 +32,8 @@ BEGIN
             Title,
             Body,
             Slug,
-            Username
+            Username,
+            IsPublic
         )
     VALUES (
         @ID,
@@ -36,7 +41,8 @@ BEGIN
         @Title,
         @Body,
         @Slug,
-        @Username
+        @Username,
+        @IsPublic
     )
 
     EXEC UpdateDocumentLocations

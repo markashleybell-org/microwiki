@@ -11,7 +11,7 @@ using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Controllers
 {
-    [Authorize]
+    
     public class WikiController : ControllerBase
     {
         private readonly IRepository _repository;
@@ -28,6 +28,7 @@ namespace MicroWiki.Controllers
             return PartialView(nameof(BreadcrumbTrail), model);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Create(Guid parentID)
         {
@@ -45,6 +46,7 @@ namespace MicroWiki.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateViewModel model)
         {
@@ -71,6 +73,11 @@ namespace MicroWiki.Controllers
                 return NotFound();
             }
 
+            if (!document.IsPublic && !User.Identity.IsAuthenticated)
+            {
+                return new ChallengeResult();
+            }
+
             var breadcrumbTrailData = new BreadcrumbTrailViewModel {
                 Segments = await _repository.GetBreadcrumbTrail(document.ID)
             };
@@ -78,6 +85,7 @@ namespace MicroWiki.Controllers
             return View(ReadViewModel.From(document, breadcrumbTrailData));
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Update(Guid id)
         {
@@ -95,6 +103,7 @@ namespace MicroWiki.Controllers
                 : NotFound();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Update(UpdateViewModel model)
         {
@@ -112,6 +121,7 @@ namespace MicroWiki.Controllers
             return Redirect(document.Location);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -120,6 +130,7 @@ namespace MicroWiki.Controllers
             return Redirect(SiteRootUrl);
         }
 
+   
         public async Task<IActionResult> Contents()
         {
             var model = new ContentsViewModel {
@@ -129,6 +140,7 @@ namespace MicroWiki.Controllers
             return View(model);
         }
 
+        [Authorize]
         public async Task<IActionResult> EditorTestHarness(Guid? id)
         {
             var model = new EditorTestHarnessViewModel();
@@ -143,6 +155,7 @@ namespace MicroWiki.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Move(Guid id, Guid newParentID)
         {
@@ -151,6 +164,7 @@ namespace MicroWiki.Controllers
             return Json(new { newLocation });
         }
 
+        [Authorize]
         public async Task<IActionResult> MoveDocumentModal(Guid currentDocumentId, string currentDocumentTitle)
         {
             var model = new MoveDocumentModalViewModel {
@@ -162,6 +176,7 @@ namespace MicroWiki.Controllers
             return PartialView(nameof(MoveDocumentModal), model);
         }
 
+        [Authorize]
         private async Task<SiteMapDocumentViewModel> GetSiteMap()
         {
             var documents = await _repository.ReadAllDocuments();
