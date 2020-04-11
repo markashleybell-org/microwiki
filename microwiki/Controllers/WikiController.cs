@@ -11,7 +11,6 @@ using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Controllers
 {
-    
     public class WikiController : ControllerBase
     {
         private readonly IRepository _repository;
@@ -130,7 +129,6 @@ namespace MicroWiki.Controllers
             return Redirect(SiteRootUrl);
         }
 
-   
         public async Task<IActionResult> Contents()
         {
             var model = new ContentsViewModel {

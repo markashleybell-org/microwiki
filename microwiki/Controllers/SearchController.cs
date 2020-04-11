@@ -6,7 +6,6 @@ using MicroWiki.Models;
 
 namespace MicroWiki.Controllers
 {
-    
     public class SearchController : ControllerBase
     {
         private readonly ISearchService _searchService;
