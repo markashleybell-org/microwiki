@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[CheckFileUse]
+﻿ALTER PROCEDURE [dbo].[CheckFileUse]
 (
     @Location NVARCHAR(512)
 )
@@ -18,3 +17,4 @@ BEGIN
     WHERE
         Body LIKE '%' + @Location + '%'
 END
+GO
