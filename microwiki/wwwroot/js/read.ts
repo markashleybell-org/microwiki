@@ -60,9 +60,3 @@ $('.delete-page').on('click', e => {
 
     deleteWithConfirmation(button.form, 'Delete Page', getMessage);
 });
-
-$('.custom-file-input').on('change', e => {
-    const input = $(e.target);
-    const fileName = (input.val() as string).split('\\').pop();
-    input.siblings('.custom-file-label').addClass('selected').html(fileName);
-});
