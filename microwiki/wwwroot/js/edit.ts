@@ -25,7 +25,9 @@ editor.setOption('extraKeys', {
     'Tab': 'indentMore',
     'Shift-Tab': 'indentLess',
     'Ctrl-B': () => applyFormat(editor, 'bold'),
-    'Ctrl-I': () => applyFormat(editor, 'italic')
+    'Ctrl-I': () => applyFormat(editor, 'italic'),
+    'Home': 'goLineLeft',
+    'End': 'goLineRight'
 });
 
 const tagInputElements = document.getElementsByClassName('tag-input');
