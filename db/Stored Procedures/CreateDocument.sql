@@ -8,10 +8,7 @@ CREATE PROCEDURE [dbo].[CreateDocument]
     @Slug NVARCHAR(256),
     @Username NVARCHAR(128),
     @Tags [dbo].[TagList] READONLY,
-    @IsPublic [bit] NOT NULL
-
-
-
+    @IsPublic BIT
 )
 AS
 BEGIN
