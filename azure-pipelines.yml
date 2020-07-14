@@ -19,6 +19,32 @@ steps:
     clean: true
     msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
 
+- task: Npm@1
+  displayName: 'NPM Package Restore'
+  inputs:
+    command: 'ci'
+    workingDir: '$(Build.SourcesDirectory)/microwiki'
+
+- task: Npm@1
+  displayName: 'NPM Build'
+  inputs:
+    command: 'custom'
+    workingDir: '$(Build.SourcesDirectory)/microwiki'
+    customCommand: 'run build'
+
+- task: Npm@1
+  displayName: 'NPM Build CSS'
+  inputs:
+    command: 'custom'
+    workingDir: '$(Build.SourcesDirectory)/microwiki'
+    customCommand: 'run build-css'
+
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '3.1.301'
+
 - task: DotNetCoreCLI@2
   displayName: Publish
   inputs:
