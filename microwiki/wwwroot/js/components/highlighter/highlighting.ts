@@ -1,6 +1,6 @@
-import hljs from 'highlight.js/lib/highlight';
+import hljs from 'highlight.js/lib/core';
 
-import cs from 'highlight.js/lib/languages/cs';
+import csharp from 'highlight.js/lib/languages/csharp';
 import css from 'highlight.js/lib/languages/css';
 import javascript from 'highlight.js/lib/languages/javascript';
 import powershell from 'highlight.js/lib/languages/powershell';
@@ -8,7 +8,7 @@ import sql from 'highlight.js/lib/languages/sql';
 import typescript from 'highlight.js/lib/languages/typescript';
 import xml from 'highlight.js/lib/languages/xml';
 
-hljs.registerLanguage('cs', cs);
+hljs.registerLanguage('cs', csharp);
 hljs.registerLanguage('css', css);
 hljs.registerLanguage('js', javascript);
 hljs.registerLanguage('ps', powershell);
