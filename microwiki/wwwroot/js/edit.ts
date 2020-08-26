@@ -1,3 +1,4 @@
+import Dropzone from 'dropzone';
 import { TagInput } from 'mab-bootstrap-taginput';
 import 'mab-bootstrap-taginput/css/standard.css';
 import {
@@ -196,3 +197,18 @@ $('a[data-toggle="tab"]').on('show.bs.tab', e => {
         updatePreview(val, tabContent);
     }
 });
+
+Dropzone.autoDiscover = false;
+
+var zone = new Dropzone('.dropzone');
+
+document.onpaste = function (event) {
+    var items = (event.clipboardData || event.clipboardData).items;
+    for (let k in items) {
+        var item = items[k];
+        if (item.kind === 'file') {
+            var tmp = item.getAsFile() as Dropzone.DropzoneFile;
+            zone.addFile(tmp);
+        }
+    }
+}
