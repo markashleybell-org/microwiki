@@ -35,7 +35,7 @@
         "js-cookie": "2.2.1",
         "mab-bootstrap-taginput": "0.0.7",
         "marked": "^1.2.0",
-        "sweetalert2": "^9.17.1",
+        "sweetalert2": "^10.6.1",
         "tslib": "^2.0.3"
     },
     "scripts": {
