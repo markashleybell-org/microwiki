@@ -200,10 +200,33 @@ $('a[data-toggle="tab"]').on('show.bs.tab', e => {
 
 Dropzone.autoDiscover = false;
 
-var zone = new Dropzone('.dropzone');
+var zone = new Dropzone('.editor-dropzone', {
+    paramName: 'UploadedFile',
+    previewTemplate: '<div class="dz-preview dz-file-preview"></div>'
+});
+
+zone.on('success', (file: any, response: any) => {
+    console.log(file);
+    console.log(response);
+
+    const data: IHtmlImageProperties = { alt: null, url: response.uploadedFileName };
+
+    createImage(editor, data);
+});
+
+editor.on('drop', function (data, e) {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        const file = files[0] as Dropzone.DropzoneFile;
+        zone.addFile(file);
+    }
+});
 
 document.onpaste = function (event) {
-    var items = (event.clipboardData || event.clipboardData).items;
+    var items = event.clipboardData.items;
+
     for (let k in items) {
         var item = items[k];
         if (item.kind === 'file') {

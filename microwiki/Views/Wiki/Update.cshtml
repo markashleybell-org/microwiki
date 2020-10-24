@@ -59,7 +59,7 @@
         </form>
     </div>
     <div class="@ActionColumnClasses">
-        <p><a asp-controller="Files" asp-action="Upload" target="_blank" class="@ActionButtonClasses">Upload File</a></p>
+        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone"></form>
     </div>
 </div>
 
@@ -70,7 +70,7 @@
 }
 
 @section modals {
-    @{ await Html.RenderPartialAsync("_EditorCodeBlockDialog"); }    
+    @{ await Html.RenderPartialAsync("_EditorCodeBlockDialog"); }
     @{ await Html.RenderPartialAsync("_EditorLinkDialog"); }
     @{ await Html.RenderPartialAsync("_EditorImageDialog"); }
 }

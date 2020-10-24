@@ -54,9 +54,7 @@
         </form>
     </div>
     <div class="@ActionColumnClasses">
-        <p><a asp-controller="Files" asp-action="Upload" target="_blank" class="@ActionButtonClasses">Upload File</a></p>
-
-        <form asp-controller="Files" asp-action="Upload" class="dropzone"></form>
+        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone"></form>
     </div>
 </div>
 
