@@ -59,7 +59,9 @@
         </form>
     </div>
     <div class="@ActionColumnClasses">
-        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone"></form>
+        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone">
+            <input type="hidden" name="FileNamePrefix" value="@Model.ID" />
+        </form>
     </div>
 </div>
 

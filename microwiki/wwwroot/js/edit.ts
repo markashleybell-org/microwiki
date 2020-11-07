@@ -206,9 +206,6 @@ var zone = new Dropzone('.editor-dropzone', {
 });
 
 zone.on('success', (file: any, response: any) => {
-    console.log(file);
-    console.log(response);
-
     const data: IHtmlImageProperties = { alt: null, url: response.uploadedFileName };
 
     createImage(editor, data);

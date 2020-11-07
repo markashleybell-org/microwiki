@@ -44,6 +44,7 @@
                 <editor asp-for="Body" />
             </div>
 
+            <input asp-for="ID" type="hidden" />
             <input asp-for="ParentID" type="hidden" />
 
             <input asp-for="ParentTitle" type="hidden" />
@@ -54,7 +55,9 @@
         </form>
     </div>
     <div class="@ActionColumnClasses">
-        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone"></form>
+        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone">
+            <input type="hidden" name="FileNamePrefix" value="@Model.ID" />
+        </form>
     </div>
 </div>
 

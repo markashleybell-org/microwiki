@@ -17,6 +17,8 @@ namespace MicroWiki.Models
 
         public string UploadedFileName { get; set; }
 
+        public string FileNamePrefix { get; set; }
+
         public IEnumerable<string> Files { get; set; }
             = Enumerable.Empty<string>();
     }
