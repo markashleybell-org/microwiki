@@ -39,12 +39,6 @@ steps:
     workingDir: '$(Build.SourcesDirectory)/microwiki'
     customCommand: 'run build-css'
 
-- task: UseDotNet@2
-  displayName: 'Install .NET Core SDK'
-  inputs:
-    packageType: 'sdk'
-    version: '3.1.301'
-
 - task: DotNetCoreCLI@2
   displayName: Publish
   inputs:
