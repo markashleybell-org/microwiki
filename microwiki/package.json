@@ -39,7 +39,7 @@
         "tslib": "^2.0.3"
     },
     "scripts": {
-        "build": "webpack --mode=production --display-modules",
+        "build": "webpack --mode=production",
         "build-css": "gulp sass",
         "watch-ts": "webpack --watch --mode=production"
     },
