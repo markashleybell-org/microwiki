@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <TypeScriptToolsVersion>4.0</TypeScriptToolsVersion>
+        <TypeScriptToolsVersion>4.1</TypeScriptToolsVersion>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <LangVersion>latest</LangVersion>
         <CodeAnalysisRuleSet>..\microwiki.ruleset</CodeAnalysisRuleSet>
@@ -16,9 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="2.0.30" />
-        <PackageReference Include="Markdig" Version="0.18.0" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.0" />
+        <PackageReference Include="Dapper" Version="2.0.78" />
+        <PackageReference Include="Markdig" Version="0.23.0" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

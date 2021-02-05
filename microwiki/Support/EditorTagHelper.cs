@@ -32,6 +32,7 @@ namespace MicroWiki.Support
             var buttonData = new (string format, string label)[] {
                 ("bold", "Bold"),
                 ("italic", "Italic"),
+                ("strikethrough", "Strikethrough"),
                 ("code", "Code (Inline)"),
                 ("codeBlock", "Code (Block)"),
                 ("h2", "H2"),

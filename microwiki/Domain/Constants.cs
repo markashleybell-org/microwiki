@@ -1,4 +1,5 @@
 using Markdig;
+using Markdig.Extensions.EmphasisExtras;
 
 namespace MicroWiki.Domain
 {
@@ -26,6 +27,7 @@ namespace MicroWiki.Domain
 
         public static readonly MarkdownPipeline MarkdownFeatures =
             new MarkdownPipelineBuilder()
+                .UseEmphasisExtras(EmphasisExtraOptions.Strikethrough)
                 .UseAutoLinks()
                 .UsePipeTables()
                 .Build();
