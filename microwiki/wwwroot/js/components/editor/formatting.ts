@@ -16,6 +16,7 @@ export interface IEditorFormats {
     h3: IEditorFormat;
     bold: IEditorFormat;
     italic: IEditorFormat;
+    strikethrough: IEditorFormat;
     code: IEditorFormat;
     ol: IEditorFormat;
     ul: IEditorFormat;
@@ -31,6 +32,7 @@ export interface IEditorFormatTokens {
     'header-3': string;
     strong: string;
     em: string;
+    strikethrough: string;
     comment: string;
 }
 
@@ -40,6 +42,7 @@ export const EditorFormats: IEditorFormats = {
     h3: { type: 'block', token: 'header-3', before: '###', re: /^###\s+/, placeholder: 'Heading' },
     bold: { type: 'inline', token: 'strong', before: '**', after: '**', placeholder: 'bold text' },
     italic: { type: 'inline', token: 'em', before: '_', after: '_', placeholder: 'italic text' },
+    strikethrough: { type: 'inline', token: 'strikethrough', before: '~~', after: '~~', placeholder: 'deleted text' },
     code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
     ol: { type: 'block', before: '1.', re: /^\d+\.\s+/, placeholder: 'List' },
     ul: { type: 'block', before: '*', re: /^[\*\-]\s+/, placeholder: 'List' },
@@ -54,6 +57,7 @@ export const EditorFormatTokens: IEditorFormatTokens = {
     'header-3': 'h3',
     'strong': 'bold',
     'em': 'italic',
+    'strikethrough': 'strikethrough',
     'comment': 'code'
 };
 
@@ -67,6 +71,7 @@ export interface ICursorFormat {
     h3: boolean;
     bold: boolean;
     italic: boolean;
+    strikethrough: boolean;
     code: boolean;
     ol: boolean;
     ul: boolean;
@@ -97,6 +102,7 @@ function createEmptyCursorState(): ICursorState {
             h3: false,
             bold: false,
             italic: false,
+            strikethrough: false,
             code: false,
             ol: false,
             ul: false
