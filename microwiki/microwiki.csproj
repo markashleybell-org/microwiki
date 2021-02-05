@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+        <TypeScriptToolsVersion>4.1</TypeScriptToolsVersion>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <LangVersion>latest</LangVersion>
         <CodeAnalysisRuleSet>..\microwiki.ruleset</CodeAnalysisRuleSet>
