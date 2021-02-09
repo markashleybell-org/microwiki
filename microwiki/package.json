@@ -33,7 +33,7 @@
         "jquery-validation": "^1.19.3",
         "jquery-validation-unobtrusive": "3.2.11",
         "js-cookie": "2.2.1",
-        "mab-bootstrap-taginput": "^0.1.0",
+        "mab-bootstrap-taginput": "^0.3.0",
         "marked": "^2.0.0",
         "sweetalert2": "^10.8.1",
         "tslib": "^2.0.3"
