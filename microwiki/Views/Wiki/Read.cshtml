@@ -25,7 +25,7 @@
         {
             <ul class="toc">
                 @foreach (var child in Model.Children
-                   .Where(c => c.IsPublic || User.Identity.IsAuthenticated))
+                  .Where(c => c.IsPublic || User.Identity.IsAuthenticated))
                 {
                     <li><a href="@child.Location">@child.Title</a> &raquo;</li>
                 }

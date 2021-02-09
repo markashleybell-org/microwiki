@@ -14,7 +14,7 @@
         <ul>
             @foreach (var document in Model.InUseByDocuments)
             {
-            <li><a href="@(document.Location)" target="_blank">@(document.Title)</a></li>
+                <li><a href="@(document.Location)" target="_blank">@(document.Title)</a></li>
             }
         </ul>
         <p>Please remove any links to this upload before continuing.</p>
