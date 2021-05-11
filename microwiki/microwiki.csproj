@@ -17,10 +17,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="2.0.78" />
-        <PackageReference Include="Markdig" Version="0.23.0" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />
-        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.1.2">
+        <PackageReference Include="Dapper" Version="2.0.90" />
+        <PackageReference Include="Markdig" Version="0.24.0" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.2.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
