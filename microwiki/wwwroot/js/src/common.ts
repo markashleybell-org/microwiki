@@ -48,7 +48,6 @@ export function deleteWithConfirmation(form: HTMLFormElement, title: string, get
     Swal.fire({
         title: title,
         html: getConfirmationMessage(),
-        icon: null,
         input: 'text',
         confirmButtonText: 'DELETE NOW',
         showCancelButton: true,
@@ -59,11 +58,7 @@ export function deleteWithConfirmation(form: HTMLFormElement, title: string, get
             confirmButton: 'btn btn-danger',
             cancelButton: 'btn btn-secondary mr-3'
         },
-        inputValidator: (value) => {
-            if (value !== 'YES') {
-                return 'You must type YES into the box to confirm.'
-            }
-        }
+        inputValidator: (value: string) => (value !== 'YES') ? 'You must type YES into the box to confirm.' : null
     }).then(r => {
         if (r.value === 'YES') {
             form.submit();

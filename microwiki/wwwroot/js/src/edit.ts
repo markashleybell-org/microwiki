@@ -44,14 +44,22 @@ for (const tagInputElement of tagInputElements) {
     });
 }
 
+function getInputByName(parent: HTMLElement, name: string): HTMLInputElement {
+    return parent.querySelector(`input[name="${name}"]`) as HTMLInputElement;
+}
+
+function getInputValueByName(parent: HTMLElement, name: string): string {
+    return getInputByName(parent, name).value;
+}
+
 // TODO: Refactor modal code
 const linkModalElement = document.getElementById('editor-link-modal');
 const linkModal = new Modal(linkModalElement);
 
 addDelegatedEventListener(linkModalElement, '.btn-success', 'click', () => {
-    const text = linkModalElement.find('input[name="link-text"]').val() as string;
-    const url = linkModalElement.find('input[name="link-url"]').val() as string;
-    const title = linkModalElement.find('input[name="link-title"]').val() as string;
+    const text = getInputValueByName(linkModalElement, 'link-text');
+    const url = getInputValueByName(linkModalElement, 'link-url');
+    const title = getInputValueByName(linkModalElement, 'link-title');
 
     const data: IHtmlLinkProperties = { linkText: text, href: url };
 
@@ -72,10 +80,10 @@ addDelegatedEventListener(linkModalElement, '.btn-danger', 'click', () => {
 });
 
 addEventListener(linkModalElement, 'shown.bs.modal', e => {
-    const textInput = linkModalElement.find('input[name="link-text"]');
+    const textInput = getInputByName(linkModalElement, 'link-text');
 
-    if ((textInput.val() as string).trim() !== '') {
-        linkModalElement.find('input[name="link-url"]').focus();
+    if (textInput.value.trim() !== '') {
+        getInputByName(linkModalElement, 'link-url').focus();
     } else {
         textInput.focus();
     }
@@ -89,7 +97,7 @@ const codeBlockModalElement = document.getElementById('editor-code-block-modal')
 const codeBlockModal = new Modal(codeBlockModalElement);
 
 addDelegatedEventListener(codeBlockModalElement, '.btn-success', 'click', () => {
-    const language = codeBlockModalElement.find('select[name="code-block-language"]').val() as string;
+    const language = (codeBlockModalElement.querySelector('select[name="code-block-language"]') as HTMLInputElement).value;
 
     const data: ICodeBlockProperties = { language: language };
 
@@ -106,8 +114,8 @@ const imageModalElement = document.getElementById('editor-image-modal');
 const imageModal = new Modal(imageModalElement);
 
 addDelegatedEventListener(imageModalElement, '.btn-success', 'click', () => {
-    const url = imageModalElement.find('input[name="image-url"]').val() as string;
-    const alt = imageModalElement.find('input[name="image-alt"]').val() as string;
+    const url = getInputValueByName(imageModalElement, 'image-url');
+    const alt = getInputValueByName(imageModalElement, 'image-alt');
 
     const data: IHtmlImageProperties = { alt: alt, url: url };
 
@@ -117,7 +125,7 @@ addDelegatedEventListener(imageModalElement, '.btn-success', 'click', () => {
 });
 
 addEventListener(imageModalElement, 'shown.bs.modal', e => {
-    imageModalElement.find('input[name="image-url"]').focus();
+    getInputByName(imageModalElement, 'image-url').focus();
 });
 
 addEventListener(imageModalElement, 'hidden.bs.modal', e => {
@@ -125,14 +133,14 @@ addEventListener(imageModalElement, 'hidden.bs.modal', e => {
 });
 
 function resetLinkModalFields() {
-    linkModalElement.find('input[name="link-text"]').val(null);
-    linkModalElement.find('input[name="link-url"]').val(null);
-    linkModalElement.find('input[name="link-title"]').val(null);
+    getInputByName(linkModalElement, 'link-text').value = null;
+    getInputByName(linkModalElement, 'link-url').value = null;
+    getInputByName(linkModalElement, 'link-title').value = null;
 }
 
 function resetImageModalFields() {
-    imageModalElement.find('input[name="image-alt"]').val(null);
-    imageModalElement.find('input[name="image-url"]').val(null);
+    getInputByName(imageModalElement, 'image-alt').value = null;
+    getInputByName(imageModalElement, 'image-url').value = null;
 }
 
 export function format(key: string) {
@@ -142,11 +150,11 @@ export function format(key: string) {
         const linkData = getLinkData(editor);
 
         if (linkData) {
-            linkModalElement.find('input[name="link-text"]').val(linkData.linkText);
-            linkModalElement.find('input[name="link-url"]').val(linkData.href);
-            linkModalElement.find('input[name="link-title"]').val(linkData.linkTitle);
+            getInputByName(linkModalElement, 'link-text').value = linkData.linkText;
+            getInputByName(linkModalElement, 'link-url').value = linkData.href;
+            getInputByName(linkModalElement, 'link-title').value = linkData.linkTitle;
         } else {
-            linkModalElement.find('input[name="link-text"]').val(editor.getSelection());
+            getInputByName(linkModalElement, 'link-text').value = editor.getSelection();
         }
 
         linkModal.show();
@@ -156,10 +164,10 @@ export function format(key: string) {
         const imageData = getImageData(editor);
 
         if (imageData) {
-            imageModalElement.find('input[name="image-alt"]').val(imageData.alt);
-            imageModalElement.find('input[name="image-url"]').val(imageData.url);
+            getInputByName(imageModalElement, 'image-alt').value = imageData.alt;
+            getInputByName(imageModalElement, 'image-url').value = imageData.url;
         } else {
-            imageModalElement.find('input[name="image-alt"]').val(editor.getSelection());
+            getInputByName(imageModalElement, 'image-alt').value = editor.getSelection();
         }
 
         imageModal.show();
@@ -173,16 +181,16 @@ export function format(key: string) {
 $('.cm-format-button').on('click', e => {
     e.preventDefault();
 
-    const formatName = $(e.target).data('format');
+    const formatName = e.target.getAttribute('data-format');
 
     format(formatName);
 });
 
 $('a[data-toggle="tab"]').on('show.bs.tab', e => {
     if (e.target.id === 'preview-tab') {
-        const tab = $(e.target);
+        const tab = e.target.getAttribute('href');
 
-        const tabContent = $(tab.attr('href'));
+        const tabContent = document.querySelector(tab) as HTMLElement;
 
         const val = editor.getValue();
 

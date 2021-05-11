@@ -1,0 +1,2 @@
+https://github.com/microsoft/TypeScript/issues/31148
+https://github.com/Microsoft/TypeScript/wiki/FAQ#common-bugs-that-arent-bugs

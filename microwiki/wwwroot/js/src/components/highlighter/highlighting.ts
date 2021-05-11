@@ -19,7 +19,6 @@ hljs.registerLanguage('xml', xml);
 const supportedLanguages: string[] = hljs.listLanguages();
 
 export function highlightElement(el: HTMLElement) {
-
     el.classList.add('hljs');
     if (el.matches('[class^=language]')) {
         el.innerHTML = hljs.highlightAuto(el.innerText, supportedLanguages).value;

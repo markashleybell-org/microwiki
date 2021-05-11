@@ -7,8 +7,8 @@ module.exports = {
         library: 'MicroWiki'
     },
     entry: {
-        // 'edit': './wwwroot/js/edit.ts',
-        'read': './wwwroot/js/read.ts',
+        'edit': './wwwroot/js/src/edit.ts',
+        'read': './wwwroot/js/src/read.ts',
         // 'tagmanager': './wwwroot/js/tagmanager.ts',
         // 'upload': './wwwroot/js/upload.ts'
     },
