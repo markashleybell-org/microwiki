@@ -1,56 +1,50 @@
+import { Modal } from 'bootstrap';
 import { highlightElement } from './components/highlighter';
-import { deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
+import { addEventListener, addDelegatedEventListener, deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
 
-$('pre code').each(highlightElement);
+document.querySelectorAll('pre code').forEach(highlightElement);
 
-export const moveDocumentButton = $('#move-document-button');
-export const moveDocumentModal = $('#move-document-modal');
+export const moveDocumentButton = document.getElementById('move-document-button');
 
-moveDocumentModal.modal({ show: false });
+export const moveDocumentModalElement = document.getElementById('move-document-modal');
+export const moveDocumentModal = new Modal(moveDocumentModalElement);
 
-moveDocumentButton.on('click', e => {
+const deletePageButton = document.querySelectorAll('.delete-page');
+
+addEventListener(moveDocumentButton, 'click', e => {
     e.preventDefault();
 
-    const a = $(e.currentTarget);
+    const a = (e.currentTarget as HTMLElement);
 
-    const data: any = {
-        currentDocumentId: a.data('id'),
-        currentDocumentTitle: a.data('title')
-    };
-
-    $.ajax({
-        url: '/wiki/movedocumentmodal',
-        data: data,
-        dataType: 'html',
-        type: 'GET',
-        cache: false,
-        success: html => {
-            moveDocumentModal.html(html);
-            moveDocumentModal.modal('show');
-        }
-    });
+    fetch(`/wiki/movedocumentmodal?currentDocumentId=${a.getAttribute('data-id')}&currentDocumentTitle=${a.getAttribute('data-title')}`, { method: 'GET' })
+        .then(async response => {
+            moveDocumentModalElement.querySelector('.modal-body').innerHTML = await response.text();
+            moveDocumentModal.show();
+        }).catch(error => {
+            // Handle error
+        });
 });
 
-moveDocumentModal.on('click', 'a.document', e => {
+addDelegatedEventListener(moveDocumentModalElement, 'a.document', 'click', e => {
     e.preventDefault();
 
-    const a = $(e.currentTarget);
+    const a = (e.currentTarget as HTMLElement);
 
     const data: any = {
-        id: moveDocumentButton.data('id'),
-        newParentID: a.data('id')
+        id: moveDocumentButton.getAttribute('data-id'),
+        newParentID: a.getAttribute('data-id')
     };
 
-    $.ajax({
-        url: '/wiki/move',
-        data: data,
-        dataType: 'json',
-        type: 'POST',
-        success: response => { window.location.href = response.newLocation; }
-    });
+    fetch('/wiki/move', { method: 'POST', body: data })
+        .then(async response => {
+            const result = await response.json();
+            window.location.href = result.newLocation;
+        }).catch(error => {
+            // Handle error
+        });
 });
 
-$('.delete-page').on('click', e => {
+addEventListener(deletePageButton, 'click', e => {
     e.preventDefault();
 
     const button = e.target as HTMLButtonElement;

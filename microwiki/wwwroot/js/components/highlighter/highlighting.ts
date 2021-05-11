@@ -18,10 +18,10 @@ hljs.registerLanguage('xml', xml);
 
 const supportedLanguages: string[] = hljs.listLanguages();
 
-export function highlightElement(i: number, el: HTMLElement) {
-    const code = $(el);
-    code.addClass('hljs');
-    if (code.is('[class^=language]')) {
+export function highlightElement(el: HTMLElement) {
+
+    el.classList.add('hljs');
+    if (el.matches('[class^=language]')) {
         el.innerHTML = hljs.highlightAuto(el.innerText, supportedLanguages).value;
     }
 }

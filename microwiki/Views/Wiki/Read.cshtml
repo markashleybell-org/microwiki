@@ -24,8 +24,7 @@
         @if (Model.Children.Any())
         {
             <ul class="toc">
-                @foreach (var child in Model.Children
-                  .Where(c => c.IsPublic || User.Identity.IsAuthenticated))
+                @foreach (var child in Model.Children.Where(c => c.IsPublic || User.Identity.IsAuthenticated))
                 {
                     <li><a href="@child.Location">@child.Title</a> &raquo;</li>
                 }
@@ -60,7 +59,22 @@
     </div>
 </div>
 
-<div class="modal" id="move-document-modal" tabindex="-1" role="dialog"></div>
+@section modals {
+    <div class="modal" id="move-document-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Move Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @section scripts {
     <script src="~/js/dist/read.js" asp-append-version="true"></script>

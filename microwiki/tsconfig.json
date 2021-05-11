@@ -12,12 +12,15 @@
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": true,
+        // "skipLibCheck": true,
+        "types": [],
         "lib": [
             "dom",
             "dom.iterable",
             "es5",
             "scripthost"
-        ]
+        ],
+        "explainFiles": true
     },
     "compileOnSave": false
 }

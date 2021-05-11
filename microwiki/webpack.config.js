@@ -1,4 +1,3 @@
-const ProvidePlugin = require('webpack').ProvidePlugin;
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
@@ -8,20 +7,14 @@ module.exports = {
         library: 'MicroWiki'
     },
     entry: {
-        'edit': './wwwroot/js/edit.ts',
+        // 'edit': './wwwroot/js/edit.ts',
         'read': './wwwroot/js/read.ts',
-        'tagmanager': './wwwroot/js/tagmanager.ts',
-        'upload': './wwwroot/js/upload.ts'
+        // 'tagmanager': './wwwroot/js/tagmanager.ts',
+        // 'upload': './wwwroot/js/upload.ts'
     },
     devtool: 'source-map',
     plugins: [
-        new CleanWebpackPlugin(),
-        // This automatically adds aliases to the application scope for the specified packages
-        // So packages which look for the 'jQuery' global alias still work within our app closure
-        new ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery'
-        })
+        new CleanWebpackPlugin()
     ],
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json']
@@ -34,8 +27,5 @@ module.exports = {
             { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
             { test: /\.css$/i, use: ['style-loader', 'css-loader'] }
         ]
-    },
-    externals: {
-        jquery: 'jQuery'
     }
 };

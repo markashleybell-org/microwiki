@@ -1,5 +1,7 @@
+import { Modal } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
 import 'mab-bootstrap-taginput/css/standard.css';
+import { addEventListener, addDelegatedEventListener } from './common';
 import {
     applyFormat,
     createCodeBlock,
@@ -43,16 +45,13 @@ for (const tagInputElement of tagInputElements) {
 }
 
 // TODO: Refactor modal code
-const linkModal = $('#editor-link-modal');
+const linkModalElement = document.getElementById('editor-link-modal');
+const linkModal = new Modal(linkModalElement);
 
-linkModal.modal({
-    show: false
-});
-
-linkModal.on('click', '.btn-success', () => {
-    const text = linkModal.find('input[name="link-text"]').val() as string;
-    const url = linkModal.find('input[name="link-url"]').val() as string;
-    const title = linkModal.find('input[name="link-title"]').val() as string;
+addDelegatedEventListener(linkModalElement, '.btn-success', 'click', () => {
+    const text = linkModalElement.find('input[name="link-text"]').val() as string;
+    const url = linkModalElement.find('input[name="link-url"]').val() as string;
+    const title = linkModalElement.find('input[name="link-title"]').val() as string;
 
     const data: IHtmlLinkProperties = { linkText: text, href: url };
 
@@ -62,84 +61,78 @@ linkModal.on('click', '.btn-success', () => {
 
     createLink(editor, data);
 
-    linkModal.modal('hide');
+    linkModal.hide();
 });
 
-linkModal.on('click', '.btn-danger', () => {
+addDelegatedEventListener(linkModalElement, '.btn-danger', 'click', () => {
     // TODO: Confirm?
     removeLink(editor);
 
-    linkModal.modal('hide');
+    linkModal.hide();
 });
 
-linkModal.on('shown.bs.modal', e => {
-    const textInput = linkModal.find('input[name="link-text"]');
+addEventListener(linkModalElement, 'shown.bs.modal', e => {
+    const textInput = linkModalElement.find('input[name="link-text"]');
 
     if ((textInput.val() as string).trim() !== '') {
-        linkModal.find('input[name="link-url"]').focus();
+        linkModalElement.find('input[name="link-url"]').focus();
     } else {
         textInput.focus();
     }
 });
 
-linkModal.on('hidden.bs.modal', e => {
+addEventListener(linkModalElement, 'hidden.bs.modal', e => {
     editor.focus();
 });
 
-const codeBlockModal = $('#editor-code-block-modal');
+const codeBlockModalElement = document.getElementById('editor-code-block-modal');
+const codeBlockModal = new Modal(codeBlockModalElement);
 
-codeBlockModal.modal({
-    show: false
-});
-
-codeBlockModal.on('click', '.btn-success', () => {
-    const language = codeBlockModal.find('select[name="code-block-language"]').val() as string;
+addDelegatedEventListener(codeBlockModalElement, '.btn-success', 'click', () => {
+    const language = codeBlockModalElement.find('select[name="code-block-language"]').val() as string;
 
     const data: ICodeBlockProperties = { language: language };
 
     createCodeBlock(editor, data);
 
-    codeBlockModal.modal('hide');
+    codeBlockModal.hide();
 });
 
-codeBlockModal.on('hidden.bs.modal', e => {
+addEventListener(codeBlockModalElement, 'hidden.bs.modal', e => {
     editor.focus();
 });
 
-const imageModal = $('#editor-image-modal');
+const imageModalElement = document.getElementById('editor-image-modal');
+const imageModal = new Modal(imageModalElement);
 
-imageModal.modal({
-    show: false
-});
-
-imageModal.on('click', '.btn-success', () => {
-    const url = imageModal.find('input[name="image-url"]').val() as string;
-    const alt = imageModal.find('input[name="image-alt"]').val() as string;
+addDelegatedEventListener(imageModalElement, '.btn-success', 'click', () => {
+    const url = imageModalElement.find('input[name="image-url"]').val() as string;
+    const alt = imageModalElement.find('input[name="image-alt"]').val() as string;
 
     const data: IHtmlImageProperties = { alt: alt, url: url };
 
     createImage(editor, data);
 
-    imageModal.modal('hide');
+    imageModal.hide();
 });
 
-imageModal.on('shown.bs.modal', e => {
-    imageModal.find('input[name="image-url"]').focus();
+addEventListener(imageModalElement, 'shown.bs.modal', e => {
+    imageModalElement.find('input[name="image-url"]').focus();
 });
 
-imageModal.on('hidden.bs.modal', e => {
+addEventListener(imageModalElement, 'hidden.bs.modal', e => {
     editor.focus();
 });
 
 function resetLinkModalFields() {
-    linkModal.find('input[name="link-text"]').val(null);
-    linkModal.find('input[name="link-url"]').val(null);
-    linkModal.find('input[name="link-title"]').val(null);
+    linkModalElement.find('input[name="link-text"]').val(null);
+    linkModalElement.find('input[name="link-url"]').val(null);
+    linkModalElement.find('input[name="link-title"]').val(null);
 }
 
 function resetImageModalFields() {
-    imageModal.find('input[name="image-alt"]').val(null);
-    imageModal.find('input[name="image-url"]').val(null);
+    imageModalElement.find('input[name="image-alt"]').val(null);
+    imageModalElement.find('input[name="image-url"]').val(null);
 }
 
 export function format(key: string) {
@@ -149,29 +142,29 @@ export function format(key: string) {
         const linkData = getLinkData(editor);
 
         if (linkData) {
-            linkModal.find('input[name="link-text"]').val(linkData.linkText);
-            linkModal.find('input[name="link-url"]').val(linkData.href);
-            linkModal.find('input[name="link-title"]').val(linkData.linkTitle);
+            linkModalElement.find('input[name="link-text"]').val(linkData.linkText);
+            linkModalElement.find('input[name="link-url"]').val(linkData.href);
+            linkModalElement.find('input[name="link-title"]').val(linkData.linkTitle);
         } else {
-            linkModal.find('input[name="link-text"]').val(editor.getSelection());
+            linkModalElement.find('input[name="link-text"]').val(editor.getSelection());
         }
 
-        linkModal.modal('show');
+        linkModal.show();
     } else if (key === 'image') {
         resetImageModalFields();
 
         const imageData = getImageData(editor);
 
         if (imageData) {
-            imageModal.find('input[name="image-alt"]').val(imageData.alt);
-            imageModal.find('input[name="image-url"]').val(imageData.url);
+            imageModalElement.find('input[name="image-alt"]').val(imageData.alt);
+            imageModalElement.find('input[name="image-url"]').val(imageData.url);
         } else {
-            imageModal.find('input[name="image-alt"]').val(editor.getSelection());
+            imageModalElement.find('input[name="image-alt"]').val(editor.getSelection());
         }
 
-        imageModal.modal('show');
+        imageModal.show();
     } else if (key === 'codeBlock') {
-        codeBlockModal.modal('show');
+        codeBlockModal.show();
     } else {
         applyFormat(editor, key);
     }

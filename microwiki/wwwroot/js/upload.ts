@@ -1,9 +1,11 @@
 import bsCustomFileInput from 'bs-custom-file-input';
-import { deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
+import { addEventListener, deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
 
 bsCustomFileInput.init();
 
-$('.delete-upload').on('click', e => {
+const uploadDeleteButton = document.querySelectorAll('.delete-upload');
+
+addEventListener(uploadDeleteButton, 'click', e => {
     e.preventDefault();
 
     const button = e.target as HTMLButtonElement;

@@ -6,7 +6,7 @@ marked.setOptions({
     langPrefix: 'language-'
 });
 
-export function updatePreview(markdown: string, preview: JQuery) {
-    preview.html(marked(markdown));
-    preview.find('pre code').each(highlightElement);
+export function updatePreview(markdown: string, preview: HTMLElement) {
+    preview.innerHTML = marked(markdown);
+    preview.querySelectorAll('pre code').forEach(highlightElement);
 }
