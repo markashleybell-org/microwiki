@@ -1,4 +1,4 @@
-import { Modal } from 'bootstrap';
+import { Modal, Tab } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
 import 'mab-bootstrap-taginput/css/standard.css';
 import { addEventListener, addDelegatedEventListener } from './common';
@@ -178,19 +178,34 @@ export function format(key: string) {
     }
 }
 
-$('.cm-format-button').on('click', e => {
+addEventListener(document.querySelectorAll('.cm-format-button'), 'click', e => {
     e.preventDefault();
 
-    const formatName = e.target.getAttribute('data-format');
+    const button = e.target as HTMLElement;
+
+    const formatName = button.getAttribute('data-format');
 
     format(formatName);
 });
 
-$('a[data-toggle="tab"]').on('show.bs.tab', e => {
-    if (e.target.id === 'preview-tab') {
-        const tab = e.target.getAttribute('href');
+const tabElements = [].slice.call(document.querySelectorAll('a[data-toggle="tab"]'));
 
-        const tabContent = document.querySelector(tab) as HTMLElement;
+tabElements.forEach(el => {
+    const tab = new Tab(el);
+
+    el.addEventListener('click', (e: Event) => {
+        e.preventDefault();
+        tab.show();
+    })
+})
+
+addEventListener(document.querySelectorAll('a[data-toggle="tab"]'), 'show.bs.tab', e => {
+    const tab = e.target as HTMLElement;
+
+    if (tab.id === 'preview-tab') {
+        const tabSelector = tab.getAttribute('href');
+
+        const tabContent = document.querySelector(tabSelector) as HTMLElement;
 
         const val = editor.getValue();
 

@@ -34,3 +34,7 @@
 .tag-links .badge {
     margin-right: 6px;
 }
+
+.tag-input.form-control:read-only {
+    background-color: #fff;
+}
