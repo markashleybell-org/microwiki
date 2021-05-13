@@ -28,12 +28,11 @@ moveDocumentButton.on('click', e => {
 moveDocumentModalElement.onchild('a.document', 'click', e => {
     e.preventDefault();
 
-    const a = (e.currentTarget as HTMLElement);
+    const a = (e.target as HTMLElement);
 
-    const data: any = {
-        id: moveDocumentButton.data('id'),
-        newParentID: a.getAttribute('data-id')
-    };
+    const data = new FormData();
+    data.append('id', moveDocumentButton.data('id'));
+    data.append('newParentID', a.getAttribute('data-id'));
 
     fetch('/wiki/move', { method: 'POST', body: data })
         .then(async response => {
