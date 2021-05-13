@@ -36,6 +36,8 @@ namespace MicroWiki
                 options.Secure = CookieSecurePolicy.Always;
             });
 
+            services.AddRouting(options => options.LowercaseUrls = true);
+
             services.AddAuthentication(authenticationScheme)
                 .AddCookie(authenticationScheme, options => {
                     options.LoginPath = "/users/login";
@@ -81,7 +83,7 @@ namespace MicroWiki
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "wiki/{action}/{id?}",
-                    defaults: new { controller = "Wiki", action = "Index" }
+                    defaults: new { controller = "Wiki", action = "Read" }
                 );
 
                 endpoints.MapControllerRoute(

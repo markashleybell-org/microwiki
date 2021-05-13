@@ -90,7 +90,7 @@ namespace MicroWiki.Functions
                 ? $"<a class=\"document\" href=\"{document.Location}\" data-id=\"{document.ID}\">{document.Title}</a>"
                 : document.Title;
 
-            return new HtmlString($"<i class=\"fa fa-file-text-o\"></i>{itemContent}");
+            return new HtmlString($"<i class=\"bi-file-earmark\"></i>{itemContent}");
         }
 
         public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null, bool showPrivate = false)
