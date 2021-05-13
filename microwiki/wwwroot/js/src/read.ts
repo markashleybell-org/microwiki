@@ -1,37 +1,37 @@
 import { Modal } from 'bootstrap';
 import { highlightElement } from './components/highlighter';
-import { addEventListener, addDelegatedEventListener, deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
+import { deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
+import { dom } from './dom';
 
 document.querySelectorAll('pre code').forEach(highlightElement);
 
-export const moveDocumentButton = document.getElementById('move-document-button');
+export const moveDocumentButton = dom('#move-document-button');
 
-export const moveDocumentModalElement = document.getElementById('move-document-modal');
-export const moveDocumentModal = new Modal(moveDocumentModalElement);
+export const moveDocumentModalElement = dom('#move-document-modal');
+export const moveDocumentModal = new Modal(moveDocumentModalElement.get(0));
 
-const deletePageButton = document.querySelectorAll('.delete-page');
-
-addEventListener(moveDocumentButton, 'click', e => {
+moveDocumentButton.on('click', e => {
     e.preventDefault();
 
     const a = (e.currentTarget as HTMLElement);
 
     fetch(`/wiki/movedocumentmodal?currentDocumentId=${a.getAttribute('data-id')}&currentDocumentTitle=${a.getAttribute('data-title')}`, { method: 'GET' })
         .then(async response => {
-            moveDocumentModalElement.querySelector('.modal-body').innerHTML = await response.text();
+            // TODO: Implement find()
+            moveDocumentModalElement.get(0).querySelector('.modal-body').innerHTML = await response.text();
             moveDocumentModal.show();
         }).catch(error => {
             // Handle error
         });
 });
 
-addDelegatedEventListener(moveDocumentModalElement, 'a.document', 'click', e => {
+moveDocumentModalElement.onchild('a.document', 'click', e => {
     e.preventDefault();
 
     const a = (e.currentTarget as HTMLElement);
 
     const data: any = {
-        id: moveDocumentButton.getAttribute('data-id'),
+        id: moveDocumentButton.data('id'),
         newParentID: a.getAttribute('data-id')
     };
 
@@ -44,7 +44,7 @@ addDelegatedEventListener(moveDocumentModalElement, 'a.document', 'click', e => 
         });
 });
 
-addEventListener(deletePageButton, 'click', e => {
+dom('.delete-page').on('click', e => {
     e.preventDefault();
 
     const button = e.target as HTMLButtonElement;

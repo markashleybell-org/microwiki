@@ -1,7 +1,7 @@
 import { Modal, Tab } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
 import 'mab-bootstrap-taginput/css/standard.css';
-import { addEventListener, addDelegatedEventListener } from './common';
+import { dom } from './dom';
 import {
     applyFormat,
     createCodeBlock,
@@ -44,22 +44,24 @@ for (const tagInputElement of tagInputElements) {
     });
 }
 
-function getInputByName(parent: HTMLElement, name: string): HTMLInputElement {
+// TODO: Implement DOM.val()?
+function getInputByName(parent: Element, name: string): HTMLInputElement {
     return parent.querySelector(`input[name="${name}"]`) as HTMLInputElement;
 }
 
-function getInputValueByName(parent: HTMLElement, name: string): string {
+function getInputValueByName(parent: Element, name: string): string {
     return getInputByName(parent, name).value;
 }
 
 // TODO: Refactor modal code
-const linkModalElement = document.getElementById('editor-link-modal');
-const linkModal = new Modal(linkModalElement);
+const linkModalElement = dom('#editor-link-modal');
+const linkModal = new Modal(linkModalElement.get(0));
 
-addDelegatedEventListener(linkModalElement, '.btn-success', 'click', () => {
-    const text = getInputValueByName(linkModalElement, 'link-text');
-    const url = getInputValueByName(linkModalElement, 'link-url');
-    const title = getInputValueByName(linkModalElement, 'link-title');
+linkModalElement.onchild('.btn-success', 'click', () => {
+    // TODO: Implement .val()?
+    const text = getInputValueByName(linkModalElement.get(0), 'link-text');
+    const url = getInputValueByName(linkModalElement.get(0), 'link-url');
+    const title = getInputValueByName(linkModalElement.get(0), 'link-title');
 
     const data: IHtmlLinkProperties = { linkText: text, href: url };
 
@@ -72,32 +74,32 @@ addDelegatedEventListener(linkModalElement, '.btn-success', 'click', () => {
     linkModal.hide();
 });
 
-addDelegatedEventListener(linkModalElement, '.btn-danger', 'click', () => {
+linkModalElement.onchild('.btn-danger', 'click', () => {
     // TODO: Confirm?
     removeLink(editor);
 
     linkModal.hide();
 });
 
-addEventListener(linkModalElement, 'shown.bs.modal', e => {
-    const textInput = getInputByName(linkModalElement, 'link-text');
+linkModalElement.on('shown.bs.modal', e => {
+    const textInput = getInputByName(linkModalElement.get(0), 'link-text');
 
     if (textInput.value.trim() !== '') {
-        getInputByName(linkModalElement, 'link-url').focus();
+        getInputByName(linkModalElement.get(0), 'link-url').focus();
     } else {
         textInput.focus();
     }
 });
 
-addEventListener(linkModalElement, 'hidden.bs.modal', e => {
+linkModalElement.on('hidden.bs.modal', e => {
     editor.focus();
 });
 
-const codeBlockModalElement = document.getElementById('editor-code-block-modal');
-const codeBlockModal = new Modal(codeBlockModalElement);
+const codeBlockModalElement = dom('#editor-code-block-modal');
+const codeBlockModal = new Modal(codeBlockModalElement.get(0));
 
-addDelegatedEventListener(codeBlockModalElement, '.btn-success', 'click', () => {
-    const language = (codeBlockModalElement.querySelector('select[name="code-block-language"]') as HTMLInputElement).value;
+codeBlockModalElement.onchild('.btn-success', 'click', () => {
+    const language = (codeBlockModalElement.get(0).querySelector('select[name="code-block-language"]') as HTMLInputElement).value;
 
     const data: ICodeBlockProperties = { language: language };
 
@@ -106,16 +108,16 @@ addDelegatedEventListener(codeBlockModalElement, '.btn-success', 'click', () => 
     codeBlockModal.hide();
 });
 
-addEventListener(codeBlockModalElement, 'hidden.bs.modal', e => {
+codeBlockModalElement.on('hidden.bs.modal', e => {
     editor.focus();
 });
 
-const imageModalElement = document.getElementById('editor-image-modal');
-const imageModal = new Modal(imageModalElement);
+const imageModalElement = dom('#editor-image-modal');
+const imageModal = new Modal(imageModalElement.get(0));
 
-addDelegatedEventListener(imageModalElement, '.btn-success', 'click', () => {
-    const url = getInputValueByName(imageModalElement, 'image-url');
-    const alt = getInputValueByName(imageModalElement, 'image-alt');
+imageModalElement.onchild('.btn-success', 'click', () => {
+    const url = getInputValueByName(imageModalElement.get(0), 'image-url');
+    const alt = getInputValueByName(imageModalElement.get(0), 'image-alt');
 
     const data: IHtmlImageProperties = { alt: alt, url: url };
 
@@ -124,23 +126,23 @@ addDelegatedEventListener(imageModalElement, '.btn-success', 'click', () => {
     imageModal.hide();
 });
 
-addEventListener(imageModalElement, 'shown.bs.modal', e => {
-    getInputByName(imageModalElement, 'image-url').focus();
+imageModalElement.on('shown.bs.modal', e => {
+    getInputByName(imageModalElement.get(0), 'image-url').focus();
 });
 
-addEventListener(imageModalElement, 'hidden.bs.modal', e => {
+imageModalElement.on('hidden.bs.modal', e => {
     editor.focus();
 });
 
 function resetLinkModalFields() {
-    getInputByName(linkModalElement, 'link-text').value = null;
-    getInputByName(linkModalElement, 'link-url').value = null;
-    getInputByName(linkModalElement, 'link-title').value = null;
+    getInputByName(linkModalElement.get(0), 'link-text').value = null;
+    getInputByName(linkModalElement.get(0), 'link-url').value = null;
+    getInputByName(linkModalElement.get(0), 'link-title').value = null;
 }
 
 function resetImageModalFields() {
-    getInputByName(imageModalElement, 'image-alt').value = null;
-    getInputByName(imageModalElement, 'image-url').value = null;
+    getInputByName(imageModalElement.get(0), 'image-alt').value = null;
+    getInputByName(imageModalElement.get(0), 'image-url').value = null;
 }
 
 export function format(key: string) {
@@ -150,11 +152,11 @@ export function format(key: string) {
         const linkData = getLinkData(editor);
 
         if (linkData) {
-            getInputByName(linkModalElement, 'link-text').value = linkData.linkText;
-            getInputByName(linkModalElement, 'link-url').value = linkData.href;
-            getInputByName(linkModalElement, 'link-title').value = linkData.linkTitle;
+            getInputByName(linkModalElement.get(0), 'link-text').value = linkData.linkText;
+            getInputByName(linkModalElement.get(0), 'link-url').value = linkData.href;
+            getInputByName(linkModalElement.get(0), 'link-title').value = linkData.linkTitle;
         } else {
-            getInputByName(linkModalElement, 'link-text').value = editor.getSelection();
+            getInputByName(linkModalElement.get(0), 'link-text').value = editor.getSelection();
         }
 
         linkModal.show();
@@ -164,10 +166,10 @@ export function format(key: string) {
         const imageData = getImageData(editor);
 
         if (imageData) {
-            getInputByName(imageModalElement, 'image-alt').value = imageData.alt;
-            getInputByName(imageModalElement, 'image-url').value = imageData.url;
+            getInputByName(imageModalElement.get(0), 'image-alt').value = imageData.alt;
+            getInputByName(imageModalElement.get(0), 'image-url').value = imageData.url;
         } else {
-            getInputByName(imageModalElement, 'image-alt').value = editor.getSelection();
+            getInputByName(imageModalElement.get(0), 'image-alt').value = editor.getSelection();
         }
 
         imageModal.show();
@@ -178,7 +180,7 @@ export function format(key: string) {
     }
 }
 
-addEventListener(document.querySelectorAll('.cm-format-button'), 'click', e => {
+dom('.cm-format-button').on('click', e => {
     e.preventDefault();
 
     const button = e.target as HTMLElement;
@@ -188,6 +190,7 @@ addEventListener(document.querySelectorAll('.cm-format-button'), 'click', e => {
     format(formatName);
 });
 
+// TODO: Figure out how to fit this in
 const tabElements = [].slice.call(document.querySelectorAll('a[data-toggle="tab"]'));
 
 tabElements.forEach(el => {
@@ -199,7 +202,7 @@ tabElements.forEach(el => {
     })
 })
 
-addEventListener(document.querySelectorAll('a[data-toggle="tab"]'), 'show.bs.tab', e => {
+dom('a[data-toggle="tab"]').on('show.bs.tab', e => {
     const tab = e.target as HTMLElement;
 
     if (tab.id === 'preview-tab') {

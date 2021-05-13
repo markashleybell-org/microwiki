@@ -1,27 +1,5 @@
 import Swal from 'sweetalert2';
 
-export function addDelegatedEventListener(selector: HTMLElement | NodeListOf<Element>, childSelector: string, event: string, handler: (e: Event) => void) {
-    const delegatedHandler = (e: Event) => {
-        if ((e.target as Element).matches(childSelector)) {
-            handler(e);
-        }
-    };
-
-    if (selector instanceof HTMLElement) {
-        selector.addEventListener(event, delegatedHandler);
-    } else {
-        (selector as NodeListOf<Element>).forEach(el => el.addEventListener(event, delegatedHandler));
-    }
-}
-
-export function addEventListener(selector: HTMLElement | NodeListOf<Element>, event: string, handler: (e: Event) => void): void {
-    if (selector instanceof HTMLElement) {
-        selector.addEventListener(event, handler);
-    } else {
-        (selector as NodeListOf<Element>).forEach(el => el.addEventListener(event, handler));
-    }
-}
-
 export function debounce(callback: (...args: any[]) => void, time: number): () => void {
     let interval: any;
 

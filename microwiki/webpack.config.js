@@ -9,8 +9,8 @@ module.exports = {
     entry: {
         'edit': './wwwroot/js/src/edit.ts',
         'read': './wwwroot/js/src/read.ts',
-        // 'tagmanager': './wwwroot/js/tagmanager.ts',
-        // 'upload': './wwwroot/js/upload.ts'
+        'tagmanager': './wwwroot/js/src/tagmanager.ts',
+        'upload': './wwwroot/js/src/upload.ts'
     },
     devtool: 'source-map',
     plugins: [
@@ -21,11 +21,18 @@ module.exports = {
     },
     module: {
         rules: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'
-            { test: /\.tsx?$/, exclude: /node_modules/, loader: 'ts-loader' },
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'
-            { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
-            { test: /\.css$/i, use: ['style-loader', 'css-loader'] }
+            {
+                test: /\.ts(x)?$/,
+                loader: 'ts-loader',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            }
         ]
     }
 };

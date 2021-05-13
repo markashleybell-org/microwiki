@@ -3,7 +3,8 @@
 
     "compilerOptions": {
         "strictFunctionTypes": false,
-        "strictNullChecks": false
+        "strictNullChecks": false,
+        "sourceMap": true
     },
 
     "include": [ "./wwwroot/js/src/**/*.ts" ],
