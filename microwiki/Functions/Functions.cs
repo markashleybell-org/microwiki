@@ -17,7 +17,7 @@ namespace MicroWiki.Functions
 
         public static string GetUniqueCode()
         {
-            var characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var ticks = DateTime.UtcNow.Ticks.ToString();
 
             var code = string.Empty;
@@ -53,7 +53,7 @@ namespace MicroWiki.Functions
                 return null;
             }
 
-            var options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+            const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
 
             // Remove all special chars (but not spaces or dashes)
             var output = Regex.Replace(input, @"[^a-z0-9\s\-]", string.Empty, options);
@@ -65,10 +65,7 @@ namespace MicroWiki.Functions
             output = Regex.Replace(output, @"\-{2,}", "-", options);
 
             // Trim extra hyphen off the end if exists
-            if (output.EndsWith("-"))
-            {
-                output = output.Substring(0, output.Length - 1);
-            }
+            output = output.TrimEnd('-');
 
             return output.ToLower();
         }

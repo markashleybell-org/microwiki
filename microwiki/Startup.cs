@@ -22,16 +22,17 @@ namespace MicroWiki
 
         public void ConfigureServices(IServiceCollection services)
         {
+            const string authenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
             var connectionString = Configuration.GetValue<string>("ConnectionString");
-            var authenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
             services.AddHttpContextAccessor();
 
             services.Configure<Settings>(Configuration);
 
             services.Configure<CookiePolicyOptions>(options => {
-                options.CheckConsentNeeded = context => false;
-                options.MinimumSameSitePolicy = SameSiteMode.Lax;
+                options.CheckConsentNeeded = _ => false;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict;
                 options.HttpOnly = HttpOnlyPolicy.Always;
                 options.Secure = CookieSecurePolicy.Always;
             });
