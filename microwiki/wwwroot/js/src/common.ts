@@ -34,7 +34,7 @@ export function deleteWithConfirmation(form: HTMLFormElement, title: string, get
         customClass: {
             icon: 'swal2-icon-small',
             confirmButton: 'btn btn-danger',
-            cancelButton: 'btn btn-secondary mr-3'
+            cancelButton: 'btn btn-secondary me-3'
         },
         inputValidator: (value: string) => (value !== 'YES') ? 'You must type YES into the box to confirm.' : null
     }).then(r => {

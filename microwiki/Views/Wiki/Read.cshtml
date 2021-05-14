@@ -35,24 +35,22 @@
     <div class="@ActionColumnClasses">
         @if (User.Identity.IsAuthenticated)
         {
-            <p>@Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = ActionButtonClasses })</p>
+            <div class="d-grid gap-2">
+                @Html.ActionLink("Edit This Page", "Update", new { id = Model.ID }, new { @class = ActionButtonClasses })
 
-            <p>@Html.ActionLink("New Child Page", "Create", new { parentID = Model.ID }, new { @class = ActionButtonClasses })</p>
+                @Html.ActionLink("New Child Page", "Create", new { parentID = Model.ID }, new { @class = ActionButtonClasses })
 
-            @if (!Model.IsRootDocument)
-            {
-                <p>
+                @if (!Model.IsRootDocument)
+                {
                     <a id="move-document-button" href="#move-document-modal" data-id="@Model.ID" data-title="@Model.Title" class="@ActionButtonClasses">Move This Page</a>
-                </p>
-            }
+                }
+            </div>
 
             @if (!Model.IsRootDocument)
             {
-                <form asp-controller="Wiki" asp-action="Delete" method="post">
-                    <p>
-                        @Html.HiddenFor(x => x.ID)
-                        <button class="@DeleteButtonClasses delete-page" data-pagetitle="@Model.Title">Delete This Page</button>
-                    </p>
+                <form asp-controller="Wiki" asp-action="Delete" method="post" class="mt-4 d-grid gap-2">
+                    @Html.HiddenFor(x => x.ID)
+                    <button class="@DeleteButtonClasses delete-page" data-pagetitle="@Model.Title">Delete This Page</button>
                 </form>
             }
         }
