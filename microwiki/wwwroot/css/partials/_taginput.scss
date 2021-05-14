@@ -87,3 +87,8 @@
     background-color: #007bff;
     color: #fff;
 }
+
+/* Project-specific */
+.tag-input.form-control:read-only, .tag-input-merge.form-control:read-only {
+    background-color: #fff;
+}
