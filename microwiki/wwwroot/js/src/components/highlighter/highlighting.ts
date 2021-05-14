@@ -1,5 +1,4 @@
 import hljs from 'highlight.js/lib/core';
-
 import csharp from 'highlight.js/lib/languages/csharp';
 import css from 'highlight.js/lib/languages/css';
 import javascript from 'highlight.js/lib/languages/javascript';

@@ -1,7 +1,6 @@
 import { Modal, Tab } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
 import 'mab-bootstrap-taginput/css/standard.css';
-import { dom } from './dom';
 import {
     applyFormat,
     createCodeBlock,
@@ -16,6 +15,7 @@ import {
     removeLink,
     updatePreview
 } from './components/editor';
+import { dom } from './dom';
 
 declare const _ALL_TAGS: string[];
 

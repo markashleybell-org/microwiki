@@ -1,3 +1,15 @@
 export { createEditor } from './editor';
-export { EditorFormats, applyFormat, createCodeBlock, createImage, createLink, getImageData, getLinkData, ICodeBlockProperties, IHtmlLinkProperties, IHtmlImageProperties, removeLink } from './formatting';
+export {
+    applyFormat,
+    createCodeBlock,
+    createImage,
+    createLink,
+    EditorFormats,
+    getImageData,
+    getLinkData,
+    ICodeBlockProperties,
+    IHtmlImageProperties,
+    IHtmlLinkProperties,
+    removeLink
+} from './formatting';
 export { updatePreview } from './previewer';

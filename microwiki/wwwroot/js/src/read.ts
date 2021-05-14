@@ -1,6 +1,6 @@
 import { Modal } from 'bootstrap';
-import { highlightElement } from './components/highlighter';
 import { deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
+import { highlightElement } from './components/highlighter';
 import { dom } from './dom';
 
 document.querySelectorAll('pre code').forEach(highlightElement);
