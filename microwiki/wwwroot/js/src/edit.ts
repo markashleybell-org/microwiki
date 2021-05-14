@@ -1,6 +1,6 @@
 import { Modal, Tab } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
-import 'mab-bootstrap-taginput/css/standard.css';
+import { tagItemTemplate } from './common';
 import {
     applyFormat,
     createCodeBlock,
@@ -40,7 +40,8 @@ for (const tagInputElement of tagInputElements) {
         data: _ALL_TAGS || [],
         getId: item => item,
         getLabel: item => item,
-        newItemFactory: label => Promise.resolve(label)
+        newItemFactory: label => Promise.resolve(label),
+        itemTemplate: tagItemTemplate
     });
 }
 

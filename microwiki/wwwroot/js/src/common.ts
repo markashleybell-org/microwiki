@@ -1,5 +1,7 @@
 import Swal from 'sweetalert2';
 
+export const tagItemTemplate = '<div class="{{globalCssClassPrefix}}-tag" data-id="{{id}}" data-label="{{label}}">{{label}} <i class="{{globalCssClassPrefix}}-removetag bi-x"></i></div>';
+
 export function debounce(callback: (...args: any[]) => void, time: number): () => void {
     let interval: any;
 

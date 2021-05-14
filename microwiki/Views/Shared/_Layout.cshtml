@@ -25,30 +25,30 @@
     @RenderSection("css", required: false)
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" asp-route="read" asp-route-location="/">@configuration.ApplicationTitle</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="main-nav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-sm-3">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Wiki" asp-action="Contents">Contents</a>
                     </li>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="tags-dropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Tags
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="tags-dropdown">
-                                <a class="dropdown-item" asp-controller="Tags" asp-action="Index">All Tags</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" asp-controller="Tags" asp-action="Manage">Manage Tags</a>
-                            </div>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Tags" asp-action="Index">All Tags</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" asp-controller="Tags" asp-action="Manage">Manage Tags</a>
+                        </li>
+                    }
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item ms-lg-4">
                             <span class="nav-link active">@User.Identity.Name</span>
                         </li>
                         <li class="nav-item">
@@ -62,8 +62,8 @@
                         </li>
                     }
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex flex-column d-lg-flex flex-lg-row">
+                    <input class="form-control me-2 mb-2 mb-lg-0" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
