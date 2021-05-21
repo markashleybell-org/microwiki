@@ -1,8 +1,5 @@
-import bsCustomFileInput from 'bs-custom-file-input';
 import { deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
 import { dom } from 'mab-dom';
-
-bsCustomFileInput.init();
 
 dom('.delete-upload').on('click', e => {
     e.preventDefault();

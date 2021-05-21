@@ -9,5 +9,6 @@ Full UI refresh (BS5, no more jQuery)
 #107    Fixed 'Move Page' modal (was completely broken) 
 #98     Editor now supports YAML highlighting
 #93     Session cookies are now SameSite=Strict
+#95     Copiable file URLs are now correctly URL-encoded
 
 Numerous minor bug fixes
