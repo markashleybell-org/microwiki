@@ -432,7 +432,7 @@ export function getImageData(cm: CodeMirror.Editor): IHtmlImageProperties {
 
     let data: IHtmlImageProperties = null;
 
-    if (token.type && (token.type === 'link' || token.type.indexOf('url') > -1)) {
+    if (token.type && (token.type.indexOf('image') > -1 || token.type.indexOf('url') > -1)) {
         const startPoint = cm.getCursor('start');
         const endPoint = cm.getCursor('end');
         const line = cm.getLine(startPoint.line);
