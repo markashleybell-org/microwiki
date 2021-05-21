@@ -1,14 +1,14 @@
 import { Modal } from 'bootstrap';
 import { deleteWithConfirmation, getDeleteConfirmationMessage } from './common';
 import { highlightElement } from './components/highlighter';
-import { dom } from './dom';
+import { dom } from 'mab-dom';
 
 document.querySelectorAll('pre code').forEach(highlightElement);
 
 export const moveDocumentButton = dom('#move-document-button');
 
 export const moveDocumentModalElement = dom('#move-document-modal');
-export const moveDocumentModal = new Modal(moveDocumentModalElement.get(0));
+export const moveDocumentModal = new Modal(moveDocumentModalElement.get());
 
 moveDocumentButton.on('click', e => {
     e.preventDefault();
@@ -17,8 +17,8 @@ moveDocumentButton.on('click', e => {
 
     fetch(`/wiki/movedocumentmodal?currentDocumentId=${a.getAttribute('data-id')}&currentDocumentTitle=${a.getAttribute('data-title')}`, { method: 'GET' })
         .then(async response => {
-            // TODO: Implement find()
-            moveDocumentModalElement.get(0).querySelector('.modal-body').innerHTML = await response.text();
+            const html = await response.text();
+            moveDocumentModalElement.find('.modal-body').html(html);
             moveDocumentModal.show();
         }).catch(error => {
             // Handle error
