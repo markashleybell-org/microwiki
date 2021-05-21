@@ -26,3 +26,8 @@ $tab-border-color: #bebebe;
     background-color: $main-background-color;
     border-color: $tab-border-color $tab-border-color $main-background-color;
 }
+
+.editor-dropzone {
+    height: 100px;
+    background-color: #999;
+}

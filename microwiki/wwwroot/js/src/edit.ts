@@ -1,3 +1,4 @@
+import Dropzone from 'dropzone';
 import { Modal, Tab } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
 import { tagItemTemplate } from './common';
@@ -205,3 +206,38 @@ dom('a[data-toggle="tab"]').on('show.bs.tab', e => {
         updatePreview(val, tabContent);
     }
 });
+
+Dropzone.autoDiscover = false;
+
+var zone = new Dropzone('.editor-dropzone', {
+    paramName: 'UploadedFile',
+    previewTemplate: '<div class="dz-preview dz-file-preview"></div>'
+});
+
+zone.on('success', (file: any, response: any) => {
+    const data: IHtmlImageProperties = { alt: null, url: response.uploadedFileName };
+
+    createImage(editor, data);
+});
+
+editor.on('drop', function (data, e) {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        const file = files[0] as Dropzone.DropzoneFile;
+        zone.addFile(file);
+    }
+});
+
+document.onpaste = function (event) {
+    var items = event.clipboardData.items;
+
+    for (let k in items) {
+        var item = items[k];
+        if (item.kind === 'file') {
+            var tmp = item.getAsFile() as Dropzone.DropzoneFile;
+            zone.addFile(tmp);
+        }
+    }
+};

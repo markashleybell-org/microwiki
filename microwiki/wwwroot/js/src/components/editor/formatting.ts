@@ -349,7 +349,7 @@ export function codeBlockApply(cm: CodeMirror.Editor, data: ICodeBlockProperties
 }
 
 export function imageApply(cm: CodeMirror.Editor, data: IHtmlImageProperties) {
-    cm.replaceSelection('![' + data.alt + '](' + data.url + ')');
+    cm.replaceSelection('![' + (data.alt || '') + '](' + data.url + ')');
 
     cm.focus();
 }
