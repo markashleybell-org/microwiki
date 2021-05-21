@@ -46,8 +46,9 @@
                 <editor asp-for="Body" />
             </div>
 
-            <input asp-for="ParentTitle" type="hidden" />
+            <input asp-for="ID" type="hidden" />
             <input asp-for="ParentID" type="hidden" />
+            <input asp-for="ParentTitle" type="hidden" />
 
             <div class="mt-4 mb-2">
                 <button type="submit" class="@SaveButtonClasses"><i class="bi-save2-fill"></i> Save Page</button>
@@ -60,7 +61,7 @@
         </div>
 
         <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone">
-            <input type="hidden" name="FileNamePrefix" value="@Model.ID" />
+            <input asp-for="FilenamePrefix" type="hidden" />
         </form>
     </div>
 </div>

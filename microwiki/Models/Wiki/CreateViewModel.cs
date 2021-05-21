@@ -42,6 +42,9 @@ namespace MicroWiki.Models
         public string TagDataJson =>
             AllTags?.AsTagJson(t => t.Label);
 
+        public string FilenamePrefix =>
+            ID.ToString();
+
         public static CreateViewModel From(Document parentDocument, IEnumerable<Tag> allTags) =>
             new CreateViewModel {
                 ID = Guid.NewGuid(),
