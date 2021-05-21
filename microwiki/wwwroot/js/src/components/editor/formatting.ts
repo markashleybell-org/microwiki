@@ -367,7 +367,7 @@ export function getLinkData(cm: CodeMirror.Editor): IHtmlLinkProperties {
 
     let data: IHtmlLinkProperties = null;
 
-    if (token.type && (token.type === 'link' || token.type.indexOf('url') > -1)) {
+    if (token.type && (token.type.indexOf('link') > -1 || token.type.indexOf('url') > -1)) {
         const startPoint = cm.getCursor('start');
         const endPoint = cm.getCursor('end');
         const line = cm.getLine(startPoint.line);
