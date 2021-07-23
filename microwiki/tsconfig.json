@@ -7,6 +7,5 @@
         "sourceMap": true
     },
 
-    "include": [ "./wwwroot/js/src/**/*.ts" ],
-    "exclude": [ "node_modules" ]
+    "include": [ "./wwwroot/js/src/**/*.ts" ]
 }

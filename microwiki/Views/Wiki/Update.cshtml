@@ -5,8 +5,8 @@
 }
 
 @section css {
-    <link rel="stylesheet" href="~/css/codemirror/codemirror.css" />
-    <link rel="stylesheet" href="~/css/codemirror/theme/microwiki.css" />
+    <link rel="stylesheet" href="~/css/dist/codemirror/codemirror.min.css" />
+    <link rel="stylesheet" href="~/css/dist/codemirror/theme/microwiki.min.css" />
 }
 
 @{ await Html.RenderPartialAsync("_BreadcrumbTrail", Model.BreadcrumbTrailData); }
@@ -85,5 +85,5 @@
 }
 
 @section scripts {
-    <script src="~/js/dist/edit.js" asp-append-version="true"></script>
+    <script src="~/js/dist/edit.min.js" asp-append-version="true"></script>
 }

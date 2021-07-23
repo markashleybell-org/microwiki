@@ -2,7 +2,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     output: {
-        filename: '[name].js',
+        filename: '[name].min.js',
         path: __dirname + '/wwwroot/js/dist',
         library: 'MicroWiki'
     },
