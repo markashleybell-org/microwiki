@@ -211,7 +211,12 @@ Dropzone.autoDiscover = false;
 
 var zone = new Dropzone('.editor-dropzone', {
     paramName: 'UploadedFile',
-    previewTemplate: '<div class="dz-preview dz-file-preview"></div>'
+    previewTemplate: `
+<div class="dz-preview dz-file-preview">
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-dz-uploadprogress></div>
+    </div>
+</div>`
 });
 
 zone.on('success', (file: any, response: any) => {
