@@ -16,7 +16,7 @@ import {
     removeLink,
     updatePreview
 } from './components/editor';
-import { dom } from 'mab-dom';
+import { DOM, dom } from 'mab-dom';
 
 declare const _ALL_TAGS: string[];
 
@@ -46,84 +46,96 @@ for (const tagInputElement of tagInputElements) {
     });
 }
 
-// TODO: Refactor modal code
-const linkModalElement = dom('#editor-link-modal');
-const linkModal = new Modal(linkModalElement.get(0));
+interface IModalOptions {
+    primaryAction: (element: DOM, modal: Modal) => void;
+    secondaryAction?: (element: DOM, modal: Modal) => void;
+    onShown?: (element: DOM, modal: Modal) => void;
+}
 
-linkModalElement.onchild('.btn-success', 'click', () => {
-    const text = linkModalElement.find('[name=link-text]').val();
-    const url = linkModalElement.find('[name=link-url]').val();
-    const title = linkModalElement.find('[name=link-title]').val();
+function initEditorModal(selector: string, options: IModalOptions): [DOM, Modal] {
+    const modalElement = dom(selector);
+    const modal = new Modal(modalElement.get(0));
 
-    const data: IHtmlLinkProperties = { linkText: text, href: url };
+    modalElement.onchild('.btn-success', 'click', () => {
+        options.primaryAction(modalElement, modal);
+    });
 
-    if (title) {
-        data.linkTitle = title;
+    if (options.secondaryAction) {
+        modalElement.onchild('.btn-danger', 'click', () => {
+            options.secondaryAction(modalElement, modal);
+        });
     }
 
-    createLink(editor, data);
+    modalElement.on('hidden.bs.modal', e => {
+        editor.focus();
+    });
 
-    linkModal.hide();
-});
+    return [modalElement, modal];
+}
 
-linkModalElement.onchild('.btn-danger', 'click', () => {
-    removeLink(editor);
+const linkModalOptions: IModalOptions = {
+    primaryAction: (el, modal) => {
+        const text = el.find('[name=link-text]').val();
+        const url = el.find('[name=link-url]').val();
+        const title = el.find('[name=link-title]').val();
 
-    linkModal.hide();
-});
+        const data: IHtmlLinkProperties = { linkText: text, href: url };
 
-linkModalElement.on('shown.bs.modal', e => {
-    const textInput = linkModalElement.find('[name=link-text]');
+        if (title) {
+            data.linkTitle = title;
+        }
 
-    if (textInput.val().trim() !== '') {
-        linkModalElement.find('[name=link-url]').focus();
-    } else {
-        textInput.focus();
+        createLink(editor, data);
+
+        modal.hide();
+    },
+    secondaryAction: (el, modal) => {
+        removeLink(editor);
+
+        modal.hide();
+    },
+    onShown: (el, modal) => {
+        const textInput = el.find('[name=link-text]');
+
+        if (textInput.val().trim() !== '') {
+            el.find('[name=link-url]').focus();
+        } else {
+            textInput.focus();
+        }
     }
-});
+};
 
-linkModalElement.on('hidden.bs.modal', e => {
-    editor.focus();
-});
+const codeBlockModalOptions: IModalOptions = {
+    primaryAction: (el, modal) => {
+        const language = el.find('select[name="code-block-language"]').val();
 
-const codeBlockModalElement = dom('#editor-code-block-modal');
-const codeBlockModal = new Modal(codeBlockModalElement.get(0));
+        const data: ICodeBlockProperties = { language: language };
 
-codeBlockModalElement.onchild('.btn-success', 'click', () => {
-    const language = codeBlockModalElement.find('select[name="code-block-language"]').val();
+        createCodeBlock(editor, data);
 
-    const data: ICodeBlockProperties = { language: language };
+        modal.hide();
+    }
+};
 
-    createCodeBlock(editor, data);
+const imageModalOptions: IModalOptions = {
+    primaryAction: (el, modal) => {
+        const url = imageModalElement.find('[name=image-url]').val();
+        const alt = imageModalElement.find('[name=image-alt]').val();
 
-    codeBlockModal.hide();
-});
+        const data: IHtmlImageProperties = { alt: alt, url: url };
 
-codeBlockModalElement.on('hidden.bs.modal', e => {
-    editor.focus();
-});
+        createImage(editor, data);
 
-const imageModalElement = dom('#editor-image-modal');
-const imageModal = new Modal(imageModalElement.get(0));
+        imageModal.hide();
+    },
+    onShown: (el, modal) => {
+        el.find('[name=image-url]').focus();
+    }
+};
 
-imageModalElement.onchild('.btn-success', 'click', () => {
-    const url = imageModalElement.find('[name=image-url]').val();
-    const alt = imageModalElement.find('[name=image-alt]').val();
-
-    const data: IHtmlImageProperties = { alt: alt, url: url };
-
-    createImage(editor, data);
-
-    imageModal.hide();
-});
-
-imageModalElement.on('shown.bs.modal', e => {
-    imageModalElement.find('[name=image-url]').focus();
-});
-
-imageModalElement.on('hidden.bs.modal', e => {
-    editor.focus();
-});
+const [linkModalElement, linkModal] = initEditorModal('#editor-link-modal', linkModalOptions);
+const [codeBlockModalElement, codeBlockModal] = initEditorModal('#editor-code-block-modal', codeBlockModalOptions);
+const [imageModalElement, imageModal] = initEditorModal('#editor-image-modal', imageModalOptions);
 
 function resetLinkModalFields() {
     linkModalElement.find('[name=link-text]').val(null);
@@ -181,19 +193,18 @@ dom('.cm-format-button').on('click', e => {
     format(formatName);
 });
 
-// TODO: Figure out how to fit this in
-const tabElements = [].slice.call(document.querySelectorAll('a[data-toggle="tab"]'));
+const tabs = dom('a[data-toggle="tab"]');
 
-tabElements.forEach(el => {
-    const tab = new Tab(el);
+tabs.each(el => {
+    const tab = new Tab(el.get());
 
-    el.addEventListener('click', (e: Event) => {
+    el.on('click', e => {
         e.preventDefault();
         tab.show();
-    })
-})
+    });
+});
 
-dom('a[data-toggle="tab"]').on('show.bs.tab', e => {
+tabs.on('show.bs.tab', e => {
     const tab = e.target as HTMLElement;
 
     if (tab.id === 'preview-tab') {
