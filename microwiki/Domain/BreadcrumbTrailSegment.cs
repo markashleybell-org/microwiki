@@ -16,5 +16,8 @@ namespace MicroWiki.Domain
         public string Title { get; }
 
         public string Location { get; }
+
+        public bool ReadOnly =>
+            string.IsNullOrWhiteSpace(Location);
     }
 }

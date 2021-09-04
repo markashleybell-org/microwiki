@@ -9,6 +9,10 @@ body {
     background-color: $main-background-color;
 }
 
+.breadcrumb-readonly {
+    color: #999;
+}
+
 @media only screen and (min-width: 1300px) {
     .navbar input[type=search] {
         width: 400px;
