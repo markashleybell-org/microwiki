@@ -90,11 +90,11 @@ namespace MicroWiki.Functions
             return new HtmlString($"<i class=\"bi-file-earmark\"></i>{itemContent}");
         }
 
-        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null, bool showPrivate = false)
+        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, bool showPrivate, Guid? currentDocumentId = null)
         {
             var childPageLinks = document.Children
                 .Where(c => c.IsPublic || showPrivate)
-                .Select(c => CreateSiteMapItemHtml(c, currentDocumentId));
+                .Select(c => CreateSiteMapItemHtml(c, showPrivate, currentDocumentId));
 
             var childPageList = childPageLinks.Any()
                 ? $"<ul>{string.Join(string.Empty, childPageLinks)}</ul>"
