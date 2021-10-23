@@ -18,8 +18,8 @@
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.90" />
         <PackageReference Include="Markdig" Version="0.26.0" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0" />
-        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.4.2">
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.4.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
