@@ -28,6 +28,26 @@ $tab-border-color: #bebebe;
 }
 
 .editor-dropzone {
-    height: 100px;
-    background-color: #999;
+    .dz-preview {
+        margin-bottom: 10px;
+    }
+
+    .progress {
+        background-color: #a3a3a3;
+    }
+}
+
+.dz-message {
+    align-items: center;
+    border: 1px dotted #999;
+    display: flex;
+    height: 200px;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.dz-started .dz-message {
+    display: none;
 }

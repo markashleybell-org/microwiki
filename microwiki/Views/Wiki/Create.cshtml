@@ -56,13 +56,7 @@
         </form>
     </div>
     <div class="@ActionColumnClasses">
-        <div class="d-grid gap-2">
-            <a asp-controller="Files" asp-action="Upload" target="_blank" class="@ActionButtonClasses">Upload File</a>
-        </div>
-
-        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data" class="editor-dropzone">
-            <input asp-for="FilenamePrefix" type="hidden" />
-        </form>
+        <file-upload asp-controller="Files" asp-action="Upload" filename-prefix="@Model.FilenamePrefix" />
     </div>
 </div>
 

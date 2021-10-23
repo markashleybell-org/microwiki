@@ -348,8 +348,8 @@ export function codeBlockApply(cm: CodeMirror.Editor, data: ICodeBlockProperties
     inlineApply(cm, format);
 }
 
-export function imageApply(cm: CodeMirror.Editor, data: IHtmlImageProperties) {
-    cm.replaceSelection('![' + (data.alt || '') + '](' + data.url + ')');
+export function imageApply(cm: CodeMirror.Editor, data: IHtmlImageProperties, appendNewLine: boolean) {
+    cm.replaceSelection('![' + (data.alt || '') + '](' + data.url + ')' + (appendNewLine ? '\n' : ''));
 
     cm.focus();
 }
@@ -475,8 +475,8 @@ export function getImageData(cm: CodeMirror.Editor): IHtmlImageProperties {
     return data;
 }
 
-export function createImage(cm: CodeMirror.Editor, properties: IHtmlImageProperties) {
-    imageApply(cm, properties);
+export function createImage(cm: CodeMirror.Editor, properties: IHtmlImageProperties, appendNewLine: boolean) {
+    imageApply(cm, properties, appendNewLine);
 }
 
 /* END Public Functions */

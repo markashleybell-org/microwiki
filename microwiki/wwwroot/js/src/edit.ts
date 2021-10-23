@@ -124,7 +124,7 @@ const imageModalOptions: IModalOptions = {
 
         const data: IHtmlImageProperties = { alt: alt, url: url };
 
-        createImage(editor, data);
+        createImage(editor, data, false);
 
         imageModal.hide();
     },
@@ -233,7 +233,11 @@ var zone = new Dropzone('.editor-dropzone', {
 zone.on('success', (file: any, response: any) => {
     const data: IHtmlImageProperties = { alt: null, url: response.uploadedFileName };
 
-    createImage(editor, data);
+    createImage(editor, data, true);
+
+    zone.removeFile(file);
+
+    console.log(file);
 });
 
 editor.on('drop', function (data, e) {
