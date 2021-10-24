@@ -177,7 +177,7 @@ namespace MicroWiki.Controllers
         [Authorize]
         private async Task<SiteMapDocumentViewModel> GetSiteMap()
         {
-            var documents = await _repository.ReadAllDocuments();
+            var documents = await _repository.ReadDocuments();
 
             var root = documents.Single(d => !d.ParentID.HasValue);
 

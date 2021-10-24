@@ -61,9 +61,7 @@ namespace MicroWiki.Models
                 model.Title,
                 model.Body,
                 CreateSlug(model.Title),
-                (model.Tags ?? string.Empty)
-                    .Split('|', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(t => new Tag(t)),
+                TagList(model.Tags),
                 model.IsPublic
             );
     }

@@ -110,6 +110,11 @@ namespace MicroWiki.Functions
                 ? tags.Split('|').Select(t => new Tag(t))
                 : Enumerable.Empty<Tag>();
 
+        public static string TagString(IEnumerable<Tag> tags) =>
+            tags?.Any() == true
+                ? string.Join("|", tags.Select(t => t.Label))
+                : default;
+
         public static string AsTagJson(this IEnumerable<Tag> tags, Func<Tag, object> transform) =>
             JsonSerializer.Serialize(tags.Select(transform));
     }

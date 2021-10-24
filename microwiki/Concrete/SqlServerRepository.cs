@@ -82,11 +82,19 @@ namespace MicroWiki.Concrete
                 return document;
             });
 
-        public async Task<IEnumerable<SiteMapDocument>> ReadAllDocuments() =>
+        public async Task<IEnumerable<SiteMapDocument>> ReadDocuments() =>
             await WithConnection(async conn => {
                 return await conn.QuerySp<SiteMapDocument>(
                     sql: "ReadDocuments",
                     param: new { ParentID = default(Guid?) }
+                );
+            });
+
+        public async Task<IEnumerable<Document>> ReadDocumentsForSearchIndex() =>
+            await WithConnection(async conn => {
+                return await conn.QuerySp<Document>(
+                    sql: "ReadDocumentsForSearchIndex",
+                    param: new { }
                 );
             });
 

@@ -9,5 +9,7 @@ namespace MicroWiki.Support
         public string LocalFileManagerLibraryFolderPath { get; set; }
 
         public int PersistentSessionLengthInDays { get; set; }
+
+        public string SearchIndexBasePath { get; set; }
     }
 }

@@ -17,13 +17,15 @@
 
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.90" />
+        <PackageReference Include="Lucene.Net" Version="4.8.0-beta00014" />
+        <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00014" />
         <PackageReference Include="Markdig" Version="0.26.0" />
         <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
         <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.4.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

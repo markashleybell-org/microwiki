@@ -15,7 +15,9 @@ namespace MicroWiki.Abstract
 
         Task<Document> ReadDocument(Guid id);
 
-        Task<IEnumerable<SiteMapDocument>> ReadAllDocuments();
+        Task<IEnumerable<SiteMapDocument>> ReadDocuments();
+
+        Task<IEnumerable<Document>> ReadDocumentsForSearchIndex();
 
         Task<Document> UpdateDocument(Document document);
 
