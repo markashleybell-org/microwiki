@@ -12,7 +12,8 @@ namespace MicroWiki.Domain
             string body,
             string location,
             IEnumerable<Tag> tags,
-            bool isPublic)
+            bool isPublic,
+            string[] highlights)
         {
             Score = score;
             ID = id;
@@ -21,6 +22,7 @@ namespace MicroWiki.Domain
             Location = location ?? throw new ArgumentNullException(nameof(location));
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
             IsPublic = isPublic;
+            Highlights = highlights ?? Array.Empty<string>();
         }
 
         public float Score { get; }
@@ -36,5 +38,7 @@ namespace MicroWiki.Domain
         public IEnumerable<Tag> Tags { get; }
 
         public bool IsPublic { get; }
+
+        public string[] Highlights { get; }
     }
 }

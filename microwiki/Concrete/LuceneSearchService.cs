@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.En;
 using Lucene.Net.Analysis.Standard;
 
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
+using Lucene.Net.Search.Highlight;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Microsoft.Extensions.Options;
@@ -77,11 +80,19 @@ namespace MicroWiki.Concrete
 
             var hits = searcher.Search(luceneQuery, n: 20).ScoreDocs;
 
+            var formatter = new SimpleHTMLFormatter();
+            var highlighter = new Highlighter(formatter, new QueryScorer(luceneQuery));
+
             // We don't care about the created/updated date here, as we're just ordering by score anyway
             var now = _dateTimeService.Now;
 
             var results = hits.Select(h => {
                 var doc = searcher.Doc(h.Doc);
+
+                var body = doc.Get("body");
+                var tokenStream = TokenSources.GetAnyTokenStream(searcher.IndexReader, h.Doc, "body", analyzer);
+                var fragments = highlighter.GetBestTextFragments(tokenStream, body, true, 10);
+
                 return new SearchResult(
                     h.Score,
                     Guid.Parse(doc.Get("id")),
@@ -89,7 +100,8 @@ namespace MicroWiki.Concrete
                     doc.Get("body"),
                     doc.Get("location"),
                     TagList(doc.Get("tags")),
-                    bool.Parse(doc.Get("ispublic"))
+                    bool.Parse(doc.Get("ispublic")),
+                    fragments.Select(f => f.ToString()).ToArray()
                 );
             });
 
@@ -98,6 +110,69 @@ namespace MicroWiki.Concrete
                 .Where(r => r.IsPublic == publicOnly || r.IsPublic)
                 .OrderByDescending(r => r.Score)
                 .ToList();
+        }
+
+        /*
+        If a token contains any non-digit characters, do a fuzzy search.
+        We search for both an exact match *and* a fuzzy match, and the
+        exact match is boosted so it ranks higher in the results.
+        If the token is numeric, it's almost definitely a product code,
+        so we look for an exact match only.
+        */
+        private static string LuceneTokenTransform(string token) =>
+            Regex.IsMatch(token, @"\D+") ? $"({token}* OR {token}^2 OR {token}~1)" : token;
+
+        private static string SanitiseQuery(string query)
+        {
+            var sanitisedQuery = new StringBuilder(query);
+
+            sanitisedQuery.Replace("-", " ");
+            sanitisedQuery.Replace("(", " ");
+            sanitisedQuery.Replace(")", " ");
+            sanitisedQuery.Replace("[", " ");
+            sanitisedQuery.Replace("]", " ");
+            sanitisedQuery.Replace("\t", " ");
+            sanitisedQuery.Replace("\r", " ");
+            sanitisedQuery.Replace("\n", " ");
+            sanitisedQuery.Replace("*", " ");
+
+            return sanitisedQuery.ToString();
+        }
+
+        private static string LuceneQueryFrom(string query) =>
+            LuceneQueryFrom(query, SanitiseQuery, LuceneTokenTransform);
+
+        private static string LuceneQueryFrom(
+            string query,
+            Func<string, string> sanitiseQuery,
+            Func<string, string> queryTokenTransform)
+        {
+            if (sanitiseQuery is null)
+            {
+                throw new ArgumentNullException(nameof(sanitiseQuery));
+            }
+
+            if (queryTokenTransform is null)
+            {
+                throw new ArgumentNullException(nameof(queryTokenTransform));
+            }
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return null;
+            }
+
+            var normalisedQuery = Regex.Replace(sanitiseQuery(query).Trim(), @"\s{2,}", " ");
+
+            if (string.IsNullOrWhiteSpace(normalisedQuery))
+            {
+                return null;
+            }
+
+            // Use fuzzy search if the term doesn't match something
+            var terms = normalisedQuery.Split(' ').Select(queryTokenTransform);
+
+            return string.Join(" ", terms);
         }
 
         private static l.Document AsDocument(Document document) =>
