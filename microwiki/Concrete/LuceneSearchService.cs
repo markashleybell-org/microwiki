@@ -6,13 +6,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.En;
 using Lucene.Net.Analysis.Standard;
-
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Highlight;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using Markdig;
 using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
 using MicroWiki.Domain;
@@ -179,7 +179,7 @@ namespace MicroWiki.Concrete
             new() {
                 new l.StringField("id", document.ID.ToString(), l.Field.Store.YES),
                 new l.TextField("title", document.Title, l.Field.Store.YES),
-                new l.TextField("body", document.Body ?? string.Empty, l.Field.Store.YES),
+                new l.TextField("body", Markdown.ToPlainText(document.Body ?? string.Empty), l.Field.Store.YES),
                 new l.StringField("location", document.Location, l.Field.Store.YES),
                 new l.TextField("tags", TagString(document.Tags) ?? string.Empty, l.Field.Store.YES),
                 new l.StringField("ispublic", document.IsPublic.ToString(), l.Field.Store.YES)
