@@ -19,6 +19,10 @@ steps:
     clean: true
     msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
 
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16.13.0'
+
 - task: Npm@1
   displayName: 'NPM Package Restore'
   inputs:
