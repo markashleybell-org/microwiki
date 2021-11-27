@@ -7,10 +7,10 @@ namespace MicroWiki.Abstract
 {
     public interface IFileManager
     {
-        Task<string> UploadFile(IFormFile file, Func<string, string> fileNameTransform = null);
+        Task<Uri> UploadFile(IFormFile file, string destinationPath);
 
-        void DeleteFile(string fileName);
+        void DeleteFile(string path);
 
-        IEnumerable<string> GetFiles();
+        IEnumerable<Uri> GetFiles();
     }
 }

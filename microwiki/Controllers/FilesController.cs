@@ -25,7 +25,7 @@ namespace MicroWiki.Controllers
         {
             var model = new UploadViewModel {
                 UploadedFileName = uploadedFileName,
-                Files = _fileManager.GetFiles()
+                Files = _fileManager.GetFiles().Select(f => f.ToString())
             };
 
             return View(model);
@@ -41,7 +41,7 @@ namespace MicroWiki.Controllers
                 return RedirectToAction(nameof(Upload));
             }
 
-            var uploadedFilePath = await _fileManager.UploadFile(file, fn => $"{model.FileNamePrefix}-{fn}");
+            var uploadedFilePath = await _fileManager.UploadFile(file, $"{model.FileNamePrefix}/{file.FileName}");
 
             return HttpContext.Request.Headers["X-Requested-With"] != "XMLHttpRequest"
                 ? RedirectToAction(nameof(Upload), new { UploadedFileName = uploadedFilePath })

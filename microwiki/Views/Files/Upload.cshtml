@@ -42,18 +42,18 @@
                                 }
                                 else
                                 {
-                                    <a href="@file" class="thumbnail file" target="_blank">
-                                        <span class="glyphicon glyphicon-file"></span>
+                                    <a href="@file" class="thumbnail file fs-1" target="_blank">
+                                        <span class="bi bi-file-earmark-text"></span>
                                     </a>
                                 }
                             </td>
                             <td>
-                                <strong>@Uri.EscapeUriString(file)</strong>
+                                <strong>@file</strong>
                             </td>
                             <td>
                                 <form asp-controller="Files" asp-action="DeleteUpload" method="post">
                                     <input type="hidden" name="Location" value="@file" />
-                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" data-filename="@System.IO.Path.GetFileName(file)" />
+                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" data-filename="@(file)" />
                                 </form>
                             </td>
                         </tr>

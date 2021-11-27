@@ -12,6 +12,8 @@ namespace MicroWiki.Functions
 {
     public static class Functions
     {
+        public const char UrlSeparator = '/';
+
         public static bool IsImageFile(this string filePath) =>
             Regex.IsMatch(Path.GetExtension(filePath), @"\.(?:jpe?g|png|gif)", RegexOptions.IgnoreCase);
 
@@ -117,5 +119,29 @@ namespace MicroWiki.Functions
 
         public static string AsTagJson(this IEnumerable<Tag> tags, Func<Tag, object> transform) =>
             JsonSerializer.Serialize(tags.Select(transform));
+
+        public static string CreatePhysicalPath(params string[] segments) =>
+            CreatePath(Path.DirectorySeparatorChar, NormalisePhysicalPath, segments);
+
+        public static string CreateUrlPath(params string[] segments) =>
+            CreatePath('/', NormaliseUrlPath, segments);
+
+        public static string CreatePath(char separator, Func<string, string> normalise, params string[] segments) =>
+            string.Join(separator, segments.Select(s => normalise(s.Trim('/', '\\'))));
+
+        public static string NormalisePhysicalPath(string path) =>
+            NormalisePathSeparators(path, Path.DirectorySeparatorChar);
+
+        public static string NormaliseUrlPath(string path) =>
+            NormalisePathSeparators(path, UrlSeparator);
+
+        public static string NormalisePathSeparators(string path, char separator)
+        {
+            var normalised = path.Replace('/', separator).Replace('\\', separator);
+
+            var s = separator.ToString();
+
+            return Regex.Replace(normalised, Regex.Escape(s) + "{2,}", s);
+        }
     }
 }
