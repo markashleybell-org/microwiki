@@ -87,7 +87,7 @@ public class TestWebHostEnvironment : IWebHostEnvironment
 public class TestOptionsMonitor : IOptionsMonitor<Settings> 
 {
     private Settings _settings = new Settings {
-        ConnectionString = "Server=localhost;Database=microwiki;Trusted_Connection=yes",
+        ConnectionString = "Server=localhost;Database=microwiki;Trusted_Connection=yes;TrustServerCertificate=true",
         LocalFileManagerLibraryFolderPath = "/usercontent"
     };
     
