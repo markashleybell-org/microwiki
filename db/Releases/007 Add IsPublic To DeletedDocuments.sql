@@ -1,5 +1,11 @@
-﻿
-CREATE PROCEDURE [dbo].[DeleteDocument]
+﻿IF COL_LENGTH('[dbo].[DeletedDocuments]', 'IsPublic') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[DeletedDocuments]
+	ADD [IsPublic] BIT NOT NULL DEFAULT 0
+END
+GO
+
+ALTER PROCEDURE [dbo].[DeleteDocument]
 (
     @ID UNIQUEIDENTIFIER,
     @Username NVARCHAR(128)
@@ -74,3 +80,4 @@ BEGIN
     INNER JOIN
         #DocumentsToDelete del ON del.ID = d.ID
 END
+GO
