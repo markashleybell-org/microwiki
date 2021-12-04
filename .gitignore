@@ -361,3 +361,6 @@ microwiki/wwwroot/css/dist/
 
 # TypeScript Output
 microwiki/wwwroot/js/dist/
+
+# Migration tool config
+migrateconfig.json
