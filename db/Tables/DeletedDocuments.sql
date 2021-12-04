@@ -9,5 +9,6 @@
     [Created]  DATETIME       CONSTRAINT [DF_DeletedDocuments_Created] DEFAULT (getdate()) NOT NULL,
     [Updated]  DATETIME       CONSTRAINT [DF_DeletedDocuments_Updated] DEFAULT (getdate()) NOT NULL,
     [Deleted]  DATETIME       CONSTRAINT [DF_DeletedDocuments_Deleted] DEFAULT (getdate()) NOT NULL,
+    [IsPublic] BIT NOT NULL DEFAULT 0,
     CONSTRAINT [PK_DeletedDocuments] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
