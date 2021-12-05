@@ -82,17 +82,32 @@ namespace MicroWiki.Functions
             return SiteMapDocumentViewModel.From(document).WithChildren(children);
         }
 
-        public static HtmlString CreateSiteMapItemLinkHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null)
+        public static HtmlString CreateSiteMapItemLinkHtml(
+            SiteMapDocumentViewModel document,
+            bool showPrivate,
+            Guid? currentDocumentId = null)
         {
-            // If an ID has been passed in, don't link the item for that document
-            var itemContent = currentDocumentId != document.ID
-                ? $"<a class=\"document\" href=\"{document.Location}\" data-id=\"{document.ID}\">{document.Title}</a>"
-                : document.Title;
+            string itemContent;
+
+            if (document.IsPublic || showPrivate)
+            {
+                // If an ID has been passed in, don't link the item for that document
+                itemContent = currentDocumentId != document.ID
+                    ? $"<a class=\"document\" href=\"{document.Location}\" data-id=\"{document.ID}\">{document.Title}</a>"
+                    : document.Title;
+            }
+            else
+            {
+                itemContent = document.ParentID.HasValue ? "[PRIVATE]" : "Home";
+            }
 
             return new HtmlString($"<i class=\"bi-file-earmark\"></i>{itemContent}");
         }
 
-        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, bool showPrivate, Guid? currentDocumentId = null)
+        public static HtmlString CreateSiteMapItemHtml(
+            SiteMapDocumentViewModel document,
+            bool showPrivate,
+            Guid? currentDocumentId = null)
         {
             var childPageLinks = document.Children
                 .Where(c => c.IsPublic || showPrivate)
@@ -102,7 +117,7 @@ namespace MicroWiki.Functions
                 ? $"<ul>{string.Join(string.Empty, childPageLinks)}</ul>"
                 : string.Empty;
 
-            var html = $"<li>{CreateSiteMapItemLinkHtml(document, currentDocumentId)}{childPageList}</li>";
+            var html = $"<li>{CreateSiteMapItemLinkHtml(document, showPrivate, currentDocumentId)}{childPageList}</li>";
 
             return new HtmlString(html);
         }
