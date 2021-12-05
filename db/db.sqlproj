@@ -213,5 +213,8 @@
     <None Include="Releases\002 DeleteDocument Tags Fix.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Releases\008 ReadDocumentsForSearchIndex Permissions.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
