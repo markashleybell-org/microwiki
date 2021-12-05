@@ -1,13 +1,6 @@
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using MicroWiki.Abstract;
-using MicroWiki.Domain;
-using MicroWiki.Models;
 using MicroWiki.Support;
 using static MicroWiki.Functions.Functions;
 
