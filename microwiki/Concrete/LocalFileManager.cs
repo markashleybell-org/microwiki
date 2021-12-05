@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
@@ -16,21 +15,16 @@ namespace MicroWiki.Concrete
     {
         private readonly Settings _cfg;
 
-        private readonly string _webRootPath;
-        private readonly string _fileLibraryPhysicalPath;
-        private readonly string _fileLibraryRelativePath;
+        private readonly string _fileLibraryFolderPhysicalPath;
+        private readonly string _fileLibraryFolderRelativeUrl;
 
         public LocalFileManager(
-            IWebHostEnvironment hostingEnvironment,
             IOptionsMonitor<Settings> optionsMonitor)
         {
             _cfg = optionsMonitor.CurrentValue;
 
-            _webRootPath = hostingEnvironment.WebRootPath;
-
-            _fileLibraryRelativePath = NormalisePhysicalPath(_cfg.LocalFileManagerLibraryFolderPath);
-
-            _fileLibraryPhysicalPath = CreatePhysicalPath(_webRootPath, _fileLibraryRelativePath);
+            _fileLibraryFolderPhysicalPath = _cfg.LocalFileManagerLibraryFolderPhysicalPath;
+            _fileLibraryFolderRelativeUrl = _cfg.LocalFileManagerLibraryFolderRelativeUrl;
         }
 
         public async Task<Uri> UploadFile(IFormFile file, string destinationPath)
@@ -45,11 +39,11 @@ namespace MicroWiki.Concrete
                 throw new ArgumentOutOfRangeException(nameof(file), "File has zero length.");
             }
 
-            var normalisedDestinationPath = NormalisePhysicalPath(destinationPath);
+            var normalisedDestinationPath = NormalisePhysicalPath(TrimSeparators(destinationPath));
 
             var destinationFolder = Path.GetDirectoryName(normalisedDestinationPath);
 
-            var physicalDestinationFolder = CreatePhysicalPath(_fileLibraryPhysicalPath, destinationFolder);
+            var physicalDestinationFolder = Path.Combine(_fileLibraryFolderPhysicalPath, destinationFolder);
 
             if (destinationFolder != string.Empty)
             {
@@ -58,23 +52,26 @@ namespace MicroWiki.Concrete
 
             var destinationFilenameOriginal = Path.GetFileName(normalisedDestinationPath);
 
-            var destinationFilename = File.Exists(CreatePhysicalPath(physicalDestinationFolder, destinationFilenameOriginal))
+            var destinationFilename = File.Exists(Path.Combine(physicalDestinationFolder, destinationFilenameOriginal))
                 ? $"{Path.GetFileNameWithoutExtension(destinationFilenameOriginal)}-{GetUniqueCode()}{Path.GetExtension(destinationFilenameOriginal)}"
                 : destinationFilenameOriginal;
 
-            using (var stream = new FileStream(CreatePhysicalPath(physicalDestinationFolder, destinationFilename), FileMode.CreateNew))
+            using (var stream = new FileStream(Path.Combine(physicalDestinationFolder, destinationFilename), FileMode.CreateNew))
             {
                 await file.CopyToAsync(stream);
             }
 
-            var relativeUrl = UrlSeparator + CreateUrlPath(_fileLibraryRelativePath, Path.GetDirectoryName(destinationPath), destinationFilename);
+            var urlParts = new[] { _fileLibraryFolderRelativeUrl, destinationFolder, destinationFilename }
+                .Where(s => !string.IsNullOrWhiteSpace(s));
+
+            var relativeUrl = string.Join(UrlSeparator, urlParts);
 
             return new Uri(relativeUrl, uriKind: UriKind.Relative);
         }
 
         public void DeleteFile(string path)
         {
-            var filePath = CreatePhysicalPath(_webRootPath, path);
+            var filePath = Path.Combine(_fileLibraryFolderPhysicalPath, TrimSeparators(path));
 
             if (File.Exists(filePath))
             {
@@ -83,7 +80,7 @@ namespace MicroWiki.Concrete
         }
 
         public IEnumerable<Uri> GetFiles() =>
-            Directory.EnumerateFiles(_fileLibraryPhysicalPath, "*.*", new EnumerationOptions { RecurseSubdirectories = true })
-                .Select(f => new Uri(UrlSeparator + CreateUrlPath(_fileLibraryRelativePath, f.Replace(_fileLibraryPhysicalPath, string.Empty)), uriKind: UriKind.Relative));
+            Directory.EnumerateFiles(_fileLibraryFolderPhysicalPath, "*.*", new EnumerationOptions { RecurseSubdirectories = true })
+                .Select(f => new Uri(string.Join(UrlSeparator, _fileLibraryFolderRelativeUrl, f.Replace(_fileLibraryFolderPhysicalPath + Path.DirectorySeparatorChar, string.Empty)), uriKind: UriKind.Relative));
     }
 }

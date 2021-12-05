@@ -120,14 +120,8 @@ namespace MicroWiki.Functions
         public static string AsTagJson(this IEnumerable<Tag> tags, Func<Tag, object> transform) =>
             JsonSerializer.Serialize(tags.Select(transform));
 
-        public static string CreatePhysicalPath(params string[] segments) =>
-            CreatePath(Path.DirectorySeparatorChar, NormalisePhysicalPath, segments);
-
-        public static string CreateUrlPath(params string[] segments) =>
-            CreatePath('/', NormaliseUrlPath, segments);
-
-        public static string CreatePath(char separator, Func<string, string> normalise, params string[] segments) =>
-            string.Join(separator, segments.Select(s => normalise(s.Trim('/', '\\'))));
+        public static string TrimSeparators(string path) =>
+            path.Trim('/', '\\');
 
         public static string NormalisePhysicalPath(string path) =>
             NormalisePathSeparators(path, Path.DirectorySeparatorChar);

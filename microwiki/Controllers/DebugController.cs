@@ -15,24 +15,15 @@ namespace MicroWiki.Controllers
 {
     public class DebugController : ControllerBase
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly Settings _cfg;
 
         public DebugController(
-            IWebHostEnvironment hostingEnvironment,
-            IOptionsMonitor<Settings> optionsMonitor)
-        {
-            _hostingEnvironment = hostingEnvironment;
+            IOptionsMonitor<Settings> optionsMonitor) =>
             _cfg = optionsMonitor.CurrentValue;
-        }
 
         public IActionResult Index()
         {
-            var webRootPath = _hostingEnvironment.WebRootPath;
-
-            var fileLibraryRelativePath = NormalisePhysicalPath(_cfg.LocalFileManagerLibraryFolderPath);
-
-            var fileLibraryPhysicalPath = CreatePhysicalPath(webRootPath, fileLibraryRelativePath);
+            var fileLibraryPhysicalPath = _cfg.LocalFileManagerLibraryFolderPhysicalPath;
 
             var destinationPath = "c479dd73-0699-4295-a167-a78e4919e235/flowers2.jpg";
 
@@ -40,20 +31,20 @@ namespace MicroWiki.Controllers
 
             var destinationFolder = Path.GetDirectoryName(normalisedDestinationPath);
 
-            var physicalDestinationFolder = CreatePhysicalPath(fileLibraryPhysicalPath, destinationFolder);
+            var physicalDestinationFolder = Path.Combine(fileLibraryPhysicalPath, destinationFolder);
+
+            var physicalDestinationFilename = Path.Combine(physicalDestinationFolder, Path.GetFileName(normalisedDestinationPath));
 
             var output = $@"
-LocalFileManagerLibraryFolderPath: {_cfg.LocalFileManagerLibraryFolderPath}
-
-_fileLibraryRelativePath: {fileLibraryRelativePath}
-
-_fileLibraryPhysicalPath: {fileLibraryPhysicalPath}
+LocalFileManagerLibraryFolderPath: {_cfg.LocalFileManagerLibraryFolderPhysicalPath}
 
 normalisedDestinationPath: {normalisedDestinationPath}
 
 destinationFolder: {destinationFolder}
 
 physicalDestinationFolder: {physicalDestinationFolder}
+
+physicalDestinationFilename: {physicalDestinationFilename}
 ";
 
             return Content(output);
