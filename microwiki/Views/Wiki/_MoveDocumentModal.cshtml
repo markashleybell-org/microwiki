@@ -4,5 +4,5 @@
 
 <p>Click on the page you want to move '<strong>@Model.Title</strong>' to:</p>
 <div class="site-contents">
-    <ul>@CreateSiteMapItemHtml(Model.Root, showPrivate: User.Identity.IsAuthenticated, currentDocumentId: Model.ID)</ul>
+    <ul>@CreateSiteMapItemHtml(Model.Root, showPrivate: User.Identity.IsAuthenticated, currentDocumentId: Model.ID, disableChildrenOfCurrentDocument: true)</ul>
 </div>

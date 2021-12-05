@@ -85,14 +85,15 @@ namespace MicroWiki.Functions
         public static HtmlString CreateSiteMapItemLinkHtml(
             SiteMapDocumentViewModel document,
             bool showPrivate,
-            Guid? currentDocumentId = null)
+            Guid? currentDocumentId = null,
+            bool disableChildrenOfCurrentDocument = false)
         {
             string itemContent;
 
             if (document.IsPublic || showPrivate)
             {
                 // If an ID has been passed in, don't link the item for that document
-                itemContent = currentDocumentId != document.ID
+                itemContent = currentDocumentId != document.ID && (!disableChildrenOfCurrentDocument || document.ParentID != currentDocumentId)
                     ? $"<a class=\"document\" href=\"{document.Location}\" data-id=\"{document.ID}\">{document.Title}</a>"
                     : document.Title;
             }
@@ -107,17 +108,18 @@ namespace MicroWiki.Functions
         public static HtmlString CreateSiteMapItemHtml(
             SiteMapDocumentViewModel document,
             bool showPrivate,
-            Guid? currentDocumentId = null)
+            Guid? currentDocumentId = null,
+            bool disableChildrenOfCurrentDocument = false)
         {
             var childPageLinks = document.Children
                 .Where(c => c.IsPublic || showPrivate)
-                .Select(c => CreateSiteMapItemHtml(c, showPrivate, currentDocumentId));
+                .Select(c => CreateSiteMapItemHtml(c, showPrivate, currentDocumentId, disableChildrenOfCurrentDocument));
 
             var childPageList = childPageLinks.Any()
                 ? $"<ul>{string.Join(string.Empty, childPageLinks)}</ul>"
                 : string.Empty;
 
-            var html = $"<li>{CreateSiteMapItemLinkHtml(document, showPrivate, currentDocumentId)}{childPageList}</li>";
+            var html = $"<li>{CreateSiteMapItemLinkHtml(document, showPrivate, currentDocumentId, disableChildrenOfCurrentDocument)}{childPageList}</li>";
 
             return new HtmlString(html);
         }
