@@ -1,4 +1,5 @@
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MicroWiki.Support;
@@ -6,6 +7,7 @@ using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Controllers
 {
+    [Authorize]
     public class DebugController : ControllerBase
     {
         private readonly Settings _cfg;
