@@ -1,4 +1,4 @@
-﻿@model UploadViewModel
+﻿@model FileListViewModel
 
 @section title {
     <title>Upload File</title>
@@ -8,23 +8,7 @@
 
 <div class="row">
     <div class="col">
-        <h1>Upload File</h1>
-
-        <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label asp-for="UploadedFile" class="form-label">Please select a file</label>
-                <input asp-for="UploadedFile" class="form-control" type="file">
-            </div>
-
-            <div class="mt-4 mb-2">
-                <button type="submit" class="btn btn-primary"><i class="bi-cloud-arrow-up-fill"></i> Upload File</button>
-            </div>
-        </form>
-
-        @if (Model.UploadedFileName != null)
-        {
-            <p>Uploaded File Name: <strong>@Model.UploadedFileName</strong></p>
-        }
+        <h1>All Files</h1>
 
         @if (Model.Files.Any())
         {
@@ -32,23 +16,25 @@
                 <tbody>
                     @foreach (var file in Model.Files)
                     {
+                        var url = Model.LibraryFolderRelativeUrl + "/" + NormaliseUrlPath(file);
+
                         <tr>
                             <td>
                                 @if (file.IsImageFile())
                                 {
-                                    <a href="@file" class="thumbnail" target="_blank">
-                                        <img src="@file" />
+                                    <a href="@url" class="thumbnail" target="_blank">
+                                        <img src="@url" />
                                     </a>
                                 }
                                 else
                                 {
-                                    <a href="@file" class="thumbnail file fs-1" target="_blank">
+                                    <a href="@url" class="thumbnail file fs-1" target="_blank">
                                         <span class="bi bi-file-earmark-text"></span>
                                     </a>
                                 }
                             </td>
                             <td>
-                                <strong>@file</strong>
+                                <strong>@url</strong>
                             </td>
                             <td>
                                 <form asp-controller="Files" asp-action="DeleteUpload" method="post">

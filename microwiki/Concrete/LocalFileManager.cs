@@ -71,7 +71,7 @@ namespace MicroWiki.Concrete
 
         public void DeleteFile(string path)
         {
-            var filePath = Path.Combine(_fileLibraryFolderPhysicalPath, TrimSeparators(path));
+            var filePath = Path.Combine(_fileLibraryFolderPhysicalPath, NormalisePhysicalPath(TrimSeparators(path)));
 
             if (File.Exists(filePath))
             {
@@ -81,6 +81,6 @@ namespace MicroWiki.Concrete
 
         public IEnumerable<Uri> GetFiles() =>
             Directory.EnumerateFiles(_fileLibraryFolderPhysicalPath, "*.*", new EnumerationOptions { RecurseSubdirectories = true })
-                .Select(f => new Uri(string.Join(UrlSeparator, _fileLibraryFolderRelativeUrl, f.Replace(_fileLibraryFolderPhysicalPath + Path.DirectorySeparatorChar, string.Empty)), uriKind: UriKind.Relative));
+                .Select(f => new Uri(string.Join(UrlSeparator, f.Replace(_fileLibraryFolderPhysicalPath + Path.DirectorySeparatorChar, string.Empty)), uriKind: UriKind.Relative));
     }
 }

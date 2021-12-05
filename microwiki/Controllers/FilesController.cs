@@ -2,29 +2,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
 using MicroWiki.Models;
+using MicroWiki.Support;
+using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Controllers
 {
     [Authorize]
     public class FilesController : ControllerBase
     {
+        private readonly Settings _cfg;
         private readonly IRepository _repository;
         private readonly IFileManager _fileManager;
 
         public FilesController(
+            IOptionsMonitor<Settings> optionsMonitor,
             IRepository repository,
             IFileManager fileManager)
         {
+            _cfg = optionsMonitor.CurrentValue;
             _repository = repository;
             _fileManager = fileManager;
         }
 
-        public IActionResult Upload(string uploadedFileName)
+        public IActionResult Index()
         {
-            var model = new UploadViewModel {
-                UploadedFileName = uploadedFileName,
+            var model = new FileListViewModel {
+                LibraryFolderRelativeUrl = _cfg.LocalFileManagerLibraryFolderRelativeUrl,
                 Files = _fileManager.GetFiles().Select(f => f.ToString())
             };
 
@@ -51,7 +57,9 @@ namespace MicroWiki.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUpload(DeleteUploadViewModel model)
         {
-            var usedInLocations = await _repository.CheckFileUse(model.Location);
+            var fileUrl = NormaliseUrlPath(model.Location);
+
+            var usedInLocations = await _repository.CheckFileUse(fileUrl);
 
             if (usedInLocations.Any())
             {
@@ -62,7 +70,7 @@ namespace MicroWiki.Controllers
 
             _fileManager.DeleteFile(model.Location);
 
-            return RedirectToAction(nameof(Upload));
+            return RedirectToAction(nameof(Index));
         }
     }
 }
