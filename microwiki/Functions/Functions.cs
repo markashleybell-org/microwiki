@@ -12,12 +12,14 @@ namespace MicroWiki.Functions
 {
     public static class Functions
     {
+        public const char UrlSeparator = '/';
+
         public static bool IsImageFile(this string filePath) =>
             Regex.IsMatch(Path.GetExtension(filePath), @"\.(?:jpe?g|png|gif)", RegexOptions.IgnoreCase);
 
         public static string GetUniqueCode()
         {
-            var characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var ticks = DateTime.UtcNow.Ticks.ToString();
 
             var code = string.Empty;
@@ -53,7 +55,7 @@ namespace MicroWiki.Functions
                 return null;
             }
 
-            var options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+            const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
 
             // Remove all special chars (but not spaces or dashes)
             var output = Regex.Replace(input, @"[^a-z0-9\s\-]", string.Empty, options);
@@ -65,10 +67,7 @@ namespace MicroWiki.Functions
             output = Regex.Replace(output, @"\-{2,}", "-", options);
 
             // Trim extra hyphen off the end if exists
-            if (output.EndsWith("-"))
-            {
-                output = output.Substring(0, output.Length - 1);
-            }
+            output = output.TrimEnd('-');
 
             return output.ToLower();
         }
@@ -90,14 +89,14 @@ namespace MicroWiki.Functions
                 ? $"<a class=\"document\" href=\"{document.Location}\" data-id=\"{document.ID}\">{document.Title}</a>"
                 : document.Title;
 
-            return new HtmlString($"<i class=\"fa fa-file-text-o\"></i>{itemContent}");
+            return new HtmlString($"<i class=\"bi-file-earmark\"></i>{itemContent}");
         }
 
-        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, Guid? currentDocumentId = null, bool showPrivate = false)
+        public static HtmlString CreateSiteMapItemHtml(SiteMapDocumentViewModel document, bool showPrivate, Guid? currentDocumentId = null)
         {
             var childPageLinks = document.Children
                 .Where(c => c.IsPublic || showPrivate)
-                .Select(c => CreateSiteMapItemHtml(c, currentDocumentId));
+                .Select(c => CreateSiteMapItemHtml(c, showPrivate, currentDocumentId));
 
             var childPageList = childPageLinks.Any()
                 ? $"<ul>{string.Join(string.Empty, childPageLinks)}</ul>"
@@ -113,7 +112,36 @@ namespace MicroWiki.Functions
                 ? tags.Split('|').Select(t => new Tag(t))
                 : Enumerable.Empty<Tag>();
 
+        public static string TagString(IEnumerable<Tag> tags) =>
+            tags?.Any() == true
+                ? string.Join("|", tags.Select(t => t.Label))
+                : default;
+
         public static string AsTagJson(this IEnumerable<Tag> tags, Func<Tag, object> transform) =>
             JsonSerializer.Serialize(tags.Select(transform));
+
+        public static string CreatePhysicalPath(params string[] segments) =>
+            CreatePath(Path.DirectorySeparatorChar, NormalisePhysicalPath, segments);
+
+        public static string CreateUrlPath(params string[] segments) =>
+            CreatePath('/', NormaliseUrlPath, segments);
+
+        public static string CreatePath(char separator, Func<string, string> normalise, params string[] segments) =>
+            string.Join(separator, segments.Select(s => normalise(s.Trim('/', '\\'))));
+
+        public static string NormalisePhysicalPath(string path) =>
+            NormalisePathSeparators(path, Path.DirectorySeparatorChar);
+
+        public static string NormaliseUrlPath(string path) =>
+            NormalisePathSeparators(path, UrlSeparator);
+
+        public static string NormalisePathSeparators(string path, char separator)
+        {
+            var normalised = path.Replace('/', separator).Replace('\\', separator);
+
+            var s = separator.ToString();
+
+            return Regex.Replace(normalised, Regex.Escape(s) + "{2,}", s);
+        }
     }
 }

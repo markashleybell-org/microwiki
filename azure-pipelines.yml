@@ -19,6 +19,11 @@ steps:
     clean: true
     msbuildArguments: '/p:OutDir=$(Build.ArtifactStagingDirectory)'
 
+- task: NodeTool@0
+  displayName: 'Install NodeJS 16.13.0 Tooling'
+  inputs:
+    versionSpec: '16.13.0'
+
 - task: Npm@1
   displayName: 'NPM Package Restore'
   inputs:
@@ -31,13 +36,6 @@ steps:
     command: 'custom'
     workingDir: '$(Build.SourcesDirectory)/microwiki'
     customCommand: 'run build'
-
-- task: Npm@1
-  displayName: 'NPM Build CSS'
-  inputs:
-    command: 'custom'
-    workingDir: '$(Build.SourcesDirectory)/microwiki'
-    customCommand: 'run build-css'
 
 - task: DotNetCoreCLI@2
   displayName: Publish

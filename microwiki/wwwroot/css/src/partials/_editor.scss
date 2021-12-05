@@ -1,0 +1,55 @@
+@import 'variables';
+
+.body-editor-buttons {
+    padding: 10px 0;
+
+    a {
+        margin-right: 5px;
+    }
+}
+
+#preview {
+    padding-top: 20px;
+}
+
+.tab-content {
+    min-height: 651px;
+}
+
+$tab-border-color: #bebebe;
+
+.nav-tabs {
+    border-bottom: 1px solid $tab-border-color;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: $main-background-color;
+    border-color: $tab-border-color $tab-border-color $main-background-color;
+}
+
+.editor-dropzone {
+    margin-bottom: 10px;
+
+    .dz-preview {
+        margin-bottom: 10px;
+    }
+
+    .progress {
+        background-color: #a3a3a3;
+    }
+}
+
+.dz-message {
+    align-items: center;
+    border: 1px dotted #999;
+    display: flex;
+    height: 200px;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.dz-started .dz-message {
+    display: none;
+}

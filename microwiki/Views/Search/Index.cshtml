@@ -16,23 +16,23 @@
 
         <hr />
 
-        @foreach (var result in Model.SearchResults
-            .Where(d=> d.IsPublic || User.Identity.IsAuthenticated))
+        @if (!Model.SearchResults.Any())
         {
-            <h2><a href="@result.Location">@result.Title</a></h2>
+            <p>Sorry, no matching results.</p>
+        }
+        else
+        {
+            foreach (var result in Model.SearchResults)
+            {
+                <h2><a href="@result.Location">@result.Title</a></h2>
 
-            <tag-links tags="result.Tags" />
+                <tag-links tags="result.Tags" />
 
-            <p>
-                @if (String.IsNullOrEmpty(result.Summary))
+                @if (result.Highlights.Any())
                 {
-                    <em>Page has no body text</em>
+                    <p>@Html.Raw(result.Highlights.First());</p>
                 }
-                else
-                {
-                    @(result.Summary)
-                }
-            </p>
+            }
         }
     </div>
 </div>

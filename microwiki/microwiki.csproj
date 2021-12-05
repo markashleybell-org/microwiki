@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <TypeScriptToolsVersion>4.1</TypeScriptToolsVersion>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>9.0</LangVersion>
         <CodeAnalysisRuleSet>..\microwiki.ruleset</CodeAnalysisRuleSet>
         <RootNamespace>MicroWiki</RootNamespace>
     </PropertyGroup>
@@ -17,14 +16,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="2.0.90" />
-        <PackageReference Include="Markdig" Version="0.24.0" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
-        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.2.4">
+        <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="Lucene.Net" Version="4.8.0-beta00015" />
+        <PackageReference Include="Lucene.Net.Highlighter" Version="4.8.0-beta00015" />
+        <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00015" />
+        <PackageReference Include="Markdig" Version="0.26.0" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.5.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

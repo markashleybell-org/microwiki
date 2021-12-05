@@ -2,8 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MicroWiki.Models
 {
-    public class LoginViewModel
+    public class LoginViewModel : ViewModelBase
     {
+        public LoginViewModel()
+            : base("Log In")
+        {
+        }
+
         [Required]
         [EmailAddress]
         public string Email { get; set; }

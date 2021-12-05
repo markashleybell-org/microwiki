@@ -11,17 +11,13 @@
         <h1>Upload File</h1>
 
         <form asp-controller="Files" asp-action="Upload" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                @Html.LabelFor(x => x.UploadedFile)
-
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="UploadedFile" id="UploadedFile">
-                    <label class="custom-file-label" for="UploadedFile">Choose file...</label>
-                </div>
+            <div class="mb-3">
+                <label asp-for="UploadedFile" class="form-label">Please select a file</label>
+                <input asp-for="UploadedFile" class="form-control" type="file">
             </div>
 
-            <div class="form-group form-group-submit">
-                <input type="submit" class="btn btn-primary" value="Upload File">
+            <div class="mt-4 mb-2">
+                <button type="submit" class="btn btn-primary"><i class="bi-cloud-arrow-up-fill"></i> Upload File</button>
             </div>
         </form>
 
@@ -46,8 +42,8 @@
                                 }
                                 else
                                 {
-                                    <a href="@file" class="thumbnail file" target="_blank">
-                                        <span class="glyphicon glyphicon-file"></span>
+                                    <a href="@file" class="thumbnail file fs-1" target="_blank">
+                                        <span class="bi bi-file-earmark-text"></span>
                                     </a>
                                 }
                             </td>
@@ -57,7 +53,7 @@
                             <td>
                                 <form asp-controller="Files" asp-action="DeleteUpload" method="post">
                                     <input type="hidden" name="Location" value="@file" />
-                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" data-filename="@System.IO.Path.GetFileName(file)" />
+                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" data-filename="@(file)" />
                                 </form>
                             </td>
                         </tr>
@@ -69,5 +65,5 @@
 </div>
 
 @section scripts {
-    <script src="~/js/dist/upload.js" asp-append-version="true"></script>
+    <script src="~/js/dist/upload.min.js" asp-append-version="true"></script>
 }

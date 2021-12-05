@@ -353,6 +353,14 @@ launchSettings.json
 # Database releases
 !db/Releases/
 
-# Client-side build output
-**/wwwroot/js/dist/
-**/wwwroot/css/site.css
+# Bootstrap sources (pulled in by gulp task)
+microwiki/wwwroot/css/src/vendor/bootstrap/
+
+# SCSS artefacts
+microwiki/wwwroot/css/dist/
+
+# TypeScript Output
+microwiki/wwwroot/js/dist/
+
+# Migration tool config
+migrateconfig.json

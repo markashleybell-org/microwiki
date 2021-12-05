@@ -13,10 +13,16 @@ namespace MicroWiki.Controllers
 {
     public class WikiController : ControllerBase
     {
+        private readonly ISearchService _searchService;
         private readonly IRepository _repository;
 
-        public WikiController(IRepository repository) =>
+        public WikiController(
+            ISearchService searchService,
+            IRepository repository)
+        {
+            _searchService = searchService;
             _repository = repository;
+        }
 
         public async Task<IActionResult> BreadcrumbTrail(Guid id)
         {
@@ -59,6 +65,8 @@ namespace MicroWiki.Controllers
             var create = CreateViewModel.ToDocument(model);
 
             var document = await _repository.CreateDocument(create);
+
+            _searchService.AddDocument(document);
 
             return Redirect(document.Location);
         }
@@ -117,6 +125,8 @@ namespace MicroWiki.Controllers
 
             var document = await _repository.UpdateDocument(update);
 
+            _searchService.UpdateDocument(document);
+
             return Redirect(document.Location);
         }
 
@@ -125,6 +135,8 @@ namespace MicroWiki.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             await _repository.DeleteDocument(id);
+
+            _searchService.RemoveDocument(id);
 
             return Redirect(SiteRootUrl);
         }
@@ -159,6 +171,10 @@ namespace MicroWiki.Controllers
         {
             var newLocation = await _repository.MoveDocument(id, newParentID);
 
+            var document = await _repository.ReadDocument(id);
+
+            _searchService.UpdateDocument(document);
+
             return Json(new { newLocation });
         }
 
@@ -177,7 +193,7 @@ namespace MicroWiki.Controllers
         [Authorize]
         private async Task<SiteMapDocumentViewModel> GetSiteMap()
         {
-            var documents = await _repository.ReadAllDocuments();
+            var documents = await _repository.ReadDocuments();
 
             var root = documents.Single(d => !d.ParentID.HasValue);
 

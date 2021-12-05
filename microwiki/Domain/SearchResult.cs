@@ -1,28 +1,31 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Domain
 {
     public class SearchResult
     {
         public SearchResult(
+            float score,
             Guid id,
             string title,
             string body,
             string location,
-            string tags,
-            bool isPublic)
+            IEnumerable<Tag> tags,
+            bool isPublic,
+            string[] highlights)
         {
+            Score = score;
             ID = id;
-            Title = title;
-            Body = body;
-            Location = location;
-            Tags = TagList(tags);
+            Title = title ?? throw new ArgumentNullException(nameof(title));
+            Body = body ?? throw new ArgumentNullException(nameof(body));
+            Location = location ?? throw new ArgumentNullException(nameof(location));
+            Tags = tags ?? throw new ArgumentNullException(nameof(tags));
             IsPublic = isPublic;
+            Highlights = highlights ?? Array.Empty<string>();
         }
+
+        public float Score { get; }
 
         public Guid ID { get; }
 
@@ -34,9 +37,8 @@ namespace MicroWiki.Domain
 
         public IEnumerable<Tag> Tags { get; }
 
-        public string Summary =>
-            !string.IsNullOrWhiteSpace(Body) ? Body.Length > 200 ? Body.Substring(0, 200) : Body : null;
-
         public bool IsPublic { get; }
+
+        public string[] Highlights { get; }
     }
 }

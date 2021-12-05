@@ -42,7 +42,8 @@ BEGIN
             Username,
             Created,
             Updated,
-            Deleted
+            Deleted,
+            IsPublic
         )
     SELECT
         ID,
@@ -54,7 +55,8 @@ BEGIN
         @Username,
         Created,
         Updated,
-        GETDATE()
+        GETDATE(),
+        IsPublic
     FROM
         #DocumentsToDelete
 

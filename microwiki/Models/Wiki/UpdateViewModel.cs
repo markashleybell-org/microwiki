@@ -41,6 +41,9 @@ namespace MicroWiki.Models
         public string TagDataJson =>
             AllTags?.AsTagJson(t => t.Label);
 
+        public string FilenamePrefix =>
+            ID.ToString();
+
         public static UpdateViewModel From(Document document, IEnumerable<Tag> allTags) =>
             new UpdateViewModel {
                 ID = document.ID,
@@ -61,9 +64,7 @@ namespace MicroWiki.Models
                 model.Title,
                 model.Body,
                 CreateSlug(model.Slug),
-                (model.Tags ?? string.Empty)
-                    .Split('|', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(t => new Tag(t)),
+                TagList(model.Tags),
                 model.IsPublic
             );
     }
