@@ -364,3 +364,6 @@ microwiki/wwwroot/js/dist/
 
 # Migration tool config
 migrateconfig.json
+
+# Dev settings
+appsettings.Development.json
