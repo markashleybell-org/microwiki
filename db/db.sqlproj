@@ -198,6 +198,9 @@
     <None Include="Releases\006 Lucene Search.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Releases\007 Add IsPublic To DeletedDocuments.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Publish\db.publish.xml">
