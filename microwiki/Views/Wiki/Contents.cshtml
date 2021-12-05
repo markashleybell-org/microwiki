@@ -10,7 +10,7 @@
     <div class="col">
         <h1>Contents</h1>
         <div class="site-contents">
-            <ul>@CreateSiteMapItemHtml(Model.Root, User.Identity.IsAuthenticated)</ul>
+            <ul>@CreateSiteMapItemHtml(Model.Root, showPrivate: User.Identity.IsAuthenticated)</ul>
         </div>
     </div>
 </div>
