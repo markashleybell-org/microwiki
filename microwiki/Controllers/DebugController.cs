@@ -36,7 +36,9 @@ namespace MicroWiki.Controllers
             var physicalDestinationFilename = Path.Combine(physicalDestinationFolder, Path.GetFileName(normalisedDestinationPath));
 
             var output = $@"
-LocalFileManagerLibraryFolderPath: {_cfg.LocalFileManagerLibraryFolderPhysicalPath}
+LocalFileManagerLibraryFolderPhysicalPath: {_cfg.LocalFileManagerLibraryFolderPhysicalPath}
+
+LocalFileManagerLibraryFolderRelativeUrl: {_cfg.LocalFileManagerLibraryFolderRelativeUrl}
 
 normalisedDestinationPath: {normalisedDestinationPath}
 
