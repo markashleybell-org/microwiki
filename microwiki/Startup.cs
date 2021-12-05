@@ -111,6 +111,12 @@ namespace MicroWiki
                 );
 
                 endpoints.MapControllerRoute(
+                    name: "debug",
+                    pattern: "debug/{action}/{id?}",
+                    defaults: new { controller = "Debug", action = "Index" }
+                );
+
+                endpoints.MapControllerRoute(
                     name: "read",
                     pattern: "{*location}",
                     defaults: new { controller = "Wiki", action = "Read" }
