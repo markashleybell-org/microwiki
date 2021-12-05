@@ -231,7 +231,10 @@ var zone = new Dropzone('.editor-dropzone', {
 });
 
 zone.on('success', (file: any, response: any) => {
-    const data: IHtmlImageProperties = { alt: null, url: response.uploadedFileName };
+    const data: IHtmlImageProperties = {
+        alt: 'ALT TAG GOES HERE',
+        url: response.uploadedFileName
+    };
 
     createImage(editor, data, true);
 
