@@ -31,9 +31,7 @@ namespace MicroWiki.Support
             output.TagName = "p";
             output.Attributes.Add("class", ContainerClasses);
 
-            var links = Tags.Select(t => TagSearchActionLink(t.Label));
-
-            foreach (var link in links)
+            foreach (var link in Tags.Select(t => TagSearchActionLink(t.Label)))
             {
                 output.Content.AppendHtml(link);
             }
