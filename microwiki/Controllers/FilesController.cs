@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -51,9 +52,13 @@ namespace MicroWiki.Controllers
 
             var uploadedFilePath = await _fileManager.UploadFile(file, $"{model.FileNamePrefix}/{file.FileName}");
 
-            return HttpContext.Request.Headers["X-Requested-With"] != "XMLHttpRequest"
-                ? RedirectToAction(nameof(Upload), new { UploadedFileName = uploadedFilePath.OriginalString })
-                : Json(new { UploadedFileName = uploadedFilePath.OriginalString });
+            var data = new {
+                Filename = Path.GetFileNameWithoutExtension(file.FileName),
+                Extension = Path.GetExtension(file.FileName).Trim('.'),
+                Url = uploadedFilePath.OriginalString
+            };
+
+            return Json(data);
         }
 
         [HttpPost]

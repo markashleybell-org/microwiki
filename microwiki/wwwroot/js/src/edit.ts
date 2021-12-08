@@ -1,7 +1,7 @@
 import Dropzone from 'dropzone';
 import { Modal, Tab } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
-import { tagItemTemplate } from './common';
+import { IFileUploadResponse, tagItemTemplate } from './common';
 import {
     applyFormat,
     createCodeBlock,
@@ -19,6 +19,8 @@ import {
 import { DOM, dom } from 'mab-dom';
 
 declare const _ALL_TAGS: string[];
+
+const imageFileExtensions: string[] = ['jpg', 'jpeg', 'gif', 'png', 'webp'];
 
 const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
 
@@ -230,13 +232,23 @@ var zone = new Dropzone('.editor-dropzone', {
 </div>`
 });
 
-zone.on('success', (file: any, response: any) => {
-    const data: IHtmlImageProperties = {
-        alt: 'ALT TAG GOES HERE',
-        url: response.uploadedFileName
-    };
+zone.on('success', (file: any, response: IFileUploadResponse) => {
+    if (imageFileExtensions.indexOf(response.extension) !== -1) {
+        const data: IHtmlImageProperties = {
+            alt: 'ALT TAG GOES HERE',
+            url: response.url
+        };
 
-    createImage(editor, data, true);
+        createImage(editor, data, true);
+    } else {
+        const data: IHtmlLinkProperties = {
+            linkTitle: 'LINK TITLE GOES HERE',
+            linkText: response.filename,
+            href: response.url
+        };
+
+        createLink(editor, data);
+    }
 
     zone.removeFile(file);
 
