@@ -10,7 +10,7 @@ namespace MicroWiki.Models
         {
         }
 
-        public string Location { get; set; }
+        public string Url { get; set; }
 
         public IEnumerable<SiteMapDocument> InUseByDocuments { get; set; }
     }

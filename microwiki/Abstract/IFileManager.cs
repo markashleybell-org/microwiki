@@ -1,16 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Flurl;
 using Microsoft.AspNetCore.Http;
 
 namespace MicroWiki.Abstract
 {
     public interface IFileManager
     {
-        Task<Uri> UploadFile(IFormFile file, string destinationPath);
+        Task<Url> UploadFile(IFormFile file, Url destination);
 
-        void DeleteFile(string path);
+        Url DeleteFile(Url url);
 
-        IEnumerable<Uri> GetFiles();
+        IEnumerable<Url> GetFiles();
     }
 }

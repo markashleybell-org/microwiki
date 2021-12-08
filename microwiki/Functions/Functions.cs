@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Flurl;
 using Microsoft.AspNetCore.Html;
 using MicroWiki.Domain;
 using MicroWiki.Models;
@@ -14,8 +15,10 @@ namespace MicroWiki.Functions
     {
         public const char UrlSeparator = '/';
 
-        public static bool IsImageFile(this string filePath) =>
-            Regex.IsMatch(Path.GetExtension(filePath), @"\.(?:jpe?g|png|gif)", RegexOptions.IgnoreCase);
+        public static readonly Regex ImageFileExtensionPattern = new(@"\.(?:jpe?g|png|gif)", RegexOptions.IgnoreCase);
+
+        public static bool IsImage(this Url url) =>
+            ImageFileExtensionPattern.IsMatch(Path.GetExtension(url?.PathSegments?.LastOrDefault() ?? string.Empty));
 
         public static string GetUniqueCode()
         {

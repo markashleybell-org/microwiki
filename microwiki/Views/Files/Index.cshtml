@@ -10,17 +10,15 @@
     <div class="col">
         <h1>All Files</h1>
 
-        @if (Model.Files.Any())
+        @if (Model.FileUrls.Any())
         {
             <table class="table table-condensed upload-thumbnails">
                 <tbody>
-                    @foreach (var file in Model.Files)
+                    @foreach (var url in Model.FileUrls)
                     {
-                        var url = Model.LibraryFolderRelativeUrl + "/" + NormaliseUrlPath(file);
-
                         <tr>
                             <td>
-                                @if (file.IsImageFile())
+                                @if (url.IsImage())
                                 {
                                     <a href="@url" class="thumbnail" target="_blank">
                                         <img src="@url" />
@@ -34,12 +32,12 @@
                                 }
                             </td>
                             <td>
-                                <strong>@url</strong>
+                                <strong>@Uri.UnescapeDataString(url)</strong>
                             </td>
                             <td>
                                 <form asp-controller="Files" asp-action="DeleteUpload" method="post">
-                                    <input type="hidden" name="Location" value="@file" />
-                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" data-filename="@(file)" />
+                                    <input type="hidden" name="Url" value="@url" />
+                                    <input type="submit" value="Delete" class="@DeleteButtonClasses delete-upload" data-filename="@Uri.UnescapeDataString(url)" />
                                 </form>
                             </td>
                         </tr>

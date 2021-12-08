@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Flurl;
 
 namespace MicroWiki.Models
 {
@@ -10,9 +11,7 @@ namespace MicroWiki.Models
         {
         }
 
-        public string LibraryFolderRelativeUrl { get; set; }
-
-        public IEnumerable<string> Files { get; set; }
-            = Enumerable.Empty<string>();
+        public IEnumerable<Url> FileUrls { get; set; }
+            = Enumerable.Empty<Url>();
     }
 }

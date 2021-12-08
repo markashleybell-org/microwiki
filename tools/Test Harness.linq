@@ -1,8 +1,14 @@
 <Query Kind="Program">
-  <Reference Relative="..\microwiki\bin\Debug\net5.0\microwiki.dll">C:\Src\microwiki\microwiki\bin\Debug\net5.0\microwiki.dll</Reference>
+  <Reference Relative="..\microwiki\bin\Debug\netcoreapp3.1\microwiki.dll">C:\Src\microwiki\microwiki\bin\Debug\netcoreapp3.1\microwiki.dll</Reference>
   <NuGetReference>Dapper</NuGetReference>
+  <NuGetReference>Flurl</NuGetReference>
   <Namespace>Dapper</Namespace>
+  <Namespace>Flurl</Namespace>
+  <Namespace>Flurl.Util</Namespace>
+  <Namespace>Microsoft.AspNetCore.Hosting</Namespace>
+  <Namespace>Microsoft.AspNetCore.Http</Namespace>
   <Namespace>Microsoft.AspNetCore.Identity</Namespace>
+  <Namespace>Microsoft.Extensions.FileProviders</Namespace>
   <Namespace>Microsoft.Extensions.Options</Namespace>
   <Namespace>MicroWiki</Namespace>
   <Namespace>MicroWiki.Abstract</Namespace>
@@ -13,28 +19,26 @@
   <Namespace>MicroWiki.Models</Namespace>
   <Namespace>MicroWiki.Support</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
-  <Namespace>Microsoft.AspNetCore.Hosting</Namespace>
-  <Namespace>Microsoft.Extensions.FileProviders</Namespace>
-  <Namespace>Microsoft.AspNetCore.Http</Namespace>
   <IncludeAspNet>true</IncludeAspNet>
-  <RuntimeVersion>5.0</RuntimeVersion>
+  <RuntimeVersion>3.1</RuntimeVersion>
 </Query>
 
 async Task Main()
 {    
-    var svc = new LocalFileManager(new TestWebHostEnvironment(), new TestOptionsMonitor());
+    var svc = new LocalFileManager(new TestOptionsMonitor());
     
-    var path = @"C:\Src\microwiki\tools\testfile.jpg";
-    var fileName = Path.GetFileName(path);
+    // var path = @"C:\Src\microwiki\tools\testfile.jpg";
+
+    // var fileName = Path.GetFileName(path);
     
-    var stream = File.OpenRead(path);
-    var file = new FormFile(stream, 0, stream.Length, fileName, fileName);
+    //var stream = File.OpenRead(path);
+    //var file = new FormFile(stream, 0, stream.Length, fileName, fileName);
+    //
+    //var upload = await svc.UploadFile(file, $"{Guid.NewGuid()}/{file.FileName}");
+    //
+    //upload.ToString().Dump();
     
-    var upload = await svc.UploadFile(file, $"{Guid.NewGuid()}/{file.FileName}");
-    
-    upload.ToString().Dump();
-    
-    svc.GetFiles().Select(x => x.ToString()).Dump();
+    svc.GetFiles().Dump();
     
     // Functions.CreatePhysicalPath("/a//b\\/", "\\\\c/de", "f//", "/g\\", "test.jpg").Dump();
     // Functions.CreateUrlPath("/a//b\\/", "\\\\c/de", "f//", "/g\\", "test.jpg").Dump();
@@ -64,31 +68,12 @@ async Task Main()
     // new PasswordHasher<User>().HashPassword(new User(new Guid("e5754cce-838b-4446-ada8-2d5a6e057555"), "me@markb.co.uk", "test123"), "test123").Dump();
 }
 
-public class TestWebHostEnvironment : IWebHostEnvironment 
-{
-    public TestWebHostEnvironment()
-    {
-        WebRootPath = @"C:\Src\microwiki\tools\test";
-    }
-    
-    public string WebRootPath { get; set; }
-    
-    public IFileProvider WebRootFileProvider { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    
-    public string ApplicationName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    
-    public IFileProvider ContentRootFileProvider { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    
-    public string ContentRootPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    
-    public string EnvironmentName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-}
-
 public class TestOptionsMonitor : IOptionsMonitor<Settings> 
 {
     private Settings _settings = new Settings {
         ConnectionString = "Server=localhost;Database=microwiki;Trusted_Connection=yes;TrustServerCertificate=true",
-        LocalFileManagerLibraryFolderPath = "/usercontent"
+        LocalFileManagerLibraryFolderPhysicalPath = @"C:\Src\microwiki\microwiki\wwwroot\usercontent",
+        LocalFileManagerLibraryFolderRelativeUrl = "/usercontent"
     };
     
     public Settings CurrentValue => _settings;

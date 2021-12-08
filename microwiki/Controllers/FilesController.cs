@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,8 +34,7 @@ namespace MicroWiki.Controllers
         public IActionResult Index()
         {
             var model = new FileListViewModel {
-                LibraryFolderRelativeUrl = _cfg.LocalFileManagerLibraryFolderRelativeUrl,
-                Files = _fileManager.GetFiles().Select(f => f.ToString())
+                FileUrls = _fileManager.GetFiles()
             };
 
             return View(model);
@@ -55,7 +55,7 @@ namespace MicroWiki.Controllers
             var data = new {
                 Filename = Path.GetFileNameWithoutExtension(file.FileName),
                 Extension = Path.GetExtension(file.FileName).Trim('.'),
-                Url = uploadedFilePath.OriginalString
+                Url = uploadedFilePath.ToString()
             };
 
             return Json(data);
@@ -64,7 +64,7 @@ namespace MicroWiki.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUpload(DeleteUploadViewModel model)
         {
-            var fileUrl = NormaliseUrlPath(model.Location);
+            var fileUrl = new Url(NormaliseUrlPath(model.Url));
 
             var usedInLocations = await _repository.CheckFileUse(fileUrl);
 
@@ -75,7 +75,7 @@ namespace MicroWiki.Controllers
                 return View(model);
             }
 
-            _fileManager.DeleteFile(model.Location);
+            _fileManager.DeleteFile(fileUrl);
 
             return RedirectToAction(nameof(Index));
         }

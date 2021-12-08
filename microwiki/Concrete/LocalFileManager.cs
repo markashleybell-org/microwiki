@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Flurl;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
@@ -27,7 +28,7 @@ namespace MicroWiki.Concrete
             _fileLibraryFolderRelativeUrl = _cfg.LocalFileManagerLibraryFolderRelativeUrl;
         }
 
-        public async Task<Uri> UploadFile(IFormFile file, string destinationPath)
+        public async Task<Url> UploadFile(IFormFile file, Url destination)
         {
             if (file == null)
             {
@@ -39,7 +40,7 @@ namespace MicroWiki.Concrete
                 throw new ArgumentOutOfRangeException(nameof(file), "File has zero length.");
             }
 
-            var normalisedDestinationPath = NormalisePhysicalPath(TrimSeparators(destinationPath));
+            var normalisedDestinationPath = NormalisePhysicalPath(TrimSeparators(destination.ToString()));
 
             var destinationFolder = Path.GetDirectoryName(normalisedDestinationPath);
 
@@ -61,29 +62,26 @@ namespace MicroWiki.Concrete
                 await file.CopyToAsync(stream);
             }
 
-            var urlParts = new[] {
-                _fileLibraryFolderRelativeUrl,
-                Uri.EscapeDataString(destinationFolder),
-                Uri.EscapeDataString(destinationFilename)
-            };
-
-            var relativeUrl = string.Join(UrlSeparator, urlParts.Where(s => !string.IsNullOrWhiteSpace(s)));
-
-            return new Uri(relativeUrl, uriKind: UriKind.Relative);
+            return _fileLibraryFolderRelativeUrl.AppendPathSegments(destinationFolder, destinationFilename);
         }
 
-        public void DeleteFile(string path)
+        public Url DeleteFile(Url url)
         {
-            var filePath = Path.Combine(_fileLibraryFolderPhysicalPath, NormalisePhysicalPath(TrimSeparators(path)));
+            url.PathSegments.Remove(_fileLibraryFolderRelativeUrl.Trim('/'));
+
+            var filePath = Path.Combine(_fileLibraryFolderPhysicalPath, NormalisePhysicalPath(TrimSeparators(Uri.UnescapeDataString(url))));
 
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
+
+            return url;
         }
 
-        public IEnumerable<Uri> GetFiles() =>
+        public IEnumerable<Url> GetFiles() =>
             Directory.EnumerateFiles(_fileLibraryFolderPhysicalPath, "*.*", new EnumerationOptions { RecurseSubdirectories = true })
-                .Select(f => new Uri(string.Join(UrlSeparator, f.Replace(_fileLibraryFolderPhysicalPath + Path.DirectorySeparatorChar, string.Empty)), uriKind: UriKind.Relative));
+                .Select(f => f.Replace(_fileLibraryFolderPhysicalPath + Path.DirectorySeparatorChar, string.Empty))
+                .Select(f => _fileLibraryFolderRelativeUrl.AppendPathSegment(NormaliseUrlPath(f)));
     }
 }
