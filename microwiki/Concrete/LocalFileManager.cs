@@ -61,10 +61,13 @@ namespace MicroWiki.Concrete
                 await file.CopyToAsync(stream);
             }
 
-            var urlParts = new[] { _fileLibraryFolderRelativeUrl, destinationFolder, destinationFilename }
-                .Where(s => !string.IsNullOrWhiteSpace(s));
+            var urlParts = new[] {
+                _fileLibraryFolderRelativeUrl,
+                Uri.EscapeDataString(destinationFolder),
+                Uri.EscapeDataString(destinationFilename)
+            };
 
-            var relativeUrl = string.Join(UrlSeparator, urlParts);
+            var relativeUrl = string.Join(UrlSeparator, urlParts.Where(s => !string.IsNullOrWhiteSpace(s)));
 
             return new Uri(relativeUrl, uriKind: UriKind.Relative);
         }
