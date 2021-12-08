@@ -64,7 +64,7 @@
                     }
                 </ul>
                 <form class="d-flex flex-column d-lg-flex flex-lg-row" asp-controller="Search" asp-action="Index" method="get">
-                    <input class="form-control me-2 mb-2 mb-lg-0" type="search" placeholder="Search" aria-label="Search" name="query">
+                    <input class="form-control me-2 mb-2 mb-lg-0" type="search" placeholder="Search" aria-label="Search" name="query" value="@ViewBag.SearchQuery">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
