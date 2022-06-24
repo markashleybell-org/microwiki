@@ -1,4 +1,0 @@
-{
-    "ConnectionString": "Server=localhost;Database=microwiki;Trusted_Connection=yes;TrustServerCertificate=true",
-    "PhysicalPath": "YOUR_PATH_HERE"
-}
