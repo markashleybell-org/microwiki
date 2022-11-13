@@ -21,9 +21,9 @@
         <PackageReference Include="Lucene.Net" Version="4.8.0-beta00016" />
         <PackageReference Include="Lucene.Net.Highlighter" Version="4.8.0-beta00016" />
         <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00016" />
-        <PackageReference Include="Markdig" Version="0.30.2" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
-        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.7.4">
+        <PackageReference Include="Markdig" Version="0.30.4" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.8.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
