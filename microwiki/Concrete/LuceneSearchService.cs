@@ -10,8 +10,8 @@ namespace MicroWiki.Concrete
 {
     public class LuceneSearchService : ISearchService
     {
-        public LuceneSearchService(IOptionsMonitor<Settings> optionsMonitor) =>
-            LuceneSearchFunctions.Init(optionsMonitor.CurrentValue.SearchIndexBasePath);
+        public LuceneSearchService(IOptions<Settings> options) =>
+            LuceneSearchFunctions.Init(options.Value.SearchIndexBasePath);
 
         public void DeleteAndRebuildIndex(IEnumerable<Document> documents) =>
             LuceneSearchFunctions.DeleteAndRebuildIndex(documents);
