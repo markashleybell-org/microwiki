@@ -62,7 +62,7 @@ namespace MicroWiki.Models
                 model.ParentID,
                 model.Title,
                 model.Body,
-                CreateSlug(model.Slug),
+                CreateSlug(string.IsNullOrWhiteSpace(model.Slug) ? model.Title : model.Slug),
                 TagList(model.Tags),
                 model.IsPublic
             );
