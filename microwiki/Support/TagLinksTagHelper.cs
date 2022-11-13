@@ -48,7 +48,7 @@ namespace MicroWiki.Support
                 protocol: null,
                 hostname: null,
                 fragment: null,
-                routeValues: new { query = $"tags:{label}" },
+                routeValues: new { query = $"{label}" },
                 htmlAttributes: new { @class = TagClasses }
             );
     }
