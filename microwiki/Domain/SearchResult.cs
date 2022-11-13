@@ -7,6 +7,7 @@ namespace MicroWiki.Domain
     {
         public SearchResult(
             float score,
+            DateTime lastUpdate,
             Guid id,
             string title,
             string body,
@@ -16,6 +17,7 @@ namespace MicroWiki.Domain
             string[] highlights)
         {
             Score = score;
+            LastUpdate = lastUpdate;
             ID = id;
             Title = title ?? throw new ArgumentNullException(nameof(title));
             Body = body ?? throw new ArgumentNullException(nameof(body));
@@ -26,6 +28,8 @@ namespace MicroWiki.Domain
         }
 
         public float Score { get; }
+
+        public DateTime LastUpdate { get; }
 
         public Guid ID { get; }
 

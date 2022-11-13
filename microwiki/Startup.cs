@@ -47,7 +47,7 @@ namespace MicroWiki
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDateTimeService, DateTimeService>();
-            services.AddScoped<ISearchService, LuceneSearchService>();
+            services.AddSingleton<ISearchService, LuceneSearchService>();
 
             services.AddScoped<IRepository, SqlServerRepository>(sp => {
                 var ctxAccessor = sp.GetRequiredService<IHttpContextAccessor>();
