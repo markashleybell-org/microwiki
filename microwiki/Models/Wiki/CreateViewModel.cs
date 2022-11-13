@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using MicroWiki.Domain;
-using static MicroWiki.Domain.Constants;
 using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Models

@@ -11,7 +11,7 @@ namespace MicroWiki.Models
             _breadcrumbLabel = breadcrumbLabel;
 
         public virtual BreadcrumbTrailViewModel BreadcrumbTrailData =>
-            new BreadcrumbTrailViewModel {
+            new() {
                 Segments = new[] {
                     new BreadcrumbTrailSegment(SiteRootLabel, SiteRootUrl),
                     new BreadcrumbTrailSegment(_breadcrumbLabel)

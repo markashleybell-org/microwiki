@@ -106,7 +106,7 @@ namespace MicroWiki.Controllers
             var allTags = await _repository.GetTags();
 
             return document != null
-                ? (IActionResult)View(UpdateViewModel.From(document, allTags))
+                ? View(UpdateViewModel.From(document, allTags))
                 : NotFound();
         }
 

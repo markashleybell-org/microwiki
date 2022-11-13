@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MicroWiki.Domain;
-using static MicroWiki.Domain.Constants;
 using static MicroWiki.Functions.Functions;
 
 namespace MicroWiki.Models
@@ -36,7 +35,7 @@ namespace MicroWiki.Models
         public IEnumerable<Tag> AllTags { get; set; }
 
         public MarkdownEditorViewModel MarkdownEditorData =>
-            new MarkdownEditorViewModel { Title = Title };
+            new() { Title = Title };
 
         public string TagDataJson =>
             AllTags?.AsTagJson(t => t.Label);
@@ -45,7 +44,7 @@ namespace MicroWiki.Models
             ID.ToString();
 
         public static UpdateViewModel From(Document document, IEnumerable<Tag> allTags) =>
-            new UpdateViewModel {
+            new() {
                 ID = document.ID,
                 ParentID = document.ParentID,
                 IsRootDocument = !document.ParentID.HasValue,
@@ -58,7 +57,7 @@ namespace MicroWiki.Models
             };
 
         public static Document ToDocument(UpdateViewModel model) =>
-            new Document(
+            new(
                 model.ID,
                 model.ParentID,
                 model.Title,
