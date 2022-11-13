@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MicroWiki.Abstract;
 using MicroWiki.Concrete;
+using MicroWiki.Functions;
 using MicroWiki.Support;
 
 namespace MicroWiki
@@ -61,8 +62,14 @@ namespace MicroWiki
             services.AddControllersWithViews();
         }
 
-        public void Configure(IApplicationBuilder app, IHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostEnvironment env,
+            IHostApplicationLifetime appLifetime)
         {
+            // Force Lucene to commit all pending index changes to disk before the app exits
+            appLifetime.ApplicationStopping.Register(LuceneSearchFunctions.CommitIndexChanges);
+
             app.UseDeveloperExceptionPage();
 
             if (!env.IsDevelopment())

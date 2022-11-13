@@ -113,6 +113,9 @@ namespace MicroWiki.Functions
                 .ToList();
         }
 
+        internal static void CommitIndexChanges() =>
+            _indexWriter?.Commit();
+
         private static string SanitiseQuery(string query)
         {
             if (Regex.IsMatch(query, @"CHR\(\d+\)", RegexOptions.IgnoreCase))
