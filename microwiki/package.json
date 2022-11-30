@@ -52,7 +52,8 @@
         "css:clean": "del-cli ./wwwroot/css/dist",
         "css:build": "gulp build-css",
         "build": "run-s css:clean css:build js:clean js:build",
-        "watch-js": "webpack --watch --mode=development"
+        "watch-js": "webpack --watch --mode=development",
+        "tmp": "webpack --mode=development"
     },
     "browserslist": [
         "defaults"

@@ -1,15 +1,17 @@
-import { EditorView, keymap } from '@codemirror/view'
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
+import { EditorView, keymap } from '@codemirror/view';
+import { indentUnit } from '@codemirror/language';
+import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
-import { oneDark } from '@codemirror/theme-one-dark'
+import { microwikiTheme } from './theme';
 
 export function createEditor(editorElement: HTMLTextAreaElement) {
     const view = new EditorView({
         doc: editorElement.value,
         extensions: [
-            oneDark,
+            microwikiTheme,
             history(),
-            keymap.of([...defaultKeymap, ...historyKeymap]),
+            indentUnit.of('    '),
+            keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
             markdown({ base: markdownLanguage }),
         ]
     });
