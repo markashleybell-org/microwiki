@@ -26,14 +26,14 @@ const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
 
 const editor = createEditor(editorElement);
 
-editor.setOption('extraKeys', {
-    'Tab': 'indentMore',
-    'Shift-Tab': 'indentLess',
-    'Ctrl-B': () => applyFormat(editor, 'bold'),
-    'Ctrl-I': () => applyFormat(editor, 'italic'),
-    'Home': 'goLineLeft',
-    'End': 'goLineRight'
-});
+//editor.setOption('extraKeys', {
+//    'Tab': 'indentMore',
+//    'Shift-Tab': 'indentLess',
+//    'Ctrl-B': () => applyFormat(editor, 'bold'),
+//    'Ctrl-I': () => applyFormat(editor, 'italic'),
+//    'Home': 'goLineLeft',
+//    'End': 'goLineRight'
+//});
 
 const tagInputElements = document.getElementsByClassName('tag-input');
 
@@ -151,6 +151,12 @@ function resetImageModalFields() {
 }
 
 export function format(key: string) {
+    function getSelection() {
+        return editor.state.sliceDoc(
+            editor.state.selection.main.from,
+            editor.state.selection.main.to);
+    }
+
     if (key === 'link') {
         resetLinkModalFields();
 
@@ -161,7 +167,7 @@ export function format(key: string) {
             linkModalElement.find('[name=link-url]').val(linkData.href);
             linkModalElement.find('[name=link-title]').val(linkData.linkTitle);
         } else {
-            linkModalElement.find('[name=link-text]').val(editor.getSelection());
+            linkModalElement.find('[name=link-text]').val(getSelection());
         }
 
         linkModal.show();
@@ -174,7 +180,7 @@ export function format(key: string) {
             imageModalElement.find('[name=image-alt]').val(imageData.alt);
             imageModalElement.find('[name=image-url]').val(imageData.url);
         } else {
-            imageModalElement.find('[name=image-alt]').val(editor.getSelection());
+            imageModalElement.find('[name=image-alt]').val(getSelection());
         }
 
         imageModal.show();
@@ -214,7 +220,7 @@ tabs.on('show.bs.tab', e => {
 
         const tabContent = document.querySelector(tabSelector) as HTMLElement;
 
-        const val = editor.getValue();
+        const val = editor.state.doc.toString();
 
         updatePreview(val, tabContent);
     }
@@ -255,15 +261,15 @@ zone.on('success', (file: any, response: IFileUploadResponse) => {
     console.log(file);
 });
 
-editor.on('drop', function (data, e) {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        const file = files[0] as Dropzone.DropzoneFile;
-        zone.addFile(file);
-    }
-});
+//editor.on('drop', function (data: any, e: any) {
+//    const files = e.dataTransfer.files;
+//    if (files.length > 0) {
+//        e.preventDefault();
+//        e.stopPropagation();
+//        const file = files[0] as Dropzone.DropzoneFile;
+//        zone.addFile(file);
+//    }
+//});
 
 document.onpaste = function (event) {
     var items = event.clipboardData.items;

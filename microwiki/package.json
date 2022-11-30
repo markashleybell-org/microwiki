@@ -29,9 +29,14 @@
         "webpack-cli": "^5.0.0"
     },
     "dependencies": {
+        "@codemirror/commands": "^6.1.2",
+        "@codemirror/lang-markdown": "^6.0.5",
+        "@codemirror/language": "^6.3.1",
+        "@codemirror/state": "^6.1.4",
+        "@codemirror/theme-one-dark": "^6.1.0",
+        "@codemirror/view": "^6.6.0",
         "bootstrap": "^5.2.3",
         "bootstrap-icons": "^1.10.2",
-        "codemirror": "^5.65.7",
         "dropzone": "^5.9.3",
         "highlight.js": "^11.7.0",
         "js-cookie": "^3.0.1",

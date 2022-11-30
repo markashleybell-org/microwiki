@@ -1,19 +1,19 @@
-import * as CodeMirror from 'codemirror';
+import { EditorView } from '@codemirror/view'
 
 /* BEGIN Private Interfaces */
 
 interface ICodeMirrorSelection {
     line: number;
     lineText: string;
-    start: CodeMirror.Position;
-    end: CodeMirror.Position;
+    start: number;
+    end: number;
     selectedText: string;
 }
 
 interface IFormattingOperation {
-    [key: string]: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
-    apply: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
-    remove: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
+    [key: string]: (cm: EditorView, format: IEditorFormat, data?: any) => void;
+    apply: (cm: EditorView, format: IEditorFormat, data?: any) => void;
+    remove: (cm: EditorView, format: IEditorFormat, data?: any) => void;
 }
 
 interface IFormattingOperations {
@@ -166,42 +166,34 @@ function createEmptyCursorState(): ICursorState {
     };
 }
 
-function getCmSelection(cm: CodeMirror.Editor): ICodeMirrorSelection {
-    const start = cm.getCursor('start');
-    const line = start.line;
+function getCmSelection(cm: EditorView): ICodeMirrorSelection {
+    const start = cm.state.selection.main.from;
+    const end = cm.state.selection.main.to;
+    const line = cm.state.doc.lineAt(start);
+
     return {
-        line: line,
-        lineText: cm.getLine(line),
+        line: line.number,
+        lineText: line.text,
         start: start,
-        end: cm.getCursor('end'),
-        selectedText: cm.getSelection()
+        end: end,
+        selectedText: cm.state.sliceDoc(start, end)
     };
 }
 
-function moveCmSelection(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, moveStartBy: number, moveEndBy: number): void {
-    setCmSelection(cm, selection, selection.start.ch + moveStartBy, selection.end.ch + moveEndBy);
+function moveCmSelection(cm: EditorView, selection: ICodeMirrorSelection, moveStartBy: number, moveEndBy: number): void {
+    setCmSelection(cm, selection, selection.start + moveStartBy, selection.end + moveEndBy);
 }
 
-function setCmSelection(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, start: number, end: number): void {
-    const newStart = {
-        line: selection.line,
-        ch: start
-    };
-
-    const newEnd = {
-        line: selection.line,
-        ch: end
-    };
-
-    cm.setSelection(newStart, newEnd);
+function setCmSelection(cm: EditorView, selection: ICodeMirrorSelection, start: number, end: number): void {
+    cm.dispatch({ selection: { anchor: start, head: end } });
 }
 
-function replaceCmLine(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, replacement: string): void {
-    cm.replaceRange(replacement, { line: selection.line, ch: 0 }, { line: selection.line, ch: selection.lineText.length + 1 });
+function replaceCmLine(cm: EditorView, selection: ICodeMirrorSelection, replacement: string): void {
+    cm.dispatch(cm.state.replaceSelection(replacement));
 }
 
 function findFormattingRange(selection: ICodeMirrorSelection, format: IEditorFormat): [number, number] {
-    let startPos = selection.start.ch;
+    let startPos = selection.start;
 
     while (startPos) {
         if (selection.lineText.substr(startPos, format.before.length) === format.before) {
@@ -210,7 +202,7 @@ function findFormattingRange(selection: ICodeMirrorSelection, format: IEditorFor
         startPos--;
     }
 
-    let endPos = selection.end.ch;
+    let endPos = selection.end;
 
     while (endPos <= selection.lineText.length) {
         if (selection.lineText.substr(endPos, format.after.length) === format.after) {
@@ -222,41 +214,41 @@ function findFormattingRange(selection: ICodeMirrorSelection, format: IEditorFor
     return [startPos, endPos];
 }
 
-function getCursorState(cm: CodeMirror.Editor) {
-    const pos = cm.getCursor('start');
+function getCursorState(cm: EditorView) {
+    const pos = cm.state.selection.main.from;
     const cs = createEmptyCursorState();
-    const token = cs.token = cm.getTokenAt(pos);
+    //const token = cs.token = cm.state.doc.get(pos);
 
-    if (!token.type) {
-        return cs;
-    }
+    //if (!token.type) {
+    //    return cs;
+    //}
 
-    const tokens = token.type.split(' ');
+    //const tokens = token.type.split(' ');
 
-    tokens.forEach(t => {
-        if (EditorFormatTokens[t]) {
-            cs.format[EditorFormatTokens[t]] = true;
-            return;
-        }
-        switch (t) {
-            case 'link':
-                cs.format.link = true;
-                cs.format.link_label = true;
-                break;
-            case 'string':
-                cs.format.link = true;
-                cs.format.link_href = true;
-                break;
-            case 'variable-2':
-                const text = cm.getLine(pos.line);
-                if (/^\s*\d+\.\s/.test(text)) {
-                    cs.format.ol = true;
-                } else {
-                    cs.format.ul = true;
-                }
-                break;
-        }
-    });
+    //tokens.forEach(t => {
+    //    if (EditorFormatTokens[t]) {
+    //        cs.format[EditorFormatTokens[t]] = true;
+    //        return;
+    //    }
+    //    switch (t) {
+    //        case 'link':
+    //            cs.format.link = true;
+    //            cs.format.link_label = true;
+    //            break;
+    //        case 'string':
+    //            cs.format.link = true;
+    //            cs.format.link_href = true;
+    //            break;
+    //        case 'variable-2':
+    //            const text = cm.getLine(pos.line);
+    //            if (/^\s*\d+\.\s/.test(text)) {
+    //                cs.format.ol = true;
+    //            } else {
+    //                cs.format.ul = true;
+    //            }
+    //            break;
+    //    }
+    //});
 
     return cs;
 }
@@ -265,17 +257,19 @@ function getCursorState(cm: CodeMirror.Editor) {
 
 /* BEGIN Public Functions */
 
-export function inlineApply(cm: CodeMirror.Editor, format: IEditorFormat) {
+export function inlineApply(cm: EditorView, format: IEditorFormat) {
     const sel = getCmSelection(cm);
 
-    cm.replaceSelection(format.before + sel.selectedText + format.after);
+    const text = format.before + sel.selectedText + format.after;
+
+    cm.dispatch(cm.state.replaceSelection(text));
 
     moveCmSelection(cm, sel, format.before.length, format.after.length);
 
     cm.focus();
 }
 
-export function inlineRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
+export function inlineRemove(cm: EditorView, format: IEditorFormat) {
     const sel = getCmSelection(cm);
 
     const [startPos, endPos] = findFormattingRange(sel, format);
@@ -291,7 +285,7 @@ export function inlineRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
     cm.focus();
 }
 
-export function blockApply(cm: CodeMirror.Editor, format: IEditorFormat) {
+export function blockApply(cm: EditorView, format: IEditorFormat) {
     const sel = getCmSelection(cm);
 
     const text = `${format.before} ${(sel.lineText.length ? sel.lineText : format.placeholder)}`;
@@ -303,26 +297,28 @@ export function blockApply(cm: CodeMirror.Editor, format: IEditorFormat) {
     cm.focus();
 }
 
-export function blockRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
+export function blockRemove(cm: EditorView, format: IEditorFormat) {
     const sel = getCmSelection(cm);
 
     // TODO: Why do this with regex only in this case?
     const text = sel.lineText.replace(format.re, '');
 
-    cm.replaceRange(text, { line: sel.line, ch: 0 }, { line: sel.line, ch: sel.lineText.length + 1 });
+    cm.dispatch({ changes: { from: 0, to: sel.lineText.length + 1, insert: text } });
 
     setCmSelection(cm, sel, 0, text.length);
 
     cm.focus();
 }
 
-export function linkApply(cm: CodeMirror.Editor, data: IHtmlLinkProperties) {
-    cm.replaceSelection('[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')');
+export function linkApply(cm: EditorView, data: IHtmlLinkProperties) {
+    const text = '[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')';
+
+    cm.dispatch(cm.state.replaceSelection(text));
 
     cm.focus();
 }
 
-export function linkRemove(cm: CodeMirror.Editor) {
+export function linkRemove(cm: EditorView) {
     const sel = getCmSelection(cm);
 
     const [startPos, endPos] = findFormattingRange(sel, EditorFormats.link);
@@ -335,12 +331,12 @@ export function linkRemove(cm: CodeMirror.Editor) {
 
     replaceCmLine(cm, sel, start + linkText + end);
 
-    cm.setCursor({ line: sel.line, ch: start.length });
+    cm.dispatch({ selection: { anchor: start.length } });
 
     cm.focus();
 }
 
-export function codeBlockApply(cm: CodeMirror.Editor, data: ICodeBlockProperties) {
+export function codeBlockApply(cm: EditorView, data: ICodeBlockProperties) {
     const format: IEditorFormat = Object.assign({}, EditorFormats.codeBlock);
 
     format.before = format.before.replace(/\{LANG\}/gi, data.language);
@@ -348,24 +344,28 @@ export function codeBlockApply(cm: CodeMirror.Editor, data: ICodeBlockProperties
     inlineApply(cm, format);
 }
 
-export function imageApply(cm: CodeMirror.Editor, data: IHtmlImageProperties, appendNewLine: boolean) {
-    cm.replaceSelection('![' + (data.alt || '') + '](' + data.url + ')' + (appendNewLine ? '\n' : ''));
+export function imageApply(cm: EditorView, data: IHtmlImageProperties, appendNewLine: boolean) {
+    const text = '![' + (data.alt || '') + '](' + data.url + ')' + (appendNewLine ? '\n' : '');
+
+    cm.dispatch(cm.state.replaceSelection(text));
 
     cm.focus();
 }
 
-export function applyFormat(cm: CodeMirror.Editor, key: string, data?: any) {
+export function applyFormat(cm: EditorView, key: string, data?: any) {
     const cs = getCursorState(cm);
     // console.log(cs);
     const format = EditorFormats[key];
     operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format, data);
 }
 
-export function getLinkData(cm: CodeMirror.Editor): IHtmlLinkProperties {
-    const pos = cm.getCursor('start');
-    const token = cm.getTokenAt(pos);
+export function getLinkData(cm: EditorView): IHtmlLinkProperties {
+    const pos = cm.state.selection.main.from;
 
     let data: IHtmlLinkProperties = null;
+
+    /*
+    const token = cm.getTokenAt(pos);
 
     if (token.type && (token.type.indexOf('link') > -1 || token.type.indexOf('url') > -1)) {
         const startPoint = cm.getCursor('start');
@@ -408,29 +408,34 @@ export function getLinkData(cm: CodeMirror.Editor): IHtmlLinkProperties {
             }
         }
 
-        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });
+        cm.dispatch({ selection: { anchor: startPos, head: endPos + 1 } });
     }
+    */
 
     return data;
 }
 
-export function createLink(cm: CodeMirror.Editor, properties: IHtmlLinkProperties) {
+export function createLink(cm: EditorView, properties: IHtmlLinkProperties) {
     linkApply(cm, properties);
 }
 
-export function removeLink(cm: CodeMirror.Editor) {
+export function removeLink(cm: EditorView) {
     linkRemove(cm);
 }
 
-export function createCodeBlock(cm: CodeMirror.Editor, properties: ICodeBlockProperties) {
+export function createCodeBlock(cm: EditorView, properties: ICodeBlockProperties) {
     codeBlockApply(cm, properties);
 }
 
-export function getImageData(cm: CodeMirror.Editor): IHtmlImageProperties {
-    const pos = cm.getCursor('start');
-    const token = cm.getTokenAt(pos);
+export function getImageData(cm: EditorView): IHtmlImageProperties {
+    const pos = cm.state.selection.main.from;
 
     let data: IHtmlImageProperties = null;
+
+    /*
+    const token = cm.getTokenAt(pos);
+
+
 
     if (token.type && (token.type.indexOf('image') > -1 || token.type.indexOf('url') > -1)) {
         const startPoint = cm.getCursor('start');
@@ -469,13 +474,14 @@ export function getImageData(cm: CodeMirror.Editor): IHtmlImageProperties {
             };
         }
 
-        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });
+        cm.dispatch({ selection: { anchor: startPos, head: endPos + 1 } });
     }
+    */
 
     return data;
 }
 
-export function createImage(cm: CodeMirror.Editor, properties: IHtmlImageProperties, appendNewLine: boolean) {
+export function createImage(cm: EditorView, properties: IHtmlImageProperties, appendNewLine: boolean) {
     imageApply(cm, properties, appendNewLine);
 }
 
