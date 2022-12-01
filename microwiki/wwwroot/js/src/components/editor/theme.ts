@@ -44,7 +44,7 @@ export const color = {
 
 export const microwikiEditorTheme = EditorView.theme({
     "&": {
-        color: ivory,
+        color: "#e4e4e4",
         backgroundColor: background,
         height: "600px",
         fontSize: "1.2em"
@@ -125,7 +125,7 @@ export const microwikiHighlighterTheme = HighlightStyle.define([
     },
     {
         tag: [t.name, t.deleted, t.character, t.propertyName, t.macroName],
-        color: coral
+        color: "#e4e4e4"
     },
     {
         tag: [t.function(t.variableName), t.labelName],
@@ -165,13 +165,12 @@ export const microwikiHighlighterTheme = HighlightStyle.define([
     },
     {
         tag: t.link,
-        color: stone,
-        textDecoration: "underline"
+        color: "#e6db74"
     },
     {
         tag: t.heading,
         fontWeight: "bold",
-        color: coral
+        color: "#fbfbfb"
     },
     {
         tag: [t.atom, t.bool, t.special(t.variableName)],
@@ -179,7 +178,7 @@ export const microwikiHighlighterTheme = HighlightStyle.define([
     },
     {
         tag: [t.processingInstruction, t.string, t.inserted],
-        color: sage
+        color: "#de87b9"
     },
     {
         tag: t.invalid,
