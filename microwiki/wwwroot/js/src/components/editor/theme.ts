@@ -184,8 +184,12 @@ export const microwikiHighlighterTheme = HighlightStyle.define([
         tag: t.invalid,
         color: invalid
     },
+    {
+        tag: t.monospace,
+        fontFamily: 'monospace',
+        // fontWeight: 'bold',
+        color: "#b1b1b1"
+    }
 ])
 
-/// Extension to enable the One Dark theme (both the editor theme and
-/// the highlight style).
 export const microwikiTheme: Extension = [microwikiEditorTheme, syntaxHighlighting(microwikiHighlighterTheme)]
