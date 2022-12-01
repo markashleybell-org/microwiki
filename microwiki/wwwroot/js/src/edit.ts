@@ -17,6 +17,7 @@ import {
     updatePreview
 } from './components/editor';
 import { DOM, dom } from 'mab-dom';
+import { KeyBinding } from '@codemirror/view';
 
 declare const _ALL_TAGS: string[];
 
@@ -24,16 +25,12 @@ const imageFileExtensions: string[] = ['jpg', 'jpeg', 'gif', 'png', 'webp'];
 
 const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
 
-const editor = createEditor(editorElement);
+const formattingKeymap: KeyBinding[] = [
+    { key: "Ctrl-b", run: e => { applyFormat(e, 'bold'); return true; }, preventDefault: true },
+    { key: "Ctrl-i", run: e => { applyFormat(e, 'italic'); return true; }, preventDefault: true }
+];
 
-//editor.setOption('extraKeys', {
-//    'Tab': 'indentMore',
-//    'Shift-Tab': 'indentLess',
-//    'Ctrl-B': () => applyFormat(editor, 'bold'),
-//    'Ctrl-I': () => applyFormat(editor, 'italic'),
-//    'Home': 'goLineLeft',
-//    'End': 'goLineRight'
-//});
+const editor = createEditor(editorElement, formattingKeymap);
 
 const tagInputElements = document.getElementsByClassName('tag-input');
 

@@ -1,17 +1,25 @@
-import { EditorView, keymap } from '@codemirror/view';
+import { EditorView, KeyBinding, keymap } from '@codemirror/view';
 import { indentUnit } from '@codemirror/language';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { microwikiTheme } from './theme';
 
-export function createEditor(editorElement: HTMLTextAreaElement) {
+export function createEditor(editorElement: HTMLTextAreaElement, formattingKeymap: KeyBinding[]) {
+    const keyMaps = [
+        ...(defaultKeymap.filter(b => b.key === 'Ctrl-i')),
+        ...historyKeymap,
+        ...formattingKeymap,
+        indentWithTab
+    ];
+
     const view = new EditorView({
         doc: editorElement.value,
         extensions: [
+            EditorView.lineWrapping,
             microwikiTheme,
             history(),
             indentUnit.of('    '),
-            keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
+            keymap.of(keyMaps),
             markdown({ base: markdownLanguage }),
         ]
     });
@@ -24,20 +32,6 @@ export function createEditor(editorElement: HTMLTextAreaElement) {
             editorElement.value = view.state.doc.toString();
         })
     }
-
-    //const editor = CodeMirror.fromTextArea(editorElement, {
-    //    mode: 'gfm',
-    //    theme: 'microwiki',
-    //    indentUnit: 4,
-    //    lineWrapping: true
-    //});
-
-    //editor.setSize(null, 600);
-
-    //editor.setOption('extraKeys', {
-    //    'Tab': 'indentMore',
-    //    'Shift-Tab': 'indentLess'
-    //});
 
     return view;
 }

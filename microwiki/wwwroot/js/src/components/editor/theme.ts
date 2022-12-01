@@ -42,12 +42,17 @@ export const color = {
     cursor
 }
 
-/// The editor theme styles for One Dark.
-export const microwikiTheme = EditorView.theme({
+export const microwikiEditorTheme = EditorView.theme({
     "&": {
         color: ivory,
         backgroundColor: background,
-        height: "600px"
+        height: "600px",
+        fontSize: "1.2em"
+    },
+
+    ".cm-scroller": {
+        overflow: "auto",
+        padding: "10px"
     },
 
     ".cm-content": {
@@ -113,8 +118,7 @@ export const microwikiTheme = EditorView.theme({
     }
 }, { dark: true })
 
-/// The highlighting style for code in the One Dark theme.
-export const microwikiHighlightStyle = HighlightStyle.define([
+export const microwikiHighlighterTheme = HighlightStyle.define([
     {
         tag: t.keyword,
         color: violet
@@ -185,4 +189,4 @@ export const microwikiHighlightStyle = HighlightStyle.define([
 
 /// Extension to enable the One Dark theme (both the editor theme and
 /// the highlight style).
-export const microwikiThemeWithHighlighting: Extension = [microwikiTheme, syntaxHighlighting(microwikiHighlightStyle)]
+export const microwikiTheme: Extension = [microwikiEditorTheme, syntaxHighlighting(microwikiHighlighterTheme)]
