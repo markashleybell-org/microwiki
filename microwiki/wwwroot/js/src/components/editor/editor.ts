@@ -3,6 +3,7 @@ import { indentUnit } from '@codemirror/language';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { microwikiTheme } from './theme';
+import { syntaxTree } from '@codemirror/language'
 
 export function createEditor(editorElement: HTMLTextAreaElement, formattingKeymap: KeyBinding[]) {
     const keyMaps = [
@@ -23,6 +24,15 @@ export function createEditor(editorElement: HTMLTextAreaElement, formattingKeyma
             markdown({ base: markdownLanguage }),
         ]
     });
+
+    const tmp = (_: Event) => {
+        const st = syntaxTree(view.state);
+        const node = st.resolve(view.state.selection.main.from);
+        console.log(node.type, node);
+    };
+
+    view.dom.addEventListener('click', tmp);
+    view.dom.addEventListener('keyup', tmp);
 
     editorElement.parentNode.insertBefore(view.dom, editorElement);
     editorElement.style.display = 'none';

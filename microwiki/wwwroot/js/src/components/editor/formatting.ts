@@ -1,4 +1,58 @@
 import { EditorView } from '@codemirror/view'
+import { syntaxTree } from '@codemirror/language'
+
+// From https://github.com/lezer-parser/markdown/blob/a5f28b6611b149e3473c226e699c1f0b25239aa5/src/markdown.ts
+
+export enum Type {
+    Document = 1,
+
+    CodeBlock,
+    FencedCode,
+    Blockquote,
+    HorizontalRule,
+    BulletList,
+    OrderedList,
+    ListItem,
+    ATXHeading1,
+    ATXHeading2,
+    ATXHeading3,
+    ATXHeading4,
+    ATXHeading5,
+    ATXHeading6,
+    SetextHeading1,
+    SetextHeading2,
+    HTMLBlock,
+    LinkReference,
+    Paragraph,
+    CommentBlock,
+    ProcessingInstructionBlock,
+
+    // Inline
+    Escape,
+    Entity,
+    HardBreak,
+    Emphasis,
+    StrongEmphasis,
+    Link,
+    Image,
+    InlineCode,
+    HTMLTag,
+    Comment,
+    ProcessingInstruction,
+    URL,
+
+    // Smaller tokens
+    HeaderMark,
+    QuoteMark,
+    ListMark,
+    LinkMark,
+    EmphasisMark,
+    CodeMark,
+    CodeText,
+    CodeInfo,
+    LinkTitle,
+    LinkLabel
+}
 
 /* BEGIN Private Interfaces */
 
@@ -355,6 +409,12 @@ export function imageApply(cm: EditorView, data: IHtmlImageProperties, appendNew
 export function applyFormat(cm: EditorView, key: string, data?: any) {
     const cs = getCursorState(cm);
     // console.log(cs);
+    const st = syntaxTree(cm.state);
+
+    const type = st.resolve(cm.state.selection.main.from).type;
+
+    console.log(type);
+
     const format = EditorFormats[key];
     operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format, data);
 }

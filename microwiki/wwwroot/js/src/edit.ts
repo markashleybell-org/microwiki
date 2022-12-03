@@ -223,6 +223,8 @@ tabs.on('show.bs.tab', e => {
     }
 });
 
+/* BEGIN Drag/Drop File Uploads */
+
 Dropzone.autoDiscover = false;
 
 var zone = new Dropzone('.editor-dropzone', {
@@ -279,3 +281,5 @@ document.onpaste = function (event) {
         }
     }
 };
+
+/* END Drag/Drop File Uploads */
