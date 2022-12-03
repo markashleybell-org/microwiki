@@ -3,7 +3,8 @@ import { indentUnit } from '@codemirror/language';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { microwikiTheme } from './theme';
-import { syntaxTree } from '@codemirror/language'
+import { syntaxTree } from '@codemirror/language';
+import { NodeType } from './formatting';
 
 export function createEditor(editorElement: HTMLTextAreaElement, formattingKeymap: KeyBinding[]) {
     const keyMaps = [
@@ -28,7 +29,16 @@ export function createEditor(editorElement: HTMLTextAreaElement, formattingKeyma
     const tmp = (_: Event) => {
         const st = syntaxTree(view.state);
         const node = st.resolve(view.state.selection.main.from);
-        console.log(node.type, node);
+
+        //const t = NodeType.Document;
+
+        //switch (node.type.id) {
+        //    case NodeType.Link:
+        //        console.log('link');
+        //        break;
+        //}
+
+        // console.log(node.type.name, node.parent?.type.name); //, node);
     };
 
     view.dom.addEventListener('click', tmp);
