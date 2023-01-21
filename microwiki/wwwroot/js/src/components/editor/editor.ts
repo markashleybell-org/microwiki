@@ -26,23 +26,19 @@ export function createEditor(editorElement: HTMLTextAreaElement, formattingKeyma
         ]
     });
 
-    const tmp = (_: Event) => {
-        const st = syntaxTree(view.state);
-        const node = st.resolve(view.state.selection.main.from);
+    const tmp = (e: Event) => {
+        const alt = (e as MouseEvent).getModifierState("Alt");
 
-        //const t = NodeType.Document;
+        if (alt) {
+            const st = syntaxTree(view.state);
+            const node = st.resolve(view.state.selection.main.from);
 
-        //switch (node.type.id) {
-        //    case NodeType.Link:
-        //        console.log('link');
-        //        break;
-        //}
-
-        // console.log(node.type.name, node.parent?.type.name); //, node);
+            console.log('Node: ' + node.type.name + ', Parent: ' + node.parent?.type.name); //, node);
+        }
     };
 
     view.dom.addEventListener('click', tmp);
-    view.dom.addEventListener('keyup', tmp);
+    // view.dom.addEventListener('keyup', tmp);
 
     editorElement.parentNode.insertBefore(view.dom, editorElement);
     editorElement.style.display = 'none';

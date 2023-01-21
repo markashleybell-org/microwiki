@@ -121,7 +121,7 @@ function createFormatter(guard: FormatGuard, spec: MarkupSpecification): Formatt
         }
 
         console.log(node.type);
-        console.log(changes);
+        // console.log(changes);
 
         editor.dispatch({
             changes
