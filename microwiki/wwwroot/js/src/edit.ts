@@ -191,8 +191,6 @@ function format(e: EditorView, f: Format) {
     const st = syntaxTree(e.state);
     const node = st.resolve(e.state.selection.main.from);
 
-    // console.log(f, NodeTypeForFormat[f]);
-
     const formatter = Formatter[f];
 
     return formatter(e, node);

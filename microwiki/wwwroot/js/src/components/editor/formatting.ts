@@ -113,14 +113,14 @@ function createFormatter(guard: FormatGuard, spec: MarkupSpecification): Formatt
         const sel = editor.state.selection.main;
 
         if (node.type.id === spec.nodeType) {
-            changes.push({ from: node.from, to: node.from + spec.afterContentMarkup.length, insert: '' });
-            changes.push({ from: node.to - spec.beforeContentMarkup.length, to: node.to, insert: '' });
+            changes.push({ from: node.from, to: node.from + spec.beforeContentMarkup.length, insert: '' });
+            changes.push({ from: node.to - spec.afterContentMarkup.length, to: node.to, insert: '' });
         } else {
             changes.push({ from: sel.from, insert: spec.beforeContentMarkup });
             changes.push({ from: sel.to, insert: spec.afterContentMarkup });
         }
 
-        // console.log(node.type);
+        console.log(node.type);
         // console.log(changes);
 
         editor.dispatch({
@@ -136,10 +136,13 @@ function createGuard(...disallow: NodeType[]): FormatGuard {
 }
 
 const standardInlineGuard = createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText, NodeType.InlineCode);
+const headingGuard = createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText, NodeType.InlineCode);
 
 const boldSpec = { nodeType: NodeType.StrongEmphasis, beforeContentMarkup: '**', afterContentMarkup: '**' };
 const italicSpec = { nodeType: NodeType.Emphasis, beforeContentMarkup: '_', afterContentMarkup: '_' };
 const strikeThroughSpec = { nodeType: NodeType.StrikeThrough, beforeContentMarkup: '~~', afterContentMarkup: '~~' };
+const h2Spec = { nodeType: NodeType.ATXHeading2, beforeContentMarkup: '## ', afterContentMarkup: '' };
+const h3Spec = { nodeType: NodeType.ATXHeading3, beforeContentMarkup: '### ', afterContentMarkup: '' };
 
 export const Formatter: Record<Format, Formatter> = {
     bold: createFormatter(standardInlineGuard, boldSpec),
@@ -147,8 +150,8 @@ export const Formatter: Record<Format, Formatter> = {
     strikethrough: createFormatter(standardInlineGuard, strikeThroughSpec),
     code: noopFormatter,
     codeBlock: noopFormatter,
-    h2: noopFormatter,
-    h3: noopFormatter,
+    h2: createFormatter(standardInlineGuard, h2Spec),
+    h3: createFormatter(standardInlineGuard, h3Spec),
     ul: noopFormatter,
     ol: noopFormatter,
     link: noopFormatter,
