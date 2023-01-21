@@ -104,9 +104,6 @@ export const Formatter: Record<Format, FormatValidator> = {
             changes.push({ from: node.from, to: node.from + 2, insert: '' });
             changes.push({ from: node.to - 2, to: node.to, insert: '' });
 
-            // changes.push(editor.state.replaceSelection(t2));
-
-
             console.log(changes);
 
             editor.dispatch({
@@ -116,7 +113,17 @@ export const Formatter: Record<Format, FormatValidator> = {
             return true;
         }
 
-        // editor.dispatch(editor.state.replaceSelection(text));
+        const sel = editor.state.selection.main;
+
+        changes.push({ from: sel.from, insert: '**' });
+        changes.push({ from: sel.to, insert: '**' });
+
+        console.log(changes);
+
+        editor.dispatch({
+            changes
+        });
+
         return true;
     },
     italic: noopValidator,
