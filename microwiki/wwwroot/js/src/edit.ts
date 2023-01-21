@@ -4,18 +4,7 @@ import { TagInput } from 'mab-bootstrap-taginput';
 import { IFileUploadResponse, tagItemTemplate } from './common';
 import {
     Formatter,
-    //applyFormat,
-    //createCodeBlock,
     createEditor,
-    //createImage,
-    //createLink,
-    //getImageData,
-    //getLinkData,
-    //ICodeBlockProperties,
-    //IHtmlImageProperties,
-    //IHtmlLinkProperties,
-    //removeLink,
-    NodeTypeForFormat,
     updatePreview,
     Format
 } from './components/editor';
@@ -196,10 +185,6 @@ function getSelection() {
     return editor.state.sliceDoc(
         editor.state.selection.main.from,
         editor.state.selection.main.to);
-}
-
-function getNodeAtCursor() {
-
 }
 
 function format(e: EditorView, f: Format) {

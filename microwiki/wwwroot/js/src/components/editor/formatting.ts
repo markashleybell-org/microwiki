@@ -120,7 +120,7 @@ function createFormatter(guard: FormatGuard, spec: MarkupSpecification): Formatt
             changes.push({ from: sel.to, insert: spec.afterContentMarkup });
         }
 
-        console.log(node.type);
+        // console.log(node.type);
         // console.log(changes);
 
         editor.dispatch({

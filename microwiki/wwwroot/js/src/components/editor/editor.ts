@@ -4,7 +4,6 @@ import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirro
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { microwikiTheme } from './theme';
 import { syntaxTree } from '@codemirror/language';
-import { NodeType } from './formatting';
 
 export function createEditor(editorElement: HTMLTextAreaElement, formattingKeymap: KeyBinding[]) {
     const keyMaps = [
@@ -38,7 +37,6 @@ export function createEditor(editorElement: HTMLTextAreaElement, formattingKeyma
     };
 
     view.dom.addEventListener('click', tmp);
-    // view.dom.addEventListener('keyup', tmp);
 
     editorElement.parentNode.insertBefore(view.dom, editorElement);
     editorElement.style.display = 'none';
