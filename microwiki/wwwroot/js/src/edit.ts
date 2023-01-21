@@ -21,7 +21,7 @@ import {
 } from './components/editor';
 import { syntaxTree } from '@codemirror/language';
 import { DOM, dom } from 'mab-dom';
-import { KeyBinding } from '@codemirror/view';
+import { EditorView, KeyBinding } from '@codemirror/view';
 
 declare const _ALL_TAGS: string[];
 
@@ -30,8 +30,8 @@ const imageFileExtensions: string[] = ['jpg', 'jpeg', 'gif', 'png', 'webp'];
 const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
 
 const formattingKeymap: KeyBinding[] = [
-    //{ key: "Ctrl-b", run: e => { applyFormat(e, 'bold'); return true; }, preventDefault: true },
-    //{ key: "Ctrl-i", run: e => { applyFormat(e, 'italic'); return true; }, preventDefault: true }
+    { key: "Ctrl-b", run: e => format(e, 'bold'), preventDefault: true },
+    { key: "Ctrl-i", run: e => format(e, 'italic'), preventDefault: true }
 ];
 
 const editor = createEditor(editorElement, formattingKeymap);
@@ -202,28 +202,25 @@ function getNodeAtCursor() {
 
 }
 
+function format(e: EditorView, f: Format) {
+    const st = syntaxTree(e.state);
+    const node = st.resolve(e.state.selection.main.from);
 
+    // console.log(f, NodeTypeForFormat[f]);
 
+    const formatter = Formatter[f];
+
+    return formatter(e, node);
+}
 
 dom('.cm-format-button').on('click', e => {
     e.preventDefault();
 
     const button = e.target as HTMLElement;
 
-    const format = button.getAttribute('data-format') as Format;
+    const f = button.getAttribute('data-format') as Format;
 
-    // editor.state.selection.main.empty
-
-    const st = syntaxTree(editor.state);
-    const node = st.resolve(editor.state.selection.main.from);
-
-    console.log(format, NodeTypeForFormat[format]);
-
-    const formatter = Formatter[format];
-
-    console.log(formatter(editor, node));
-
-    // format(formatName);
+    format(editor, f);
 });
 
 const tabs = dom('a[data-toggle="tab"]');

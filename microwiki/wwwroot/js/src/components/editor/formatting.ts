@@ -135,13 +135,16 @@ function createGuard(...disallow: NodeType[]): FormatGuard {
     return (e, n) => e.state.selection.main.empty || disallow.indexOf(n.type.id) !== -1;
 }
 
+const standardInlineGuard = createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText, NodeType.InlineCode);
+
 const boldSpec = { nodeType: NodeType.StrongEmphasis, beforeContentMarkup: '**', afterContentMarkup: '**' };
 const italicSpec = { nodeType: NodeType.Emphasis, beforeContentMarkup: '_', afterContentMarkup: '_' };
+const strikeThroughSpec = { nodeType: NodeType.StrikeThrough, beforeContentMarkup: '~~', afterContentMarkup: '~~' };
 
 export const Formatter: Record<Format, Formatter> = {
-    bold: createFormatter(createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText), boldSpec),
-    italic: createFormatter(createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText), italicSpec),
-    strikethrough: noopFormatter,
+    bold: createFormatter(standardInlineGuard, boldSpec),
+    italic: createFormatter(standardInlineGuard, italicSpec),
+    strikethrough: createFormatter(standardInlineGuard, strikeThroughSpec),
     code: noopFormatter,
     codeBlock: noopFormatter,
     h2: noopFormatter,
