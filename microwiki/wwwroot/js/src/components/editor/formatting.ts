@@ -58,6 +58,11 @@ export enum NodeType {
     StrikeThrough = 51
 }
 
+export enum FormattingType {
+    Inline,
+    Block
+}
+
 export type Format =
     | "bold"
     | "italic"
@@ -85,39 +90,37 @@ export const NodeTypeForFormat: Record<Format, NodeType> = {
     image: NodeType.Image,
 }
 
-export type FormatValidator = (editor: EditorView, node: SyntaxNode) => boolean;
+export type Formatter = (editor: EditorView, node: SyntaxNode) => boolean;
+export type FormatGuard = (editor: EditorView, node: SyntaxNode) => boolean;
 
-const noopValidator: FormatValidator = () => true;
+const noopFormatter: Formatter = () => true;
+const noopFormatGuard: FormatGuard = () => true;
 
-export const Formatter: Record<Format, FormatValidator> = {
-    bold: (editor, node) => {
-        if (editor.state.selection.main.empty
-            || node.type.id === NodeType.URL) {
+interface MarkupSpecification {
+    nodeType: NodeType;
+    beforeContentMarkup: string;
+    afterContentMarkup: string;
+    placeholderContent?: string;
+}
+
+function createFormatter(guard: FormatGuard, spec: MarkupSpecification): Formatter {
+    return (editor, node) => {
+        if (guard(editor, node)) {
             return false;
         }
 
         const changes: ChangeSpec[] = [];
-
-        console.log(node.type);
-
-        if (node.type.id === NodeType.StrongEmphasis) {
-            changes.push({ from: node.from, to: node.from + 2, insert: '' });
-            changes.push({ from: node.to - 2, to: node.to, insert: '' });
-
-            console.log(changes);
-
-            editor.dispatch({
-                changes
-            });
-
-            return true;
-        }
-
         const sel = editor.state.selection.main;
 
-        changes.push({ from: sel.from, insert: '**' });
-        changes.push({ from: sel.to, insert: '**' });
+        if (node.type.id === spec.nodeType) {
+            changes.push({ from: node.from, to: node.from + spec.afterContentMarkup.length, insert: '' });
+            changes.push({ from: node.to - spec.beforeContentMarkup.length, to: node.to, insert: '' });
+        } else {
+            changes.push({ from: sel.from, insert: spec.beforeContentMarkup });
+            changes.push({ from: sel.to, insert: spec.afterContentMarkup });
+        }
 
+        console.log(node.type);
         console.log(changes);
 
         editor.dispatch({
@@ -125,15 +128,25 @@ export const Formatter: Record<Format, FormatValidator> = {
         });
 
         return true;
-    },
-    italic: noopValidator,
-    strikethrough: noopValidator,
-    code: noopValidator,
-    codeBlock: noopValidator,
-    h2: noopValidator,
-    h3: noopValidator,
-    ul: noopValidator,
-    ol: noopValidator,
-    link: noopValidator,
-    image: noopValidator,
+    };
+}
+
+function createGuard(...disallow: NodeType[]): FormatGuard {
+    return (e, n) => e.state.selection.main.empty || disallow.indexOf(n.type.id) !== -1;
+}
+
+const boldSpec = { nodeType: NodeType.StrongEmphasis, beforeContentMarkup: '**', afterContentMarkup: '**' }
+
+export const Formatter: Record<Format, Formatter> = {
+    bold: createFormatter(createGuard(NodeType.URL, NodeType.CodeText), boldSpec),
+    italic: noopFormatter,
+    strikethrough: noopFormatter,
+    code: noopFormatter,
+    codeBlock: noopFormatter,
+    h2: noopFormatter,
+    h3: noopFormatter,
+    ul: noopFormatter,
+    ol: noopFormatter,
+    link: noopFormatter,
+    image: noopFormatter,
 }
