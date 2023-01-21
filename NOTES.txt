@@ -1,0 +1,3 @@
+Double-clicking italic (Emphasis) includes underscores, but double-clicking e.g. bold DOES include wrapping **
+
+https://discuss.codemirror.net/ search double-click selection
