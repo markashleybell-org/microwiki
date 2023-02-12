@@ -136,6 +136,7 @@ function createGuard(...disallow: NodeType[]): FormatGuard {
 }
 
 const standardInlineGuard = createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText, NodeType.InlineCode);
+const codeInlineGuard = createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText);
 
 function createHeadingGuard(headingNodeType: NodeType): FormatGuard {
     const headingTypes = [
@@ -153,6 +154,7 @@ function createHeadingGuard(headingNodeType: NodeType): FormatGuard {
 const boldSpec = { nodeType: NodeType.StrongEmphasis, beforeContentMarkup: '**', afterContentMarkup: '**' };
 const italicSpec = { nodeType: NodeType.Emphasis, beforeContentMarkup: '_', afterContentMarkup: '_' };
 const strikeThroughSpec = { nodeType: NodeType.StrikeThrough, beforeContentMarkup: '~~', afterContentMarkup: '~~' };
+const codeSpec = { nodeType: NodeType.InlineCode, beforeContentMarkup: '`', afterContentMarkup: '`' };
 const h2Spec = { nodeType: NodeType.ATXHeading2, beforeContentMarkup: '## ', afterContentMarkup: '' };
 const h3Spec = { nodeType: NodeType.ATXHeading3, beforeContentMarkup: '### ', afterContentMarkup: '' };
 
@@ -160,7 +162,7 @@ export const Formatter: Record<Format, Formatter> = {
     bold: createFormatter(standardInlineGuard, boldSpec),
     italic: createFormatter(standardInlineGuard, italicSpec),
     strikethrough: createFormatter(standardInlineGuard, strikeThroughSpec),
-    code: noopFormatter,
+    code: createFormatter(codeInlineGuard, codeSpec),
     codeBlock: noopFormatter,
     h2: createFormatter(createHeadingGuard(NodeType.ATXHeading2), h2Spec),
     h3: createFormatter(createHeadingGuard(NodeType.ATXHeading3), h3Spec),
