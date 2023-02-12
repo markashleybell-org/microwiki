@@ -3,6 +3,21 @@ import { syntaxTree } from '@codemirror/language'
 import { SyntaxNode } from "@lezer/common"
 import { ChangeSpec, Transaction, TransactionSpec } from '@codemirror/state'
 
+export interface IHtmlLinkProperties {
+    linkText: string;
+    href: string;
+    linkTitle?: string;
+}
+
+export interface IHtmlImageProperties {
+    alt: string;
+    url: string;
+}
+
+export interface ICodeBlockProperties {
+    language: string;
+}
+
 // From https://github.com/lezer-parser/markdown/blob/a5f28b6611b149e3473c226e699c1f0b25239aa5/src/markdown.ts
 export enum NodeType {
     Document = 1,
@@ -170,4 +185,27 @@ export const Formatter: Record<Format, Formatter> = {
     ol: noopFormatter,
     link: noopFormatter,
     image: noopFormatter,
+}
+
+export function getLinkData(node: SyntaxNode): IHtmlLinkProperties | null {
+    if (node.type.id !== NodeType.Link) {
+        return null;
+    }
+
+    return {
+        linkText: 'TEST',
+        linkTitle: 'TEST TITLE',
+        href: 'https://test.com'
+    };
+}
+
+export function getImageData(node: SyntaxNode): IHtmlImageProperties | null {
+    if (node.type.id !== NodeType.Image) {
+        return null;
+    }
+
+    return {
+        alt: 'TEST ALT',
+        url: 'https://test.com/test.jpg'
+    };
 }

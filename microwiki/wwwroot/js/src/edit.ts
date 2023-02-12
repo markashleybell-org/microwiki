@@ -11,6 +11,7 @@ import {
 import { syntaxTree } from '@codemirror/language';
 import { DOM, dom } from 'mab-dom';
 import { EditorView, KeyBinding } from '@codemirror/view';
+import { getImageData, getLinkData, ICodeBlockProperties, IHtmlImageProperties, IHtmlLinkProperties, NodeType } from './components/editor/formatting';
 
 declare const _ALL_TAGS: string[];
 
@@ -65,121 +66,83 @@ function initEditorModal(selector: string, options: IModalOptions): [DOM, Modal]
     return [modalElement, modal];
 }
 
-//const linkModalOptions: IModalOptions = {
-//    primaryAction: (el, modal) => {
-//        const text = el.find('[name=link-text]').val();
-//        const url = el.find('[name=link-url]').val();
-//        const title = el.find('[name=link-title]').val();
+const linkModalOptions: IModalOptions = {
+    primaryAction: (el, modal) => {
+        const text = el.find('[name=link-text]').val();
+        const url = el.find('[name=link-url]').val();
+        const title = el.find('[name=link-title]').val();
 
-//        const data: IHtmlLinkProperties = { linkText: text, href: url };
+        const data: IHtmlLinkProperties = { linkText: text, href: url };
 
-//        if (title) {
-//            data.linkTitle = title;
-//        }
+        if (title) {
+            data.linkTitle = title;
+        }
 
-//        createLink(editor, data);
+        console.log(data);
+        // createLink(editor, data);
 
-//        modal.hide();
-//    },
-//    secondaryAction: (el, modal) => {
-//        removeLink(editor);
+        modal.hide();
+    },
+    secondaryAction: (el, modal) => {
+        // removeLink(editor);
 
-//        modal.hide();
-//    },
-//    onShown: (el, modal) => {
-//        const textInput = el.find('[name=link-text]');
+        modal.hide();
+    },
+    onShown: (el, modal) => {
+        const textInput = el.find('[name=link-text]');
 
-//        if (textInput.val().trim() !== '') {
-//            el.find('[name=link-url]').focus();
-//        } else {
-//            textInput.focus();
-//        }
-//    }
-//};
+        if (textInput.val().trim() !== '') {
+            el.find('[name=link-url]').focus();
+        } else {
+            textInput.focus();
+        }
+    }
+};
 
-//const codeBlockModalOptions: IModalOptions = {
-//    primaryAction: (el, modal) => {
-//        const language = el.find('select[name="code-block-language"]').val();
+const codeBlockModalOptions: IModalOptions = {
+    primaryAction: (el, modal) => {
+        const language = el.find('select[name="code-block-language"]').val();
 
-//        const data: ICodeBlockProperties = { language: language };
+        const data: ICodeBlockProperties = { language: language };
 
-//        createCodeBlock(editor, data);
+        console.log(data);
+        // createCodeBlock(editor, data);
 
-//        modal.hide();
-//    }
-//};
+        modal.hide();
+    }
+};
 
-//const imageModalOptions: IModalOptions = {
-//    primaryAction: (el, modal) => {
-//        const url = imageModalElement.find('[name=image-url]').val();
-//        const alt = imageModalElement.find('[name=image-alt]').val();
+const imageModalOptions: IModalOptions = {
+    primaryAction: (el, modal) => {
+        const url = imageModalElement.find('[name=image-url]').val();
+        const alt = imageModalElement.find('[name=image-alt]').val();
 
-//        const data: IHtmlImageProperties = { alt: alt, url: url };
+        const data: IHtmlImageProperties = { alt: alt, url: url };
 
-//        createImage(editor, data, false);
+        console.log(data);
+        // createImage(editor, data, false);
 
-//        imageModal.hide();
-//    },
-//    onShown: (el, modal) => {
-//        el.find('[name=image-url]').focus();
-//    }
-//};
+        imageModal.hide();
+    },
+    onShown: (el, modal) => {
+        el.find('[name=image-url]').focus();
+    }
+};
 
-//const [linkModalElement, linkModal] = initEditorModal('#editor-link-modal', linkModalOptions);
-//const [codeBlockModalElement, codeBlockModal] = initEditorModal('#editor-code-block-modal', codeBlockModalOptions);
-//const [imageModalElement, imageModal] = initEditorModal('#editor-image-modal', imageModalOptions);
+const [linkModalElement, linkModal] = initEditorModal('#editor-link-modal', linkModalOptions);
+const [codeBlockModalElement, codeBlockModal] = initEditorModal('#editor-code-block-modal', codeBlockModalOptions);
+const [imageModalElement, imageModal] = initEditorModal('#editor-image-modal', imageModalOptions);
 
-//function resetLinkModalFields() {
-//    linkModalElement.find('[name=link-text]').val(null);
-//    linkModalElement.find('[name=link-url]').val(null);
-//    linkModalElement.find('[name=link-title]').val(null);
-//}
+function resetLinkModalFields() {
+    linkModalElement.find('[name=link-text]').val(null);
+    linkModalElement.find('[name=link-url]').val(null);
+    linkModalElement.find('[name=link-title]').val(null);
+}
 
-//function resetImageModalFields() {
-//    imageModalElement.find('[name=image-alt]').val(null);
-//    imageModalElement.find('[name=image-url]').val(null);
-//}
-
-//export function format(key: string) {
-//    function getSelection() {
-//        return editor.state.sliceDoc(
-//            editor.state.selection.main.from,
-//            editor.state.selection.main.to);
-//    }
-
-//    if (key === 'link') {
-//        resetLinkModalFields();
-
-//        const linkData = getLinkData(editor);
-
-//        if (linkData) {
-//            linkModalElement.find('[name=link-text]').val(linkData.linkText);
-//            linkModalElement.find('[name=link-url]').val(linkData.href);
-//            linkModalElement.find('[name=link-title]').val(linkData.linkTitle);
-//        } else {
-//            linkModalElement.find('[name=link-text]').val(getSelection());
-//        }
-
-//        linkModal.show();
-//    } else if (key === 'image') {
-//        resetImageModalFields();
-
-//        const imageData = getImageData(editor);
-
-//        if (imageData) {
-//            imageModalElement.find('[name=image-alt]').val(imageData.alt);
-//            imageModalElement.find('[name=image-url]').val(imageData.url);
-//        } else {
-//            imageModalElement.find('[name=image-alt]').val(getSelection());
-//        }
-
-//        imageModal.show();
-//    } else if (key === 'codeBlock') {
-//        codeBlockModal.show();
-//    } else {
-//        applyFormat(editor, key);
-//    }
-//}
+function resetImageModalFields() {
+    imageModalElement.find('[name=image-alt]').val(null);
+    imageModalElement.find('[name=image-url]').val(null);
+}
 
 function getSelection() {
     return editor.state.sliceDoc(
@@ -191,9 +154,47 @@ function format(e: EditorView, f: Format) {
     const st = syntaxTree(e.state);
     const node = st.resolve(e.state.selection.main.from);
 
-    const formatter = Formatter[f];
+    switch (f) {
+        case 'link':
+            resetLinkModalFields();
 
-    return formatter(e, node);
+            const linkData = getLinkData(node);
+
+            if (linkData) {
+                linkModalElement.find('[name=link-text]').val(linkData.linkText);
+                linkModalElement.find('[name=link-url]').val(linkData.href);
+                linkModalElement.find('[name=link-title]').val(linkData.linkTitle);
+            } else {
+                linkModalElement.find('[name=link-text]').val(getSelection());
+            }
+
+            linkModal.show();
+
+            return true;
+        case 'image':
+            resetImageModalFields();
+
+            const imageData = getImageData(node);
+
+            if (imageData) {
+                imageModalElement.find('[name=image-alt]').val(imageData.alt);
+                imageModalElement.find('[name=image-url]').val(imageData.url);
+            } else {
+                imageModalElement.find('[name=image-alt]').val(getSelection());
+            }
+
+            imageModal.show();
+
+            return true;
+        case 'codeBlock':
+            codeBlockModal.show();
+
+            return true;
+        default:
+            const formatter = Formatter[f];
+
+            return formatter(e, node);
+    }
 }
 
 dom('.cm-format-button').on('click', e => {
