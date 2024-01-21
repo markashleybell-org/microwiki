@@ -32,5 +32,7 @@ namespace MicroWiki.Abstract
         Task<IEnumerable<Tag>> GetTags();
 
         Task MergeTags(Guid id, IEnumerable<Guid> tagIdsToMerge);
+
+        Task UpdatePasswordHash(Guid id, string hash);
     }
 }

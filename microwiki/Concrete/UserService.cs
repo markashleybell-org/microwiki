@@ -46,7 +46,20 @@ namespace MicroWiki.Concrete
 
             var result = hasher.VerifyHashedPassword(user, user.Password, password);
 
-            return result == PasswordVerificationResult.Success ? (true, user.ID) : (false, default(Guid?));
+            if (result == PasswordVerificationResult.Failed)
+            {
+                return (false, default);
+            }
+
+            if (result == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                // Upgrade the password hash
+                var newHash = hasher.HashPassword(user, password);
+
+                await _repository.UpdatePasswordHash(user.ID, newHash);
+            }
+
+            return (true, user.ID);
         }
     }
 }
