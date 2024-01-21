@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_PROJECT_FOLDER: ${{ github.workspace }}/microwiki
+    defaults:
+      run:
+        working-directory: ${{ env.DOTNET_PROJECT_FOLDER }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.0
+
+      - name: Restore NuGet dependencies
+        run: dotnet restore
+
+      - name: Build application
+        run: dotnet build
