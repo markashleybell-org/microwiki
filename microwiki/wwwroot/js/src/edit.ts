@@ -218,7 +218,7 @@ tabs.each(el => {
     });
 });
 
-tabs.on('show.bs.tab', e => {
+tabs.on('show.bs.tab', async e => {
     const tab = e.target as HTMLElement;
 
     if (tab.id === 'preview-tab') {
@@ -228,7 +228,7 @@ tabs.on('show.bs.tab', e => {
 
         const val = editor.state.doc.toString();
 
-        updatePreview(val, tabContent);
+        await updatePreview(val, tabContent);
     }
 });
 

@@ -8,7 +8,6 @@
         "@types/codemirror": "^5.60.15",
         "@types/dropzone": "^5.7.8",
         "@types/js-cookie": "^3.0.6",
-        "@types/marked": "^4.0.7",
         "autoprefixer": "^10.4.17",
         "clean-webpack-plugin": "^4.0.0",
         "cssnano": "^5.1.14",
@@ -41,7 +40,8 @@
         "js-cookie": "^3.0.5",
         "mab-bootstrap-taginput": "^0.8.5",
         "mab-dom": "^0.12.1",
-        "marked": "^4.2.3",
+        "marked": "^11.1.1",
+        "marked-highlight": "^2.1.0",
         "sweetalert2": "^11.10.3",
         "tslib": "^2.6.2"
     },
