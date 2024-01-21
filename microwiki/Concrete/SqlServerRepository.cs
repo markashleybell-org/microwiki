@@ -178,6 +178,19 @@ namespace MicroWiki.Concrete
                 );
             });
 
+        public async Task UpdatePasswordHash(Guid id, string hash) =>
+            await WithConnection(async conn => {
+                var param = new {
+                    ID = id,
+                    Password = hash
+                };
+
+                return await conn.ExecuteAsync(
+                    sql: "UPDATE Users SET Password = @Password WHERE ID = @ID",
+                    param: param
+                );
+            });
+
         private async Task WithConnection(Func<SqlConnection, Task> action)
         {
             using (var connection = new SqlConnection(_cfg.ConnectionString))

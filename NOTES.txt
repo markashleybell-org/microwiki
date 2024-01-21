@@ -1,0 +1,9 @@
+Double-clicking italic (Emphasis) includes underscores, but double-clicking e.g. bold DOESNT include enclosing **
+
+https://discuss.codemirror.net/ search double-click selection
+
+Heading selection doesn't work if you select the markup ('##'), but works fine if you only select the heading text
+
+ALT-click logs node type to console
+
+Need to walk up tree in getLinkData/getImageData in case a child (e.g. URL) of the node has been clicked

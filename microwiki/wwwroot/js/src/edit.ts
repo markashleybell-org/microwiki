@@ -3,20 +3,15 @@ import { Modal, Tab } from 'bootstrap';
 import { TagInput } from 'mab-bootstrap-taginput';
 import { IFileUploadResponse, tagItemTemplate } from './common';
 import {
-    applyFormat,
-    createCodeBlock,
+    Formatter,
     createEditor,
-    createImage,
-    createLink,
-    getImageData,
-    getLinkData,
-    ICodeBlockProperties,
-    IHtmlImageProperties,
-    IHtmlLinkProperties,
-    removeLink,
-    updatePreview
+    updatePreview,
+    Format
 } from './components/editor';
+import { syntaxTree } from '@codemirror/language';
 import { DOM, dom } from 'mab-dom';
+import { EditorView, KeyBinding } from '@codemirror/view';
+import { getImageData, getLinkData, ICodeBlockProperties, IHtmlImageProperties, IHtmlLinkProperties, NodeType } from './components/editor/formatting';
 
 declare const _ALL_TAGS: string[];
 
@@ -24,16 +19,12 @@ const imageFileExtensions: string[] = ['jpg', 'jpeg', 'gif', 'png', 'webp'];
 
 const editorElement = document.getElementById('Body') as HTMLTextAreaElement;
 
-const editor = createEditor(editorElement);
+const formattingKeymap: KeyBinding[] = [
+    { key: "Ctrl-b", run: e => format(e, 'bold'), preventDefault: true },
+    { key: "Ctrl-i", run: e => format(e, 'italic'), preventDefault: true }
+];
 
-editor.setOption('extraKeys', {
-    'Tab': 'indentMore',
-    'Shift-Tab': 'indentLess',
-    'Ctrl-B': () => applyFormat(editor, 'bold'),
-    'Ctrl-I': () => applyFormat(editor, 'italic'),
-    'Home': 'goLineLeft',
-    'End': 'goLineRight'
-});
+const editor = createEditor(editorElement, formattingKeymap);
 
 const tagInputElements = document.getElementsByClassName('tag-input');
 
@@ -87,12 +78,13 @@ const linkModalOptions: IModalOptions = {
             data.linkTitle = title;
         }
 
-        createLink(editor, data);
+        console.log(data);
+        // createLink(editor, data);
 
         modal.hide();
     },
     secondaryAction: (el, modal) => {
-        removeLink(editor);
+        // removeLink(editor);
 
         modal.hide();
     },
@@ -113,7 +105,8 @@ const codeBlockModalOptions: IModalOptions = {
 
         const data: ICodeBlockProperties = { language: language };
 
-        createCodeBlock(editor, data);
+        console.log(data);
+        // createCodeBlock(editor, data);
 
         modal.hide();
     }
@@ -126,7 +119,8 @@ const imageModalOptions: IModalOptions = {
 
         const data: IHtmlImageProperties = { alt: alt, url: url };
 
-        createImage(editor, data, false);
+        console.log(data);
+        // createImage(editor, data, false);
 
         imageModal.hide();
     },
@@ -150,38 +144,56 @@ function resetImageModalFields() {
     imageModalElement.find('[name=image-url]').val(null);
 }
 
-export function format(key: string) {
-    if (key === 'link') {
-        resetLinkModalFields();
+function getSelection() {
+    return editor.state.sliceDoc(
+        editor.state.selection.main.from,
+        editor.state.selection.main.to);
+}
 
-        const linkData = getLinkData(editor);
+function format(e: EditorView, f: Format) {
+    const st = syntaxTree(e.state);
+    const node = st.resolve(e.state.selection.main.from);
 
-        if (linkData) {
-            linkModalElement.find('[name=link-text]').val(linkData.linkText);
-            linkModalElement.find('[name=link-url]').val(linkData.href);
-            linkModalElement.find('[name=link-title]').val(linkData.linkTitle);
-        } else {
-            linkModalElement.find('[name=link-text]').val(editor.getSelection());
-        }
+    switch (f) {
+        case 'link':
+            resetLinkModalFields();
 
-        linkModal.show();
-    } else if (key === 'image') {
-        resetImageModalFields();
+            const linkData = getLinkData(node);
 
-        const imageData = getImageData(editor);
+            if (linkData) {
+                linkModalElement.find('[name=link-text]').val(linkData.linkText);
+                linkModalElement.find('[name=link-url]').val(linkData.href);
+                linkModalElement.find('[name=link-title]').val(linkData.linkTitle);
+            } else {
+                linkModalElement.find('[name=link-text]').val(getSelection());
+            }
 
-        if (imageData) {
-            imageModalElement.find('[name=image-alt]').val(imageData.alt);
-            imageModalElement.find('[name=image-url]').val(imageData.url);
-        } else {
-            imageModalElement.find('[name=image-alt]').val(editor.getSelection());
-        }
+            linkModal.show();
 
-        imageModal.show();
-    } else if (key === 'codeBlock') {
-        codeBlockModal.show();
-    } else {
-        applyFormat(editor, key);
+            return true;
+        case 'image':
+            resetImageModalFields();
+
+            const imageData = getImageData(node);
+
+            if (imageData) {
+                imageModalElement.find('[name=image-alt]').val(imageData.alt);
+                imageModalElement.find('[name=image-url]').val(imageData.url);
+            } else {
+                imageModalElement.find('[name=image-alt]').val(getSelection());
+            }
+
+            imageModal.show();
+
+            return true;
+        case 'codeBlock':
+            codeBlockModal.show();
+
+            return true;
+        default:
+            const formatter = Formatter[f];
+
+            return formatter(e, node);
     }
 }
 
@@ -190,9 +202,9 @@ dom('.cm-format-button').on('click', e => {
 
     const button = e.target as HTMLElement;
 
-    const formatName = button.getAttribute('data-format');
+    const f = button.getAttribute('data-format') as Format;
 
-    format(formatName);
+    format(editor, f);
 });
 
 const tabs = dom('a[data-toggle="tab"]');
@@ -206,7 +218,7 @@ tabs.each(el => {
     });
 });
 
-tabs.on('show.bs.tab', e => {
+tabs.on('show.bs.tab', async e => {
     const tab = e.target as HTMLElement;
 
     if (tab.id === 'preview-tab') {
@@ -214,12 +226,15 @@ tabs.on('show.bs.tab', e => {
 
         const tabContent = document.querySelector(tabSelector) as HTMLElement;
 
-        const val = editor.getValue();
+        const val = editor.state.doc.toString();
 
-        updatePreview(val, tabContent);
+        await updatePreview(val, tabContent);
     }
 });
 
+/* BEGIN Drag/Drop File Uploads */
+
+/*
 Dropzone.autoDiscover = false;
 
 var zone = new Dropzone('.editor-dropzone', {
@@ -255,15 +270,15 @@ zone.on('success', (file: any, response: IFileUploadResponse) => {
     console.log(file);
 });
 
-editor.on('drop', function (data, e) {
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        const file = files[0] as Dropzone.DropzoneFile;
-        zone.addFile(file);
-    }
-});
+//editor.on('drop', function (data: any, e: any) {
+//    const files = e.dataTransfer.files;
+//    if (files.length > 0) {
+//        e.preventDefault();
+//        e.stopPropagation();
+//        const file = files[0] as Dropzone.DropzoneFile;
+//        zone.addFile(file);
+//    }
+//});
 
 document.onpaste = function (event) {
     var items = event.clipboardData.items;
@@ -276,3 +291,6 @@ document.onpaste = function (event) {
         }
     }
 };
+*/
+
+/* END Drag/Drop File Uploads */

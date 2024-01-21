@@ -1,66 +1,7 @@
-import * as CodeMirror from 'codemirror';
-
-/* BEGIN Private Interfaces */
-
-interface ICodeMirrorSelection {
-    line: number;
-    lineText: string;
-    start: CodeMirror.Position;
-    end: CodeMirror.Position;
-    selectedText: string;
-}
-
-interface IFormattingOperation {
-    [key: string]: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
-    apply: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
-    remove: (cm: CodeMirror.Editor, format: IEditorFormat, data?: any) => void;
-}
-
-interface IFormattingOperations {
-    [key: string]: IFormattingOperation;
-    inline: IFormattingOperation;
-    block: IFormattingOperation;
-}
-
-/* END Private Interfaces */
-
-/* BEGIN Public Interfaces */
-
-export interface IEditorFormat {
-    type: string;
-    token?: string;
-    before: string;
-    after?: string;
-    re?: RegExp;
-    placeholder: string;
-}
-
-export interface IEditorFormats {
-    [key: string]: IEditorFormat;
-    h1: IEditorFormat;
-    h2: IEditorFormat;
-    h3: IEditorFormat;
-    bold: IEditorFormat;
-    italic: IEditorFormat;
-    strikethrough: IEditorFormat;
-    code: IEditorFormat;
-    ol: IEditorFormat;
-    ul: IEditorFormat;
-    link: IEditorFormat;
-    codeBlock: IEditorFormat;
-    image: IEditorFormat;
-}
-
-export interface IEditorFormatTokens {
-    [key: string]: string;
-    'header-1': string;
-    'header-2': string;
-    'header-3': string;
-    strong: string;
-    em: string;
-    strikethrough: string;
-    comment: string;
-}
+import { EditorView } from '@codemirror/view'
+import { syntaxTree } from '@codemirror/language'
+import { SyntaxNode } from "@lezer/common"
+import { ChangeSpec, Transaction, TransactionSpec } from '@codemirror/state'
 
 export interface IHtmlLinkProperties {
     linkText: string;
@@ -77,406 +18,194 @@ export interface ICodeBlockProperties {
     language: string;
 }
 
-export interface ICursorFormat {
-    [key: string]: boolean;
-    link: boolean;
-    link_label: boolean;
-    link_href: boolean;
-    h1: boolean;
-    h2: boolean;
-    h3: boolean;
-    bold: boolean;
-    italic: boolean;
-    strikethrough: boolean;
-    code: boolean;
-    ol: boolean;
-    ul: boolean;
+// From https://github.com/lezer-parser/markdown/blob/a5f28b6611b149e3473c226e699c1f0b25239aa5/src/markdown.ts
+export enum NodeType {
+    Document = 1,
+
+    CodeBlock,
+    FencedCode,
+    Blockquote,
+    HorizontalRule,
+    BulletList,
+    OrderedList,
+    ListItem,
+    ATXHeading1,
+    ATXHeading2,
+    ATXHeading3,
+    ATXHeading4,
+    ATXHeading5,
+    ATXHeading6,
+    SetextHeading1,
+    SetextHeading2,
+    HTMLBlock,
+    LinkReference,
+    Paragraph,
+    CommentBlock,
+    ProcessingInstructionBlock,
+
+    // Inline
+    Escape,
+    Entity,
+    HardBreak,
+    Emphasis,
+    StrongEmphasis,
+    Link,
+    Image,
+    InlineCode,
+    HTMLTag,
+    Comment,
+    ProcessingInstruction,
+    URL,
+
+    // Smaller tokens
+    HeaderMark,
+    QuoteMark,
+    ListMark,
+    LinkMark,
+    EmphasisMark,
+    CodeMark,
+    CodeText,
+    CodeInfo,
+    LinkTitle,
+    LinkLabel,
+
+    // Extensions
+    StrikeThrough = 51
 }
 
-export interface ICursorState {
-    token: CodeMirror.Token;
-    format: ICursorFormat;
+export enum FormattingType {
+    Inline,
+    Block
 }
 
-/* END Public Interfaces */
+export type Format =
+    | "bold"
+    | "italic"
+    | "strikethrough"
+    | "code"
+    | "codeBlock"
+    | "h2"
+    | "h3"
+    | "ul"
+    | "ol"
+    | "link"
+    | "image"
 
-/* BEGIN Private Constants */
+export const NodeTypeForFormat: Record<Format, NodeType> = {
+    bold: NodeType.StrongEmphasis,
+    italic: NodeType.Emphasis,
+    strikethrough: NodeType.StrikeThrough,
+    code: NodeType.InlineCode,
+    codeBlock: NodeType.CodeBlock,
+    h2: NodeType.ATXHeading2,
+    h3: NodeType.ATXHeading3,
+    ul: NodeType.BulletList,
+    ol: NodeType.OrderedList,
+    link: NodeType.Link,
+    image: NodeType.Image,
+}
 
-const operations: IFormattingOperations = {
-    inline: {
-        apply: inlineApply,
-        remove: inlineRemove
-    },
-    block: {
-        apply: blockApply,
-        remove: blockRemove
+export type Formatter = (editor: EditorView, node: SyntaxNode) => boolean;
+export type FormatGuard = (editor: EditorView, node: SyntaxNode) => boolean;
+
+const noopFormatter: Formatter = () => true;
+const noopFormatGuard: FormatGuard = () => true;
+
+interface MarkupSpecification {
+    nodeType: NodeType;
+    beforeContentMarkup: string;
+    afterContentMarkup: string;
+    placeholderContent?: string;
+}
+
+function createFormatter(guard: FormatGuard, spec: MarkupSpecification): Formatter {
+    return (editor, node) => {
+        if (guard(editor, node)) {
+            return false;
+        }
+
+        const changes: ChangeSpec[] = [];
+        const sel = editor.state.selection.main;
+
+        if (node.type.id === spec.nodeType) {
+            changes.push({ from: node.from, to: node.from + spec.beforeContentMarkup.length, insert: '' });
+            changes.push({ from: node.to - spec.afterContentMarkup.length, to: node.to, insert: '' });
+        } else {
+            changes.push({ from: sel.from, insert: spec.beforeContentMarkup });
+            changes.push({ from: sel.to, insert: spec.afterContentMarkup });
+        }
+
+        console.log(node.type);
+        // console.log(changes);
+
+        editor.dispatch({
+            changes
+        });
+
+        return true;
+    };
+}
+
+function createGuard(...disallow: NodeType[]): FormatGuard {
+    return (e, n) => e.state.selection.main.empty || disallow.indexOf(n.type.id) !== -1;
+}
+
+const standardInlineGuard = createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText, NodeType.InlineCode);
+const codeInlineGuard = createGuard(NodeType.URL, NodeType.Image, NodeType.CodeText);
+
+function createHeadingGuard(headingNodeType: NodeType): FormatGuard {
+    const headingTypes = [
+        NodeType.ATXHeading1,
+        NodeType.ATXHeading2,
+        NodeType.ATXHeading3,
+        NodeType.ATXHeading4,
+        NodeType.ATXHeading5,
+        NodeType.ATXHeading6
+    ].filter(t => t !== headingNodeType);
+
+    return (e, n) => standardInlineGuard(e, n) || n.type.id === NodeType.Paragraph || headingTypes.indexOf(n.type.id) !== -1;
+}
+
+const boldSpec = { nodeType: NodeType.StrongEmphasis, beforeContentMarkup: '**', afterContentMarkup: '**' };
+const italicSpec = { nodeType: NodeType.Emphasis, beforeContentMarkup: '_', afterContentMarkup: '_' };
+const strikeThroughSpec = { nodeType: NodeType.StrikeThrough, beforeContentMarkup: '~~', afterContentMarkup: '~~' };
+const codeSpec = { nodeType: NodeType.InlineCode, beforeContentMarkup: '`', afterContentMarkup: '`' };
+const h2Spec = { nodeType: NodeType.ATXHeading2, beforeContentMarkup: '## ', afterContentMarkup: '' };
+const h3Spec = { nodeType: NodeType.ATXHeading3, beforeContentMarkup: '### ', afterContentMarkup: '' };
+
+export const Formatter: Record<Format, Formatter> = {
+    bold: createFormatter(standardInlineGuard, boldSpec),
+    italic: createFormatter(standardInlineGuard, italicSpec),
+    strikethrough: createFormatter(standardInlineGuard, strikeThroughSpec),
+    code: createFormatter(codeInlineGuard, codeSpec),
+    codeBlock: noopFormatter,
+    h2: createFormatter(createHeadingGuard(NodeType.ATXHeading2), h2Spec),
+    h3: createFormatter(createHeadingGuard(NodeType.ATXHeading3), h3Spec),
+    ul: noopFormatter,
+    ol: noopFormatter,
+    link: noopFormatter,
+    image: noopFormatter,
+}
+
+export function getLinkData(node: SyntaxNode): IHtmlLinkProperties | null {
+    if (node.type.id !== NodeType.Link) {
+        return null;
     }
-};
 
-/* END Private Constants */
-
-/* BEGIN Public Constants */
-
-export const EditorFormats: IEditorFormats = {
-    h1: { type: 'block', token: 'header-1', before: '#', re: /^#\s+/, placeholder: 'Heading' },
-    h2: { type: 'block', token: 'header-2', before: '##', re: /^##\s+/, placeholder: 'Heading' },
-    h3: { type: 'block', token: 'header-3', before: '###', re: /^###\s+/, placeholder: 'Heading' },
-    bold: { type: 'inline', token: 'strong', before: '**', after: '**', placeholder: 'bold text' },
-    italic: { type: 'inline', token: 'em', before: '_', after: '_', placeholder: 'italic text' },
-    strikethrough: { type: 'inline', token: 'strikethrough', before: '~~', after: '~~', placeholder: 'deleted text' },
-    code: { type: 'inline', token: 'code', before: '`', after: '`', placeholder: 'inline code' },
-    ol: { type: 'block', before: '1.', re: /^\d+\.\s+/, placeholder: 'List' },
-    ul: { type: 'block', before: '*', re: /^[\*\-]\s+/, placeholder: 'List' },
-    link: { type: 'inline', before: '[', after: ')', placeholder: 'link text' },
-    codeBlock: { type: 'inline', before: '```{LANG}\n', after: '\n```', placeholder: 'code' },
-    image: { type: 'inline', before: '![', after: ')', placeholder: 'image' },
-};
-
-export const EditorFormatTokens: IEditorFormatTokens = {
-    'header-1': 'h1',
-    'header-2': 'h2',
-    'header-3': 'h3',
-    'strong': 'bold',
-    'em': 'italic',
-    'strikethrough': 'strikethrough',
-    'comment': 'code'
-};
-
-/* END Public Constants */
-
-/* BEGIN Private Functions */
-
-function createEmptyCursorState(): ICursorState {
     return {
-        token: null,
-        format: {
-            link: false,
-            link_label: false,
-            link_href: false,
-            h1: false,
-            h2: false,
-            h3: false,
-            bold: false,
-            italic: false,
-            strikethrough: false,
-            code: false,
-            ol: false,
-            ul: false
-        }
+        linkText: 'TEST',
+        linkTitle: 'TEST TITLE',
+        href: 'https://test.com'
     };
 }
 
-function getCmSelection(cm: CodeMirror.Editor): ICodeMirrorSelection {
-    const start = cm.getCursor('start');
-    const line = start.line;
+export function getImageData(node: SyntaxNode): IHtmlImageProperties | null {
+    if (node.type.id !== NodeType.Image) {
+        return null;
+    }
+
     return {
-        line: line,
-        lineText: cm.getLine(line),
-        start: start,
-        end: cm.getCursor('end'),
-        selectedText: cm.getSelection()
+        alt: 'TEST ALT',
+        url: 'https://test.com/test.jpg'
     };
 }
-
-function moveCmSelection(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, moveStartBy: number, moveEndBy: number): void {
-    setCmSelection(cm, selection, selection.start.ch + moveStartBy, selection.end.ch + moveEndBy);
-}
-
-function setCmSelection(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, start: number, end: number): void {
-    const newStart = {
-        line: selection.line,
-        ch: start
-    };
-
-    const newEnd = {
-        line: selection.line,
-        ch: end
-    };
-
-    cm.setSelection(newStart, newEnd);
-}
-
-function replaceCmLine(cm: CodeMirror.Editor, selection: ICodeMirrorSelection, replacement: string): void {
-    cm.replaceRange(replacement, { line: selection.line, ch: 0 }, { line: selection.line, ch: selection.lineText.length + 1 });
-}
-
-function findFormattingRange(selection: ICodeMirrorSelection, format: IEditorFormat): [number, number] {
-    let startPos = selection.start.ch;
-
-    while (startPos) {
-        if (selection.lineText.substr(startPos, format.before.length) === format.before) {
-            break;
-        }
-        startPos--;
-    }
-
-    let endPos = selection.end.ch;
-
-    while (endPos <= selection.lineText.length) {
-        if (selection.lineText.substr(endPos, format.after.length) === format.after) {
-            break;
-        }
-        endPos++;
-    }
-
-    return [startPos, endPos];
-}
-
-function getCursorState(cm: CodeMirror.Editor) {
-    const pos = cm.getCursor('start');
-    const cs = createEmptyCursorState();
-    const token = cs.token = cm.getTokenAt(pos);
-
-    if (!token.type) {
-        return cs;
-    }
-
-    const tokens = token.type.split(' ');
-
-    tokens.forEach(t => {
-        if (EditorFormatTokens[t]) {
-            cs.format[EditorFormatTokens[t]] = true;
-            return;
-        }
-        switch (t) {
-            case 'link':
-                cs.format.link = true;
-                cs.format.link_label = true;
-                break;
-            case 'string':
-                cs.format.link = true;
-                cs.format.link_href = true;
-                break;
-            case 'variable-2':
-                const text = cm.getLine(pos.line);
-                if (/^\s*\d+\.\s/.test(text)) {
-                    cs.format.ol = true;
-                } else {
-                    cs.format.ul = true;
-                }
-                break;
-        }
-    });
-
-    return cs;
-}
-
-/* END Private Functions */
-
-/* BEGIN Public Functions */
-
-export function inlineApply(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const sel = getCmSelection(cm);
-
-    cm.replaceSelection(format.before + sel.selectedText + format.after);
-
-    moveCmSelection(cm, sel, format.before.length, format.after.length);
-
-    cm.focus();
-}
-
-export function inlineRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const sel = getCmSelection(cm);
-
-    const [startPos, endPos] = findFormattingRange(sel, format);
-
-    const start = sel.lineText.slice(0, startPos);
-    const mid = sel.lineText.slice(startPos + format.before.length, endPos);
-    const end = sel.lineText.slice(endPos + format.after.length);
-
-    replaceCmLine(cm, sel, start + mid + end);
-
-    setCmSelection(cm, sel, start.length, (start + mid).length);
-
-    cm.focus();
-}
-
-export function blockApply(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const sel = getCmSelection(cm);
-
-    const text = `${format.before} ${(sel.lineText.length ? sel.lineText : format.placeholder)}`;
-
-    replaceCmLine(cm, sel, text);
-
-    setCmSelection(cm, sel, format.before.length + 1, text.length);
-
-    cm.focus();
-}
-
-export function blockRemove(cm: CodeMirror.Editor, format: IEditorFormat) {
-    const sel = getCmSelection(cm);
-
-    // TODO: Why do this with regex only in this case?
-    const text = sel.lineText.replace(format.re, '');
-
-    cm.replaceRange(text, { line: sel.line, ch: 0 }, { line: sel.line, ch: sel.lineText.length + 1 });
-
-    setCmSelection(cm, sel, 0, text.length);
-
-    cm.focus();
-}
-
-export function linkApply(cm: CodeMirror.Editor, data: IHtmlLinkProperties) {
-    cm.replaceSelection('[' + data.linkText + '](' + data.href + (data.linkTitle ? ' "' + data.linkTitle + '"' : '') + ')');
-
-    cm.focus();
-}
-
-export function linkRemove(cm: CodeMirror.Editor) {
-    const sel = getCmSelection(cm);
-
-    const [startPos, endPos] = findFormattingRange(sel, EditorFormats.link);
-
-    const start = sel.lineText.slice(0, startPos);
-    const mid = sel.lineText.slice(startPos, endPos + 1);
-    const end = sel.lineText.slice(endPos + 1);
-
-    const linkText = mid.replace(/\[(.*?)\]\(.*?\)/, '$1');
-
-    replaceCmLine(cm, sel, start + linkText + end);
-
-    cm.setCursor({ line: sel.line, ch: start.length });
-
-    cm.focus();
-}
-
-export function codeBlockApply(cm: CodeMirror.Editor, data: ICodeBlockProperties) {
-    const format: IEditorFormat = Object.assign({}, EditorFormats.codeBlock);
-
-    format.before = format.before.replace(/\{LANG\}/gi, data.language);
-
-    inlineApply(cm, format);
-}
-
-export function imageApply(cm: CodeMirror.Editor, data: IHtmlImageProperties, appendNewLine: boolean) {
-    cm.replaceSelection('![' + (data.alt || '') + '](' + data.url + ')' + (appendNewLine ? '\n' : ''));
-
-    cm.focus();
-}
-
-export function applyFormat(cm: CodeMirror.Editor, key: string, data?: any) {
-    const cs = getCursorState(cm);
-    // console.log(cs);
-    const format = EditorFormats[key];
-    operations[format.type][(cs.format[key] ? 'remove' : 'apply')](cm, format, data);
-}
-
-export function getLinkData(cm: CodeMirror.Editor): IHtmlLinkProperties {
-    const pos = cm.getCursor('start');
-    const token = cm.getTokenAt(pos);
-
-    let data: IHtmlLinkProperties = null;
-
-    if (token.type && (token.type.indexOf('link') > -1 || token.type.indexOf('url') > -1)) {
-        const startPoint = cm.getCursor('start');
-        const endPoint = cm.getCursor('end');
-        const line = cm.getLine(startPoint.line);
-
-        let startPos = startPoint.ch;
-        while (startPos) {
-            startPos--;
-            if (line.charAt(startPos) === '[') {
-                break;
-            }
-        }
-
-        let endPos = endPoint.ch;
-        while (endPos <= line.length) {
-            if (line.charAt(endPos) === ')') {
-                break;
-            }
-            endPos++;
-        }
-
-        const linkMarkdown = line.slice(startPos, endPos + 1);
-
-        const linkPattern = /\[(.*?)\]\(([^\s]*)(?:\s+"(.*?)")?\)/m;
-        const match = linkPattern.exec(linkMarkdown);
-
-        if (match) {
-            // matched text: match[0]
-            // match start: match.index
-            // capturing group n: match[n]
-
-            data = {
-                linkText: match[1],
-                href: match[2]
-            };
-
-            if (match[3]) {
-                data.linkTitle = match[3];
-            }
-        }
-
-        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });
-    }
-
-    return data;
-}
-
-export function createLink(cm: CodeMirror.Editor, properties: IHtmlLinkProperties) {
-    linkApply(cm, properties);
-}
-
-export function removeLink(cm: CodeMirror.Editor) {
-    linkRemove(cm);
-}
-
-export function createCodeBlock(cm: CodeMirror.Editor, properties: ICodeBlockProperties) {
-    codeBlockApply(cm, properties);
-}
-
-export function getImageData(cm: CodeMirror.Editor): IHtmlImageProperties {
-    const pos = cm.getCursor('start');
-    const token = cm.getTokenAt(pos);
-
-    let data: IHtmlImageProperties = null;
-
-    if (token.type && (token.type.indexOf('image') > -1 || token.type.indexOf('url') > -1)) {
-        const startPoint = cm.getCursor('start');
-        const endPoint = cm.getCursor('end');
-        const line = cm.getLine(startPoint.line);
-
-        let startPos = startPoint.ch;
-        while (startPos) {
-            startPos--;
-            if (line.charAt(startPos) === '!') {
-                break;
-            }
-        }
-
-        let endPos = endPoint.ch;
-        while (endPos <= line.length) {
-            if (line.charAt(endPos) === ')') {
-                break;
-            }
-            endPos++;
-        }
-
-        const imageMarkdown = line.slice(startPos, endPos + 1);
-
-        const imagePattern = /!\[([^\s]*)\]\(([^\)]+)\)/m;
-        const match = imagePattern.exec(imageMarkdown);
-
-        if (match) {
-            // matched text: match[0]
-            // match start: match.index
-            // capturing group n: match[n]
-
-            data = {
-                alt: match[1],
-                url: match[2]
-            };
-        }
-
-        cm.setSelection({ line: startPoint.line, ch: startPos }, { line: startPoint.line, ch: endPos + 1 });
-    }
-
-    return data;
-}
-
-export function createImage(cm: CodeMirror.Editor, properties: IHtmlImageProperties, appendNewLine: boolean) {
-    imageApply(cm, properties, appendNewLine);
-}
-
-/* END Public Functions */
