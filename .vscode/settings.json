@@ -1,0 +1,8 @@
+{
+    "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+    "files.exclude": {
+        "**/bin/": true,
+        "**/node_modules/": true,
+        "**/obj/": true
+    }
+}
