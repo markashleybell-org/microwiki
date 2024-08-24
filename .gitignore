@@ -350,9 +350,6 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
-# Visual Studio Launch Settings
-launchSettings.json
-
 # Database releases
 !db/Releases/
 

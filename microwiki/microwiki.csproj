@@ -9,10 +9,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Remove="package-lock.json" />
         <Content Remove="wwwroot\usercontent\*.*" />
         <Content Include="wwwroot\usercontent\.gitignore" />
         <TypeScriptCompile Remove="node_modules\**" />
+        <Content Update="package.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+        <Content Remove="package-lock.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+        <Content Update="tsconfig.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+        <Content Update="appsettings.*.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
+        <Content Update="appsettings.*.EXAMPLE.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Never" />
     </ItemGroup>
 
     <ItemGroup>
